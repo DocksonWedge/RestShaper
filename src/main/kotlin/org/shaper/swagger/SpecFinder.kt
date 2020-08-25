@@ -1,11 +1,20 @@
 package org.shaper.swagger
 
-import arrow.core.extensions.list.foldable.combineAll
+import io.ktor.client.HttpClient
 
-class SpecFinder(urlOrJson:String, rawEndpoints: List<String> = listOf()) {
+import io.swagger.models.Swagger
+import io.swagger.parser.SwaggerParser
+
+
+
+class SpecFinder(
+    private val urlOrFilePath:String,
+    private val rawEndpoints: List<String> = listOf()) {
+
     val endpoints = rawEndpoints.map { endpointString ->
         endpointString.split(":").let { it[0] to it[1] }
     }
-    fun getFullSpec(){}
-    fun getRelevantSpec() {}
+    fun getRelevantSpec() : Swagger {
+        return SwaggerParser().read(urlOrFilePath)
+    }
 }

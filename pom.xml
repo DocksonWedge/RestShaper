@@ -15,8 +15,10 @@
         <kotlin.version>1.3.72</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
         <junit.version>5.6.2</junit.version>
+        <ktor.version>1.3.2</ktor.version>
         <arrow.version>0.10.5</arrow.version>
         <clikt.version>2.8.0</clikt.version>
+        <serialization.version>1.0.0-RC</serialization.version>
     </properties>
 
     <dependencies>
@@ -44,6 +46,33 @@
             <groupId>com.github.ajalt</groupId>
             <artifactId>clikt</artifactId>
             <version>${clikt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-json</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-serialization</artifactId>
+            <version>${ktor.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-serialization-core</artifactId>
+            <version>${serialization.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-serialization</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-apache</artifactId>
+            <version>${ktor.version}</version>
+            <scope>compile</scope>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.jetbrains.kotlin</groupId>-->
@@ -94,6 +123,11 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
+                <configuration>
+                    <compilerPlugins>
+                        <plugin>kotlinx-serialization</plugin>
+                    </compilerPlugins>
+                </configuration>
                 <executions>
                     <execution>
                         <id>compile</id>
