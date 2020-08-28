@@ -1,12 +1,13 @@
 package org.shaper.entry
 
-import io.swagger.models.parameters.QueryParameter
 import org.shaper.swagger.SpecFinder
 
+//run params http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs GET:/skills
 fun main(args: Array<String>) {
     args.forEach { println(it) }
     val spec = SpecFinder(args[0], args.slice(1 until args.size).toList())
-    val param  = spec.getRelevantSpec().getPath("/jobs").get.parameters[0] as QueryParameter
-    println(param.type)
+    val endpoints  = spec.getRelevantSpecs()
+
+    endpoints.forEach { it.queryParams.forEach{ println("${it.key} ${it.value.type}") }  }
 }
 
