@@ -1,11 +1,11 @@
 package org.shaper.swagger
 
-import io.ktor.client.HttpClient
-import io.swagger.models.HttpMethod
-import io.swagger.models.Operation
 
-import io.swagger.models.Swagger
-import io.swagger.parser.SwaggerParser
+
+import io.swagger.v3.oas.models.PathItem
+import io.swagger.v3.oas.models.PathItem.HttpMethod
+import io.swagger.v3.parser.OpenAPIV3Parser
+
 import org.shaper.swagger.model.EndpointSpec
 
 
@@ -14,7 +14,7 @@ class SpecFinder(
     private val rawEndpoints: List<String> = listOf()
 ) {
 
-    private val fullSpec = SwaggerParser().read(urlOrFilePath)
+    private val fullSpec = OpenAPIV3Parser().read(urlOrFilePath)
     private val endpoints = rawEndpoints.map { endpointString ->
         endpointString.split(":").let { HttpMethod.valueOf(it[0]) to it[1] }
     }
@@ -23,7 +23,7 @@ class SpecFinder(
     fun getRelevantSpecs(): List<EndpointSpec> {
         return endpoints.mapNotNull { endpointString ->
             EndpointSpec(
-                fullSpec.getPath(endpointString.second).operationMap[endpointString.first]
+                fullSpec.paths[endpointString.second]!!.readOperationsMap()[endpointString.first]
                     ?: throw SwaggerOperationNotFound(
                         "Could not find ${endpointString.second} ${endpointString.first} in swagger spec."
                     )
