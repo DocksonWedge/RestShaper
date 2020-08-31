@@ -34,8 +34,8 @@ class ParameterSpec(
     lateinit var customGenerator: Gen<Any> //TODO
     lateinit var GeneratorEnum: List<String> //TODO
 
-    val name = { param.name }
-    val paramType = { param.`in` }
+    val name = param.name
+    val paramType = param.`in`
     val isID = {
          dataType == UUID::class
                  || param.name.contains("Id")

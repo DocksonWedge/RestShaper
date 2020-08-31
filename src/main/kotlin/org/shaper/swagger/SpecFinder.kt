@@ -1,8 +1,5 @@
 package org.shaper.swagger
 
-
-
-import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import io.swagger.v3.parser.OpenAPIV3Parser
 
@@ -15,17 +12,18 @@ class SpecFinder(
 ) {
 
     private val fullSpec = OpenAPIV3Parser().read(urlOrFilePath)
+    //TODO lvl 1 - handle no endpoints as check all
     private val endpoints = rawEndpoints.map { endpointString ->
-        endpointString.split(":").let { HttpMethod.valueOf(it[0]) to it[1] }
+        endpointString.split(":").let { HttpMethod.valueOf(it[0].toUpperCase()) to it[1] }
     }
 
     //TODO make work with multiple specs
     fun getRelevantSpecs(): List<EndpointSpec> {
-        return endpoints.mapNotNull { endpointString ->
+        return endpoints.mapNotNull { methodPathPair ->
             EndpointSpec(
-                fullSpec.paths[endpointString.second]!!.readOperationsMap()[endpointString.first]
+                fullSpec.paths[methodPathPair.second]?.readOperationsMap()?.get(methodPathPair.first)
                     ?: throw SwaggerOperationNotFound(
-                        "Could not find ${endpointString.second} ${endpointString.first} in swagger spec."
+                        "Could not find ${methodPathPair.second} ${methodPathPair.first} in swagger spec."
                     )
             )
         }
