@@ -49,9 +49,9 @@ class GetRelevantSpecsTest {
                 mapOf(
                     "size" to 1,
                     "names" to listOf("orderId"),
-                    "paramTypes" to listOf("path"),
-                    "dataTypes" to listOf(Long::class),
-                    "isId" to listOf(true)
+                    "paramType" to "path",
+                    "dataTypes" to Long::class,
+                    "isId" to true
                 )
         ,
         listOf("get:/user/login")
@@ -59,9 +59,9 @@ class GetRelevantSpecsTest {
                 mapOf(
                     "size" to 2,
                     "names" to listOf("username", "password"),
-                    "paramTypes" to listOf("query"),
-                    "dataTypes" to listOf(String::class),
-                    "isId" to listOf(false)
+                    "paramType" to "query",
+                    "dataTypes" to String::class,
+                    "isId" to false
                 )
         ,
         listOf("get:/user/logout", "get:/store/inventory")
@@ -69,9 +69,9 @@ class GetRelevantSpecsTest {
                 mapOf(
                     "size" to 0,
                     "names" to listOf<String>(),
-                    "paramTypes" to listOf<String>(),
-                    "dataTypes" to listOf<KClass<*>>(),
-                    "isId" to listOf<Boolean>()
+                    "paramType" to "",
+                    "dataTypes" to Any::class,
+                    "isId" to false
                 )
         ,
         //This is unique because it has form data the is NOT set in params right now
@@ -80,9 +80,9 @@ class GetRelevantSpecsTest {
                 mapOf(
                     "size" to 1,
                     "names" to listOf("petId"),
-                    "paramTypes" to listOf("path"),
-                    "dataTypes" to listOf(Long::class),
-                    "isId" to listOf(true)
+                    "paramType" to "path",
+                    "dataTypes" to Long::class,
+                    "isId" to true
                 )
 
     )
@@ -101,14 +101,18 @@ class GetRelevantSpecsTest {
 
                 Assertions.assertTrue(actualSpecs.all { it.params.entries.size == expected["size"] })
                 Assertions.assertTrue(actualSpecs.all { it.params.keys.containsAll(expected["names"] as List<String>) })
+                // TODO Should the last 3 be containsAll or check for all with AND
                 Assertions.assertTrue(actualSpecs.all {
-                    it.params.values.map { p -> p.paramType }.containsAll(expected["paramTypes"] as List<String>)
+                    it.params.values.map { p -> p.paramType }
+                        .all { pType -> pType == expected["paramType"] }
                 })
                 Assertions.assertTrue(actualSpecs.all {
-                    it.params.values.map { p -> p.dataType }.containsAll(expected["dataTypes"] as List<KClass<*>>)
+                    it.params.values.map { p -> p.dataType }
+                        .all { dType -> dType == expected["dataTypes"] }
                 })
                 Assertions.assertTrue(actualSpecs.all {
-                    it.params.values.map { p -> p.isID }.containsAll(expected["isId"] as List<Boolean>)
+                    it.params.values.map { p -> p.isID }
+                        .all { isId -> isId == expected["isId"] }
                 })
 
             }
