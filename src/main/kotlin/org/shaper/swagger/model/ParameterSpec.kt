@@ -36,14 +36,14 @@ class ParameterSpec(
 
     val name = param.name
     val paramType = param.`in`
-    val isID = {
+    val isID = (
          dataType == UUID::class
-                 || param.name.contains("Id")
-                 || param.name.contains("ID") //TODO how do we handle "id"?
-                 || param.name.contains("_id", true)
-                 || param.name.contains("id_", true)
-                 || param.name.contains("-id", true)
-                 || param.name.contains("id-", true)
+                 || name.contains("Id")
+                 || name.contains("ID") //TODO how do we handle "id"?
+                 || name.contains("_id", true)
+                 || name.contains("id_", true)
+                 || name.contains("-id", true)
+                 || name.contains("id-", true)
 
-    }
+    )
 }

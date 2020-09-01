@@ -41,6 +41,7 @@ class GetRelevantSpecsTest {
             }
         }
 
+
     @TestFactory
     fun `Test getRelevantSpecs returns params with the correct param data type, type, and name`() = listOf(
         listOf("get:/store/order/{orderId}", "delete:/store/order/{orderId}")
@@ -49,7 +50,8 @@ class GetRelevantSpecsTest {
                     "size" to 1,
                     "names" to listOf("orderId"),
                     "paramTypes" to listOf("path"),
-                    "dataTypes" to listOf(Long::class)
+                    "dataTypes" to listOf(Long::class),
+                    "isId" to listOf(true)
                 )
         ,
         listOf("get:/user/login")
@@ -58,7 +60,8 @@ class GetRelevantSpecsTest {
                     "size" to 2,
                     "names" to listOf("username", "password"),
                     "paramTypes" to listOf("query"),
-                    "dataTypes" to listOf(String::class)
+                    "dataTypes" to listOf(String::class),
+                    "isId" to listOf(false)
                 )
         ,
         listOf("get:/user/logout", "get:/store/inventory")
@@ -67,7 +70,8 @@ class GetRelevantSpecsTest {
                     "size" to 0,
                     "names" to listOf<String>(),
                     "paramTypes" to listOf<String>(),
-                    "dataTypes" to listOf<KClass<*>>()
+                    "dataTypes" to listOf<KClass<*>>(),
+                    "isId" to listOf<Boolean>()
                 )
         ,
         //This is unique because it has form data the is NOT set in params right now
@@ -77,7 +81,8 @@ class GetRelevantSpecsTest {
                     "size" to 1,
                     "names" to listOf("petId"),
                     "paramTypes" to listOf("path"),
-                    "dataTypes" to listOf(Long::class)
+                    "dataTypes" to listOf(Long::class),
+                    "isId" to listOf(true)
                 )
 
     )
@@ -101,6 +106,9 @@ class GetRelevantSpecsTest {
                 })
                 Assertions.assertTrue(actualSpecs.all {
                     it.params.values.map { p -> p.dataType }.containsAll(expected["dataTypes"] as List<KClass<*>>)
+                })
+                Assertions.assertTrue(actualSpecs.all {
+                    it.params.values.map { p -> p.isID }.containsAll(expected["isId"] as List<Boolean>)
                 })
 
             }
