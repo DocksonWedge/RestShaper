@@ -2,7 +2,7 @@ package org.shaper.swagger.model
 
 
 import io.swagger.v3.oas.models.parameters.Parameter
-import propCheck.arbitrary.Gen
+
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -31,7 +31,7 @@ class ParameterSpec(
         }
     }
 
-    lateinit var customGenerator: Gen<Any> //TODO
+    //lateinit var customGenerator: Gen<Any> //TODO
     lateinit var GeneratorEnum: List<String> //TODO
 
     val name = param.name
