@@ -30,10 +30,6 @@ class ParameterSpec(
             }
         }
     }
-
-    //lateinit var customGenerator: Gen<Any> //TODO
-    lateinit var GeneratorEnum: List<String> //TODO
-
     val name = param.name
     val paramType = param.`in`
     val isID = (
@@ -46,4 +42,11 @@ class ParameterSpec(
                  || name.contains("id-", true)
 
     )
+    // TODO tighten up return type
+    fun <T> getAvailableValues(iterations: Int, endpoint: EndpointSpec, getSelectedOrPreviousData: (EndpointSpec, ParameterSpec) -> List<T> ): List<T>{
+        //TODO get values based on type
+        val values = listOf<T>()
+        return  values + getSelectedOrPreviousData(endpoint, this)
+    }
+
 }

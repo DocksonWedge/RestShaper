@@ -1,5 +1,6 @@
 package org.shaper.entry
 
+
 import org.shaper.swagger.SpecFinder
 
 //run params http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs GET:/skills
@@ -9,5 +10,7 @@ fun main(args: Array<String>) {
     val endpoints  = spec.getRelevantSpecs()
 
     endpoints.forEach { it.queryParams.forEach{ println("${it.key} ${it.value.dataType}") }  }
+
+
 }
 

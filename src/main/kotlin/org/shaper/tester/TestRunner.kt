@@ -1,16 +1,10 @@
 package org.shaper.tester
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.property.Arb
-import io.kotest.property.forAll
-import io.kotest.property.Exhaustive
-import io.kotest.property.arbitrary.int
+import org.shaper.swagger.model.EndpointSpec
 
-
-class TestRunner: StringSpec({
-    "a"{
-        forAll(2, Arb.int(1..2), Arb.int(1..2)) { a, b  ->
-            (a + b) == a + b
-        }
+object TestRunner{
+    //TODO shrink Any return type of output once we have a better idea what it looks like
+    fun shapeEndpoint(endpoint: EndpointSpec, output: (EndpointSpec) -> Any){
+        endpoint.params
     }
-})
+}

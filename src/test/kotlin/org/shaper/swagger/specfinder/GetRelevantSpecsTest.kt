@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.SwaggerOperationNotFound
-import kotlin.reflect.KClass
 
 class GetRelevantSpecsTest {
     private val exampleFolder = "src\\test\\Resources\\TestExamples"
