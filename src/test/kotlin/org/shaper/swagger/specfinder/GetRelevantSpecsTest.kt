@@ -10,6 +10,7 @@ class GetRelevantSpecsTest {
     private val exampleFolder = "src\\test\\Resources\\TestExamples"
     val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
 
+
     @TestFactory
     fun `Test getRelevantSpecs returns correct total number of params`() = listOf(
         //Triple(petStoreSwaggerLocation, listOf(""), 0),  TODO lvl 1 - handle no endpoints as check all

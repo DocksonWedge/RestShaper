@@ -34,13 +34,9 @@ class ParameterSpec(
     val paramType = param.`in`
     val isID = (
          dataType == UUID::class
-                 || name.contains("Id")
-                 || name.contains("ID") //TODO how do we handle "id"?
-                 || name.contains("_id", true)
-                 || name.contains("id_", true)
-                 || name.contains("-id", true)
-                 || name.contains("id-", true)
-
+                 || name.matches(Regex("^.*(Id|ID).*$"))
+                 || name.matches(Regex("^.*[-_](id)[-_].*$"))
+                 || name.matches(Regex("^(id)*[-_].*|.*[-_](id)*\$"))
     )
     // TODO tighten up return type
     fun <T> getAvailableValues(iterations: Int, endpoint: EndpointSpec, getSelectedOrPreviousData: (EndpointSpec, ParameterSpec) -> List<T> ): List<T>{
