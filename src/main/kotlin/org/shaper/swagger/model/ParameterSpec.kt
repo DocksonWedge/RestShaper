@@ -30,8 +30,10 @@ class ParameterSpec(
             }
         }
     }
-    val name = param.name
-    val paramType = param.`in`
+    val name: String = param.name
+    val paramType: String = param.`in`
+    val maxNum = 10000000
+    val minNum = -10000000
     val isID = (
          dataType == UUID::class
                  || name.matches(Regex("^.*(Id|ID).*$"))

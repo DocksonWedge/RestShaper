@@ -123,6 +123,11 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.beust</groupId>-->
+<!--            <artifactId>klaxon</artifactId>-->
+<!--            <version>5.0.1</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk</artifactId>

@@ -8,8 +8,7 @@ import org.shaper.swagger.SwaggerOperationNotFound
 
 class GetRelevantSpecsTest {
     private val exampleFolder = "src\\test\\Resources\\TestExamples"
-    val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
-
+    private val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
 
     @TestFactory
     fun `Test getRelevantSpecs returns correct total number of params`() = listOf(
