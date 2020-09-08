@@ -1,11 +1,12 @@
-package org.shaper.swagger.model
+package org.shaper.generators.model
 
 import kotlinx.serialization.json.JsonObject
+import org.shaper.generators.shared.IterPosition
 
-
+// TODO - adding in weights/priorities?
 // TODO user should be able to pass in their own function to add things like auth headers that they need to calculate
 // Allows for nulls so we can "curry" the constructor
-data class TestInput(
+abstract class TestInput(
     var queryParams: Map<String, List<*>>,
     var pathParams: Map<String, List<*>>,
     var headers: Map<String, List<*>>,
@@ -14,15 +15,22 @@ data class TestInput(
     // val additionalConfig: () -> Unit TODO - move this a level higher
 ) : Sequence<TestInputConcretion> { //TODO sequence instead?
 
-
-    override fun iterator(): Iterator<TestInputConcretion> {
-        return TestInputIterator(queryParams, pathParams, headers, cookies, bodies)
-    }
+    // also needs to be implemented by child class
+    abstract override fun iterator(): Iterator<TestInputConcretion>
+//    {
+//        return TestInputIterator(
+//            queryParams,
+//            pathParams,
+//            headers,
+//            cookies,
+//            bodies
+//        )
+//    }
 
 
     //TODO why do we have ot pass params explicitly? Is there ever an iterator that doesn't
     // need to know what it's iterating over?
-    class TestInputIterator(
+    abstract class TestInputIterator(
         var queryParams: Map<String, List<*>>,
         var pathParams: Map<String, List<*>>,
         var headers: Map<String, List<*>>,
@@ -38,24 +46,28 @@ data class TestInput(
             0
         ) //TODO actually use this to go to next? do we need an iterator?
 
-        override fun hasNext(): Boolean {
-            return true //currently an infinite collection
-        }
-
-        override fun next(): TestInputConcretion {
-            position.queryParams = nextParam(queryParams, position.queryParams)
-            if (!isParamReset(position.queryParams)) return inputFromPosition(position)
-
-            position.pathParams = nextParam(pathParams, position.pathParams)
-            if (!isParamReset(position.pathParams)) return inputFromPosition(position)
-
-            position.headers = nextParam(headers, position.headers)
-            if (!isParamReset(position.headers)) return inputFromPosition(position)
-
-            position.cookies = nextParam(cookies, position.cookies)
-            return inputFromPosition(position)
-
-        }
+        //var hasNext = true
+        abstract override fun hasNext(): Boolean
+//        {
+//            return hasNext // currently an infinite collection
+//        }
+        // TODO make abstract so util functions are reusable, next and hasNext implemented in child class
+        abstract override fun next(): TestInputConcretion
+//        {
+//            hasNext = true
+//            position.queryParams = nextParam(queryParams, position.queryParams)
+//            if (!isParamReset(position.queryParams)) return inputFromPosition(position)
+//
+//            position.pathParams = nextParam(pathParams, position.pathParams)
+//            if (!isParamReset(position.pathParams)) return inputFromPosition(position)
+//
+//            position.headers = nextParam(headers, position.headers)
+//            if (!isParamReset(position.headers)) return inputFromPosition(position)
+//
+//            position.cookies = nextParam(cookies, position.cookies)
+//            if (!isParamReset(position.cookies)) hasNext = false
+//            return inputFromPosition(position)
+//        }
 
         //returns position of set of parameters
         private fun nextParam(
@@ -100,15 +112,4 @@ data class TestInput(
         }
 
     }
-
-
-    data class IterPosition(
-        var queryParams: MutableMap<String, Int>,
-        var pathParams: MutableMap<String, Int>,
-        var headers: MutableMap<String, Int>,
-        var cookies: MutableMap<String, Int>,
-        var bodies: Int
-    )
-
-
 }

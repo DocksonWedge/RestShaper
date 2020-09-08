@@ -1,4 +1,4 @@
-package org.shaper.swagger.model
+package org.shaper.generators.model
 
 import kotlinx.serialization.json.JsonObject
 

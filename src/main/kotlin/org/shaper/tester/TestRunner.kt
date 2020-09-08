@@ -1,5 +1,8 @@
 package org.shaper.tester
 
+import org.shaper.generators.model.TestInput
+import org.shaper.generators.model.TestInputConcretion
+import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.*
 
 object TestRunner {
@@ -11,10 +14,11 @@ object TestRunner {
         inputGenerator: (EndpointSpec) -> TestInput,
         outputGenerator: (EndpointSpec, TestInput, List<TestResult>) -> T
     ) : T {
+        //TODO - document input-output interface/how-to
         val paramValues = inputGenerator(endpoint)
         //TODO - turn list of results into TestResults object?
         val results = paramValues.map { runTest(it, endpoint ) }
-        return outputGenerator(endpoint, paramValues, results)
+        return outputGenerator(endpoint, paramValues, results.toList())
     }
 
 
