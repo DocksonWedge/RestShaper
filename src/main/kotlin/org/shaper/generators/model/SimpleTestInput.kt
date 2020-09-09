@@ -1,0 +1,55 @@
+package org.shaper.generators.model
+
+import kotlinx.serialization.json.JsonObject
+
+class SimpleTestInput(
+    queryParams: Map<String, List<*>>,
+    pathParams: Map<String, List<*>>,
+    headers: Map<String, List<*>>,
+    cookies: Map<String, List<*>>,
+    bodies: List<JsonObject>
+) : BaseTestInput(queryParams, pathParams, headers, cookies, bodies) {
+
+    override fun iterator(): Iterator<TestInputConcretion> {
+        return SimpleTestInputIterator(
+            queryParams,
+            pathParams,
+            headers,
+            cookies,
+            bodies
+        )
+    }
+
+    class SimpleTestInputIterator(
+        queryParams: Map<String, List<*>>,
+        pathParams: Map<String, List<*>>,
+        headers: Map<String, List<*>>,
+        cookies: Map<String, List<*>>,
+        bodies: List<JsonObject>
+    ) : BaseTestInputIterator(queryParams, pathParams, headers, cookies, bodies) {
+
+        var hasNext = true
+        override fun hasNext(): Boolean {
+            return hasNext // currently an infinite collection
+        }
+
+        // TODO make abstract so util functions are reusable, next and hasNext implemented in child class
+        override fun next(): TestInputConcretion {
+            hasNext = true
+            position.queryParams = nextParam(queryParams, position.queryParams)
+            if (!isParamReset(position.queryParams)) return inputFromPosition(position)
+
+            position.pathParams = nextParam(pathParams, position.pathParams)
+            if (!isParamReset(position.pathParams)) return inputFromPosition(position)
+
+            position.headers = nextParam(headers, position.headers)
+            if (!isParamReset(position.headers)) return inputFromPosition(position)
+
+            position.cookies = nextParam(cookies, position.cookies)
+            if (!isParamReset(position.cookies)) hasNext = false
+            return inputFromPosition(position)
+        }
+    }
+
+
+}

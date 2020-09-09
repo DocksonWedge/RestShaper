@@ -4,17 +4,17 @@ import com.github.javafaker.Faker
 import kotlinx.serialization.json.JsonObject
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
-import org.shaper.generators.model.TestInput
+import org.shaper.generators.model.SimpleTestInput
 
 //simple doesn't read past results?
 class SimpleInputGenertor(
     numCases: Int = 50,
-    additionalConfig: (EndpointSpec, TestInput) -> Unit
-    = { endpointSpec: EndpointSpec, testInput: TestInput -> }
+    additionalConfig: (EndpointSpec, SimpleTestInput) -> Unit
+    = { endpointSpec: EndpointSpec, testInput: SimpleTestInput -> }
 ) {
     lateinit var whereStopped: () -> Unit
-    fun getInput(endpoint: EndpointSpec): TestInput {
-        return TestInput(
+    fun getInput(endpoint: EndpointSpec): SimpleTestInput {
+        return SimpleTestInput(
             endpoint.queryParams.mapValues { getParamVals(it.value) },
             endpoint.pathParams.mapValues { getParamVals(it.value) },
             endpoint.headerParams.mapValues { getParamVals(it.value) },
