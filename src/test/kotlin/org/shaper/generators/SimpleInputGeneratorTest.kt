@@ -14,7 +14,7 @@ class SimpleInputGeneratorTest {
     fun `Test getInput returns ints correctly`() = listOf(
         null to 50,
         1 to 1,
-        50 to 50,
+        50 to 50, //TODO - sequence makes this take a long time - need to look into- actually, looks like it's not looping over the sequence that takes time
         17 to 17,
         0 to 0,
         -1 to 0
@@ -30,7 +30,7 @@ class SimpleInputGeneratorTest {
                         .getRelevantSpecs()[0]
                 val input =
                     (if (number == null) SimpleInputGenerator() else SimpleInputGenerator(number))
-                        .getInput(endpoint)
+                        .getInput(endpoint) //TODO - this is the slow line
                 val orderIdValues = input.pathParams["orderId"]
                 Assertions.assertEquals(
                     expected,

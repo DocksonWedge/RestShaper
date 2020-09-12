@@ -5,6 +5,7 @@ import kotlinx.serialization.json.JsonObject
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 import org.shaper.generators.model.SimpleTestInput
+import kotlin.random.Random
 
 //simple doesn't read past results?
 class SimpleInputGenerator(
@@ -12,7 +13,10 @@ class SimpleInputGenerator(
     val additionalConfig: (EndpointSpec, SimpleTestInput) -> Unit
     = { endpointSpec: EndpointSpec, testInput: SimpleTestInput -> }
 ) {
-
+    companion object{
+        //instantiate this as little as possible using a static companion - it is apparently very slow
+        val faker = Faker()
+    }
     //TODO this is the functional test starting point
     fun getInput(endpoint: EndpointSpec): SimpleTestInput {
         return SimpleTestInput(
@@ -31,14 +35,14 @@ class SimpleInputGenerator(
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
             Long::class ->
                 (1..numVals).map { _ ->
-                    Faker().number()
+                    faker.number()
                         .numberBetween(-100L, 100L)
                 }
             String::class ->
                 // TODO calculate function based on requirements, then pass it in
                 // TODO can we have a way here to know when we have done something invalid and push that to the expected results?
                 (1..numVals).map { _ ->
-                    Faker().regexify("[A-z1-9]{0,10}")
+                    faker.regexify("[A-z1-9]{0,10}")
                 }
             else -> throw NotImplementedError("Parameters with specs other than " +
                     "integer or string are not yet implemented.")
