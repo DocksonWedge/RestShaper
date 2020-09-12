@@ -6,4 +6,14 @@ data class IterPosition(
     var headers: MutableMap<String, Int>,
     var cookies: MutableMap<String, Int>,
     var bodies: Int
-)
+) {
+    fun copy(): IterPosition {
+        return IterPosition(
+            queryParams.toMutableMap(),
+            pathParams.toMutableMap(),
+            headers.toMutableMap(),
+            cookies.toMutableMap(),
+            bodies
+        )
+    }
+}

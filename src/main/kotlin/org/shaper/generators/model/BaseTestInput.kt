@@ -13,7 +13,7 @@ abstract class BaseTestInput(
     var cookies: Map<String, List<*>>,
     var bodies: List<JsonObject>
     // val additionalConfig: () -> Unit TODO - move this a level higher
-) : Sequence<TestInputConcretion> { //TODO sequence instead?
+) : Sequence<TestInputConcretion> {
 
     abstract override fun iterator(): Iterator<TestInputConcretion>
 
@@ -29,10 +29,10 @@ abstract class BaseTestInput(
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
         var position = IterPosition(
-            queryParams.mapValues { 0 }.toMutableMap(),
-            pathParams.mapValues { 0 }.toMutableMap(),
-            headers.mapValues { 0 }.toMutableMap(),
-            cookies.mapValues { 0 }.toMutableMap(),
+            queryParams.mapValues { -1 }.toMutableMap(),
+            pathParams.mapValues { -1 }.toMutableMap(),
+            headers.mapValues { -1 }.toMutableMap(),
+            cookies.mapValues { -1 }.toMutableMap(),
             0
         )
 
@@ -46,7 +46,7 @@ abstract class BaseTestInput(
         ): MutableMap<String, Int> {
             params.forEach { param ->
                 val currentPos = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
-                if (currentPos == param.value.size - 1) {
+                if (currentPos + 1 >= param.value.size) {
                     position[param.key] = 0
                     //and we continue since we are doing duplicates!
                 } else {
@@ -58,8 +58,11 @@ abstract class BaseTestInput(
             return position
         }
 
-        protected fun getParamValue(params: Map<String, List<*>>, position: MutableMap<String, Int>): Map<String, *> {
-            return params.mapValues {param ->
+        protected fun getParamValuesAtPosition(
+            params: Map<String, List<*>>,
+            position: MutableMap<String, Int>
+        ): Map<String, *> {
+            return params.mapValues { param ->
                 param.value[
                         position[param.key]
                             ?: error("Iterating over a parameter that doesn't exist!")
@@ -67,16 +70,34 @@ abstract class BaseTestInput(
             }
         }
 
-        protected open fun isParamReset(position: MutableMap<String, Int>): Boolean {
-            return position.all { it.value == 0 }
+        protected open fun isParamReset(
+            position: MutableMap<String, Int>,
+            previousPosition: MutableMap<String, Int>,
+            paramVals: Map<String, List<*>>
+        ): Boolean {
+            return position.all {
+                it.value == 0 //only reset if we are back at 0
+                        && previousPosition[it.key] != it.value //only reset if we changed values
+                        && !paramVals[it.key].isNullOrEmpty() //never reset if no values to reset
+            }
+        }
+
+        protected open fun isOnLastParam(
+            position: MutableMap<String, Int>,
+            paramVals: Map<String, List<*>>
+        ): Boolean {
+            return position.all {
+                (it.value + 1) >= paramVals[it.key]?.size
+                        ?: error("Checking size of a parameter that doesn't exist!")
+            }
         }
 
         protected fun inputFromPosition(position: IterPosition): TestInputConcretion {
             return TestInputConcretion(
-                getParamValue(queryParams, position.queryParams),
-                getParamValue(pathParams, position.pathParams),
-                getParamValue(headers, position.headers),
-                getParamValue(cookies, position.cookies),
+                getParamValuesAtPosition(queryParams, position.queryParams),
+                getParamValuesAtPosition(pathParams, position.pathParams),
+                getParamValuesAtPosition(headers, position.headers),
+                getParamValuesAtPosition(cookies, position.cookies),
                 JsonObject(mapOf()) //TODO
             )
         }

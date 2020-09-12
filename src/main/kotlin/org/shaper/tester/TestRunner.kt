@@ -1,5 +1,6 @@
 package org.shaper.tester
 
+import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.SimpleTestInput
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
@@ -11,8 +12,8 @@ object TestRunner {
     //TODO "Any output should be a results object we don't have yet
     fun <T> shapeEndpoint(
         endpoint: EndpointSpec,
-        inputGenerator: (EndpointSpec) -> SimpleTestInput,
-        outputGenerator: (EndpointSpec, SimpleTestInput, List<TestResult>) -> T
+        inputGenerator: (EndpointSpec) -> BaseTestInput,
+        outputGenerator: (EndpointSpec, BaseTestInput, List<TestResult>) -> T
     ) : T {
         //TODO - document input-output interface/how-to
         val paramValues = inputGenerator(endpoint)
