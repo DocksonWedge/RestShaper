@@ -39,12 +39,13 @@ class SimpleInputGeneratorTest {
                 orderIdValues.forEach {
                     Assertions.assertDoesNotThrow { it as Long }
                 }
+                // count() uses the sequence to count the total, so it IS different than checking .size
                 Assertions.assertEquals(
                     expected,
                     input.count()
                 )
             }
         }
-    //TODO test count/iterator
+
 
 }

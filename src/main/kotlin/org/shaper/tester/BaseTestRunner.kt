@@ -1,12 +1,11 @@
 package org.shaper.tester
 
 import org.shaper.generators.model.BaseTestInput
-import org.shaper.generators.model.SimpleTestInput
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.*
 
-object TestRunner {
+object BaseTestRunner {
     //TODO shrink Any return type of output once we have a better idea what it looks like
     // TODO should list allow for a map or anything? - list should have it's own test-input object
     //TODO "Any output should be a results object we don't have yet
@@ -25,7 +24,7 @@ object TestRunner {
 
     fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec, iterations : Int = 50): TestResult {
         //TODO implement
-        (1..iterations).forEach {
+        for (i in 1..iterations) {
 
         }
         return TestResult()

@@ -5,7 +5,6 @@ import io.mockk.mockk
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
 import org.junit.jupiter.api.*
-import org.shaper.swagger.SpecFinder
 
 
 class ParameterSpecTest {

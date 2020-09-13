@@ -20,12 +20,7 @@ class SpecFinder(
     //TODO make work with multiple specs
     fun getRelevantSpecs(): List<EndpointSpec> {
         return endpoints.mapNotNull { methodPathPair ->
-            EndpointSpec(
-                fullSpec.paths[methodPathPair.second]?.readOperationsMap()?.get(methodPathPair.first)
-                    ?: throw SwaggerOperationNotFound(
-                        "Could not find ${methodPathPair.second} ${methodPathPair.first} in swagger spec."
-                    )
-            )
+            EndpointSpec(fullSpec, methodPathPair.first, methodPathPair.second)
         }
     }
 }
