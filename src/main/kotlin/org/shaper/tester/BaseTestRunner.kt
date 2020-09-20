@@ -12,21 +12,19 @@ object BaseTestRunner {
     fun <T> shapeEndpoint(
         endpoint: EndpointSpec,
         inputGenerator: (EndpointSpec) -> BaseTestInput,
-        outputGenerator: (EndpointSpec, BaseTestInput, List<TestResult>) -> T
+        outputGenerator: (EndpointSpec, BaseTestInput, Sequence<TestResult>) -> T
     ) : T {
         //TODO - document input-output interface/how-to
         val paramValues = inputGenerator(endpoint)
-        //TODO - turn list of results into TestResults object?
+        // This doesn't actually run until the out put gen because it's a sequence!
         val results = paramValues.map { runTest(it, endpoint ) }
-        return outputGenerator(endpoint, paramValues, results.toList())
+        return outputGenerator(endpoint, paramValues, results)
     }
 
-
-    fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec, iterations : Int = 50): TestResult {
+    fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec): TestResult {
         //TODO implement
-        for (i in 1..iterations) {
-
-        }
+        println("${testInput.queryParams["offset"]} || ${testInput.queryParams["limit"]}")
+        //endpoint.callWithConcretion(testInput)
         return TestResult()
     }
 

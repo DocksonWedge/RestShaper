@@ -28,6 +28,7 @@ abstract class BaseTestInput(
         var bodies: List<JsonObject> // TODO - should probably be map of maps
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
+        // Start as -1 to run at least once
         var position = IterPosition(
             queryParams.mapValues { -1 }.toMutableMap(),
             pathParams.mapValues { -1 }.toMutableMap(),
@@ -63,10 +64,9 @@ abstract class BaseTestInput(
             position: MutableMap<String, Int>
         ): Map<String, *> {
             return params.mapValues { param ->
-                param.value[
-                        position[param.key]
-                            ?: error("Iterating over a parameter that doesn't exist!")
-                ]
+                val inputPosition = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
+                val currentPosition = if (inputPosition < 0)  0 else inputPosition
+                param.value[currentPosition]
             }
         }
 
@@ -87,8 +87,9 @@ abstract class BaseTestInput(
             paramVals: Map<String, List<*>>
         ): Boolean {
             return position.all {
-                (it.value + 1) >= paramVals[it.key]?.size
-                        ?: error("Checking size of a parameter that doesn't exist!")
+                val numberOfParams = paramVals[it.key]?.size
+                    ?: error("Checking size of a parameter that doesn't exist!")
+                (it.value + 1) >= numberOfParams || numberOfParams == 0
             }
         }
 

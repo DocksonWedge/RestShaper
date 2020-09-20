@@ -35,8 +35,7 @@ class SimpleInputGenerator(
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
             Long::class ->
                 (1..numVals).map { _ ->
-                    faker.number()
-                        .numberBetween(-100L, 100L)
+                    faker.number().numberBetween(-100L, 100L)
                 }
             String::class ->
                 // TODO calculate function based on requirements, then pass it in

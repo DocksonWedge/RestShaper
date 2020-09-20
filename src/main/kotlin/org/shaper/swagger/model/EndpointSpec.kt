@@ -3,6 +3,7 @@ package org.shaper.swagger.model
 
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import io.swagger.v3.oas.models.OpenAPI
+import org.shaper.generators.model.TestInputConcretion
 
 import org.shaper.swagger.SwaggerOperationNotFound
 
@@ -34,5 +35,9 @@ class EndpointSpec(private val swaggerSpec: OpenAPI, val method: HttpMethod, val
         var pathConcretion = path
         pathParams.forEach { name, value -> pathConcretion = pathConcretion.replace("{$name}", value.toString(), false) }
         url + pathConcretion
+    }
+
+    fun callWithConcretion(input : TestInputConcretion){
+
     }
 }
