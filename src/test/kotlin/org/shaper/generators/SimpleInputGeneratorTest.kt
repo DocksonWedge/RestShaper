@@ -12,9 +12,9 @@ class SimpleInputGeneratorTest {
 
     @TestFactory
     fun `Test getInput returns ints correctly`() = listOf(
-        null to 50,
+        null to 5,
         1 to 1,
-        50 to 50,
+        5 to 5,
         17 to 17,
         0 to 0,
         -1 to 0

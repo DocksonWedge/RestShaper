@@ -28,12 +28,15 @@ abstract class BaseTestInput(
         var bodies: List<JsonObject> // TODO - should probably be map of maps
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
+
+        val getInitPosition = { entry: Map.Entry<String, List<*>> -> if (entry.value.isNotEmpty()) 0 else -1 }
+
         // Start as -1 to run at least once
         var position = IterPosition(
-            queryParams.mapValues { -1 }.toMutableMap(),
-            pathParams.mapValues { -1 }.toMutableMap(),
-            headers.mapValues { -1 }.toMutableMap(),
-            cookies.mapValues { -1 }.toMutableMap(),
+            queryParams.mapValues { getInitPosition(it) }.toMutableMap(),
+            pathParams.mapValues { getInitPosition(it) }.toMutableMap(),
+            headers.mapValues { getInitPosition(it) }.toMutableMap(),
+            cookies.mapValues { getInitPosition(it) }.toMutableMap(),
             0
         )
 
@@ -65,7 +68,7 @@ abstract class BaseTestInput(
         ): Map<String, *> {
             return params.mapValues { param ->
                 val inputPosition = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
-                val currentPosition = if (inputPosition < 0)  0 else inputPosition
+                val currentPosition = if (inputPosition < 0) 0 else inputPosition
                 param.value[currentPosition]
             }
         }
@@ -91,6 +94,10 @@ abstract class BaseTestInput(
                     ?: error("Checking size of a parameter that doesn't exist!")
                 (it.value + 1) >= numberOfParams || numberOfParams == 0
             }
+        }
+
+        protected open fun hasNoValues(paramVals: Map<String, List<*>>): Boolean {
+            return paramVals.isEmpty() || paramVals.all { it.value.isEmpty() }
         }
 
         protected fun inputFromPosition(position: IterPosition): TestInputConcretion {

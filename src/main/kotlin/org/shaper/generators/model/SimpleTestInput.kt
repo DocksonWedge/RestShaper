@@ -30,16 +30,31 @@ class SimpleTestInput(
         bodies: List<JsonObject>
     ) : BaseTestInputIterator(queryParams, pathParams, headers, cookies, bodies) {
 
-        var hasNext = true
         override fun hasNext(): Boolean {
-            return !(isOnLastParam(position.queryParams, queryParams)
-                    && isOnLastParam(position.pathParams, pathParams)
-                    && isOnLastParam(position.headers, headers)
-                    && isOnLastParam(position.cookies, cookies))
+            return (!hasStarted && !isEmpty())
+                    ||
+                    !(isOnLastParam(position.queryParams, queryParams)
+                            && isOnLastParam(position.pathParams, pathParams)
+                            && isOnLastParam(position.headers, headers)
+                            && isOnLastParam(position.cookies, cookies))
         }
+
+        private fun isEmpty(): Boolean {
+            return hasNoValues(queryParams)
+                    && hasNoValues(pathParams)
+                    && hasNoValues(headers)
+                    && hasNoValues(cookies)
+        }
+
+        private var hasStarted = false
 
         // TODO make abstract so util functions are reusable, next and hasNext implemented in child class
         override fun next(): TestInputConcretion {
+            //don't skip 0th entry, is there a better way to iterate and also force one iteration on single runs?
+            if (!hasStarted && !isEmpty()) {
+                hasStarted = true
+                return inputFromPosition(position)
+            }
             val previousPosition = position.copy()
             position.queryParams = nextParam(queryParams, position.queryParams)
             if (!isParamReset(
