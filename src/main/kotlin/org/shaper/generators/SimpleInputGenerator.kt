@@ -9,7 +9,7 @@ import kotlin.random.Random
 
 //simple doesn't read past results?
 class SimpleInputGenerator(
-    val numCases: Int = 50,
+    val numCases: Int = 5,
     val additionalConfig: (EndpointSpec, SimpleTestInput) -> Unit
     = { endpointSpec: EndpointSpec, testInput: SimpleTestInput -> }
 ) {
