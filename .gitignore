@@ -1,4 +1,5 @@
 target/
 .idea/
+*/.idea/
 .DS_store/
 do_next.txt
