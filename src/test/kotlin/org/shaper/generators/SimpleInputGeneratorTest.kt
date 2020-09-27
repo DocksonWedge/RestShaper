@@ -18,33 +18,27 @@ class SimpleInputGeneratorTest {
         17 to 17,
         0 to 0,
         -1 to 0
-    )
-        .map { (number, expected) ->
-            DynamicTest.dynamicTest(
-                "when I retrieve '${number}' values from SimpleInputGenerator.getInput " +
-                        "then I find ${expected} Long inputs are generated for orderId."
-            ) {
+    ).map { (number, expected) ->
+        DynamicTest.dynamicTest(
+            "when I retrieve '${number}' values from SimpleInputGenerator.getInput " +
+                    "then I find ${expected} Long inputs are generated for orderId."
+        ) {
 
-                val endpoint =
-                    SpecFinder(petStoreSwaggerLocation, listOf("delete:/store/order/{orderId}"))
-                        .getRelevantSpecs()[0]
-                val input =
-                    (if (number == null) SimpleInputGenerator() else SimpleInputGenerator(number))
-                        .getInput(endpoint) //TODO - this is the slow line
-                val orderIdValues = input.pathParams["orderId"]
-                Assertions.assertEquals(
-                    expected,
-                    orderIdValues!!.size
-                )
-                orderIdValues.forEach {
-                    Assertions.assertDoesNotThrow { it as Long }
-                }
-                // count() uses the sequence to count the total, so it IS different than checking .size
-                Assertions.assertEquals(
-                    expected,
-                    input.count()
-                )
+            val endpoint =
+                SpecFinder(petStoreSwaggerLocation, listOf("delete:/store/order/{orderId}"))
+                    .getRelevantSpecs()[0]
+            val input =
+                (if (number == null) SimpleInputGenerator() else SimpleInputGenerator(number))
+                    .getInput(endpoint) //TODO - this is the slow line
+            val orderIdValues = input.pathParams["orderId"]
+
+            Assertions.assertEquals(expected, orderIdValues!!.size)
+            orderIdValues.forEach {
+                Assertions.assertDoesNotThrow { it as Long }
             }
+            // count() uses the sequence to count the total, so it IS different than checking .size
+            Assertions.assertEquals(expected, input.count())
         }
+    }
 
 }

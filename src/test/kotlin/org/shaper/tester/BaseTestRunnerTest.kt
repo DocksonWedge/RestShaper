@@ -14,23 +14,20 @@ class BaseTestRunnerTest {
     @TestFactory
     fun `Test lazy evaluation of input and input happy path`() = listOf(
         "GET:/jobs" to 25, //2 params 5*5
-    )
-        .map { (endpoint, expected) ->
-            DynamicTest.dynamicTest(
-                "Verify shapeEndpoint can get all required permutations lazily"
-            ) {
-                val endpoints =
-                    SpecFinder("http://api.dataatwork.org/v1/spec/skills-api.json", listOf(endpoint))
-                        .getRelevantSpecs()
+    ).map { (endpoint, expected) ->
+        DynamicTest.dynamicTest("Verify shapeEndpoint can get all required permutations lazily")
+        {
+            val endpoints =
+                SpecFinder("http://api.dataatwork.org/v1/spec/skills-api.json", listOf(endpoint))
+                    .getRelevantSpecs()
 
-                BaseTestRunner.shapeEndpoint(
-                    endpoints[0],
-                    SimpleInputGenerator()::getInput
-                ) { endpoint: EndpointSpec, input: BaseTestInput, results: Sequence<TestResult> ->
-                    val iter = results.iterator()
-                    Assertions.assertEquals(expected, results.toList().size)
-                }
-
+            BaseTestRunner.shapeEndpoint(
+                endpoints[0],
+                SimpleInputGenerator()::getInput
+            ) { endpoint: EndpointSpec, input: BaseTestInput, results: Sequence<TestResult> ->
+                Assertions.assertEquals(expected, results.toList().size)
             }
+
         }
+    }
 }
