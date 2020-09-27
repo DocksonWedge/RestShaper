@@ -2,10 +2,12 @@ package org.shaper.swagger.model
 
 
 import io.restassured.RestAssured.given
+import io.restassured.response.Response
 import io.restassured.specification.RequestSpecification
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import io.swagger.v3.oas.models.OpenAPI
 import org.shaper.generators.model.TestInputConcretion
+import org.shaper.generators.model.TestResult
 
 import org.shaper.swagger.SwaggerOperationNotFound
 
@@ -39,11 +41,11 @@ class EndpointSpec(private val swaggerSpec: OpenAPI, val method: HttpMethod, val
         url + pathConcretion
     }
 
-    fun callWithConcretion(input : TestInputConcretion){
-        given()
+    fun callWithConcretion(input : TestInputConcretion): TestResult {
+        val result = given()
             .queryParams(input.queryParams)
             .request(method.toString(), fullUrl(input.pathParams))
-        //todo verify
-
+            ?: throw error("Calling $method $url with input $input failed to return a request!")
+        return TestResult(result, input, this)
     }
 }

@@ -1,13 +1,18 @@
 package org.shaper.swagger.model
 
+import arrow.core.mapOf
 import io.mockk.every
 import io.mockk.mockk
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem.HttpMethod
+import kotlinx.serialization.json.JsonObject
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.shaper.generators.model.TestInputConcretion
 
 import java.util.*
 
@@ -49,6 +54,39 @@ class EndpointSpecTest {
                     expected,
                     endpoint.fullUrl(paramValues)
                 )
+            }
+        }
+
+    // http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs
+    @TestFactory //TODO how to call out that this requires an external resource?
+    fun `Test callWithConcretion successfully calls an endpoint`() = listOf(
+        "/jobs" to 4, //Expected is the number returned plus 1 for pagination info
+        "/skills" to 4
+    )
+        .map { (path, expected) ->
+
+            DynamicTest.dynamicTest(
+                "when I CALL the url for $path with values then I expect a real response"
+            ) {
+                val swaggerSpec = mockk<OpenAPI>()
+                val swaggerOperation = mockk<Operation>()
+                every { swaggerSpec.servers[0].url } returns "http://api.dataatwork.org/v1"
+                every { swaggerSpec.paths[path]?.readOperationsMap()?.get(HttpMethod.GET) } returns swaggerOperation
+                every { swaggerOperation.parameters } returns listOf()
+
+                val endpoint = EndpointSpec(swaggerSpec, HttpMethod.GET, path)
+                val input = TestInputConcretion(
+                    mapOf("limit" to 3),
+                    mapOf<String, Long>(),
+                    mapOf<String, Long>(),
+                    mapOf<String, Long>(),
+                    JsonObject(mapOf())
+                )
+                Assertions.assertDoesNotThrow {
+                    endpoint.callWithConcretion(input).result.prettyPeek()
+                        .then().assertThat()
+                        .body("size()", equalTo(expected))
+                }
             }
         }
 }

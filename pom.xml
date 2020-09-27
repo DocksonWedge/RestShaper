@@ -21,7 +21,7 @@
         <clikt.version>2.8.0</clikt.version>
         <kotest.version>4.1.0</kotest.version>
         <serialization.version>1.0.0-RC</serialization.version>
-        <kotlinx.version>1.3.9</kotlinx.version>
+        <kotlinx.version>1.4.0</kotlinx.version>
         <mockk.version>1.10.0</mockk.version>
     </properties>
 
@@ -168,9 +168,9 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <configuration>
-                    <compilerPlugins>
-                        <plugin>kotlinx-serialization</plugin>
-                    </compilerPlugins>
+<!--                    <compilerPlugins>-->
+<!--                        <plugin>kotlinx-serialization</plugin>-->
+<!--                    </compilerPlugins>-->
                 </configuration>
                 <executions>
                     <execution>

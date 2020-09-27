@@ -1,4 +1,6 @@
 package org.shaper.generators.model
 
-class TestResult {
-}
+import io.restassured.response.Response
+import org.shaper.swagger.model.EndpointSpec
+
+data class TestResult(val result: Response, val input: TestInputConcretion, val endpoint: EndpointSpec)
