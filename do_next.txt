@@ -1,0 +1,11 @@
+remove real calls from unit tests
+create test result serializer
+create test result output to file
+test other parameter types- need to find endpoints
+other parameter type generation
+
+------next big picture------
+include reading test result for input
+request body generation
+allow config of num tests
+smarten up test case generation - searching for vals w/ prev results
