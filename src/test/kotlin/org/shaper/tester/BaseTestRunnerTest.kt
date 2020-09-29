@@ -1,10 +1,13 @@
 package org.shaper.tester
 
+import io.mockk.mockk
+import io.restassured.response.Response
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.SimpleInputGenerator
 import org.shaper.generators.model.BaseTestInput
+import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.model.EndpointSpec
@@ -20,6 +23,9 @@ class BaseTestRunnerTest {
             val endpoints =
                 SpecFinder("http://api.dataatwork.org/v1/spec/skills-api.json", listOf(endpoint))
                     .getRelevantSpecs()
+            //mock out call to external system for speed
+            val mockResponse = mockk<Response>()
+            endpoints[0].callFunction = { e: EndpointSpec, i: TestInputConcretion -> TestResult(mockResponse, i, e) }
 
             BaseTestRunner.shapeEndpoint(
                 endpoints[0],

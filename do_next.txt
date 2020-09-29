@@ -1,4 +1,4 @@
-remove real calls from unit tests
+remove real calls from unit tests - extract RESTAssured execution call
 create test result serializer
 create test result output to file
 test other parameter types- need to find endpoints

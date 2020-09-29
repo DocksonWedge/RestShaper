@@ -10,15 +10,23 @@ import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 
 import org.shaper.swagger.SwaggerOperationNotFound
+import org.shaper.tester.client.RestAssuredClient
 
 
-class EndpointSpec(private val swaggerSpec: OpenAPI, val method: HttpMethod, val path: String) {
+class EndpointSpec(
+    private val swaggerSpec: OpenAPI,
+    val method: HttpMethod,
+    val path: String,
+    var callFunction: (EndpointSpec, TestInputConcretion) -> TestResult = RestAssuredClient.callRestAssured
+) {
+
     private val swaggerOperation = swaggerSpec.paths[path]?.readOperationsMap()?.get(method)
         ?: throw SwaggerOperationNotFound("Could not find ${method} ${path} in swagger spec.")
 
     val params = swaggerOperation.parameters?.map {
         it.name to ParameterSpec(it)
     }?.toMap() ?: mapOf()
+
     var headers = mutableMapOf<String, ParameterSpec>()
     var cookies = mutableMapOf<String, ParameterSpec>()
 
@@ -37,15 +45,14 @@ class EndpointSpec(private val swaggerSpec: OpenAPI, val method: HttpMethod, val
     val url = swaggerSpec.servers[0].url
     val fullUrl = { pathParams: Map<String, *> ->
         var pathConcretion = path
-        pathParams.forEach { name, value -> pathConcretion = pathConcretion.replace("{$name}", value.toString(), false) }
+        pathParams.forEach { name, value ->
+            pathConcretion = pathConcretion.replace("{$name}", value.toString(), false)
+        }
         url + pathConcretion
     }
 
-    fun callWithConcretion(input : TestInputConcretion): TestResult {
-        val result = given()
-            .queryParams(input.queryParams)
-            .request(method.toString(), fullUrl(input.pathParams))
-            ?: throw error("Calling $method $url with input $input failed to return a request!")
-        return TestResult(result, input, this)
+    fun callWithConcretion(input: TestInputConcretion): TestResult {
+        return callFunction(this, input)
     }
 }
+
