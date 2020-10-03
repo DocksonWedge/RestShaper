@@ -1,9 +1,5 @@
 package org.shaper.swagger.model
 
-
-import io.restassured.RestAssured.given
-import io.restassured.response.Response
-import io.restassured.specification.RequestSpecification
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import io.swagger.v3.oas.models.OpenAPI
 import org.shaper.generators.model.TestInputConcretion

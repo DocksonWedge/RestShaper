@@ -11,7 +11,6 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.shaper.generators.model.TestInputConcretion
 
 import java.util.*
@@ -75,6 +74,7 @@ class EndpointSpecTest {
                 every { swaggerOperation.parameters } returns listOf()
 
                 val endpoint = EndpointSpec(swaggerSpec, HttpMethod.GET, path)
+
                 val input = TestInputConcretion(
                     mapOf("limit" to 3),
                     mapOf<String, Long>(),
@@ -82,6 +82,7 @@ class EndpointSpecTest {
                     mapOf<String, Long>(),
                     JsonObject(mapOf())
                 )
+
                 Assertions.assertDoesNotThrow {
                     endpoint.callWithConcretion(input).result.prettyPeek()
                         .then().assertThat()
