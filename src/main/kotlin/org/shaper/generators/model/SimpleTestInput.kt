@@ -5,7 +5,7 @@ import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 
 class SimpleTestInput(
-    queryParams: Map<String, List<*>>,
+    queryParams: Map<String, List<*>>, //TODO - this should take a sequence instead of list!
     pathParams: Map<String, List<*>>,
     headers: Map<String, List<*>>,
     cookies: Map<String, List<*>>,
