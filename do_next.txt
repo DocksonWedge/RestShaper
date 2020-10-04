@@ -1,11 +1,12 @@
 remove real calls from unit tests - extract RESTAssured execution call
+SimpleInputGenerator should be a sequence
 create test result serializer
 create test result output to file
 test other parameter types- need to find endpoints
 other parameter type generation
 
 ------next big picture------
-include reading test result for input
+include reading test result for input - while input is generated
 request body generation
 allow config of num tests
 smarten up test case generation - searching for vals w/ prev results

@@ -5,6 +5,7 @@ import kotlinx.serialization.json.JsonObject
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 import org.shaper.generators.model.SimpleTestInput
+import org.shaper.generators.model.TestResults
 import kotlin.random.Random
 
 //simple doesn't read past results?
@@ -34,7 +35,9 @@ class SimpleInputGenerator(
         return when (spec.dataType) {
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
             Long::class ->
+                //TODO make lazy/sequential evaluation that can take in results from previous run
                 (1..numVals).map { _ ->
+                    // TODO extract to configurable function that takes TestResult
                     faker.number().numberBetween(-100L, 100L)
                 }
             String::class ->
