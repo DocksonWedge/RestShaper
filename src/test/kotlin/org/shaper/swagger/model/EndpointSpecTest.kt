@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.model.TestInputConcretion
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 import java.util.*
 
@@ -42,6 +44,7 @@ class EndpointSpecTest {
                 "when I get url for $path with values $paramValues " +
                         "then I expect the concrete URL of $expected"
             ) {
+
                 val swaggerSpec = mockk<OpenAPI>()
                 val swaggerOperation = mockk<Operation>()
                 every { swaggerSpec.servers[0].url } returns "https://myUrl"
@@ -53,6 +56,7 @@ class EndpointSpecTest {
                     expected,
                     endpoint.fullUrl(paramValues)
                 )
+
             }
         }
 
@@ -82,7 +86,7 @@ class EndpointSpecTest {
                     mapOf<String, Long>(),
                     JsonObject(mapOf())
                 )
-
+                //todo mock
                 Assertions.assertDoesNotThrow {
                     endpoint.callWithConcretion(input).result.prettyPeek()
                         .then().assertThat()

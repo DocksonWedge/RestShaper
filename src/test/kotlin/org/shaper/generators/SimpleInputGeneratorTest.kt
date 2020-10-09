@@ -27,6 +27,7 @@ class SimpleInputGeneratorTest {
             val endpoint =
                 SpecFinder(petStoreSwaggerLocation, listOf("delete:/store/order/{orderId}"))
                     .getRelevantSpecs()[0]
+
             val input =
                 (if (number == null) SimpleInputGenerator() else SimpleInputGenerator(number))
                     .getInput(endpoint) //TODO - this is the slow line

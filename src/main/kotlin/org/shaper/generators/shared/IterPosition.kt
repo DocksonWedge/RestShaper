@@ -1,19 +1,27 @@
 package org.shaper.generators.shared
 
 data class IterPosition(
-    var queryParams: MutableMap<String, Int>,
-    var pathParams: MutableMap<String, Int>,
-    var headers: MutableMap<String, Int>,
-    var cookies: MutableMap<String, Int>,
-    var bodies: Int
+    var queryParamsIter: MutableMap<String, Iterator<*>>,
+    var pathParamsIter: MutableMap<String, Iterator<*>>,
+    var headersIter: MutableMap<String, Iterator<*>>,
+    var cookiesIter: MutableMap<String, Iterator<*>>,
+    var bodiesIter: Iterator<*>
 ) {
+    val queryParams = getValuesMap(queryParamsIter)
+    val pathParams = getValuesMap(pathParamsIter)
+    val headers = getValuesMap(headersIter)
+    val cookies = getValuesMap(cookiesIter)
+
     fun copy(): IterPosition {
         return IterPosition(
-            queryParams.toMutableMap(),
-            pathParams.toMutableMap(),
-            headers.toMutableMap(),
-            cookies.toMutableMap(),
-            bodies
+            queryParamsIter.toMutableMap(),
+            pathParamsIter.toMutableMap(),
+            headersIter.toMutableMap(),
+            cookiesIter.toMutableMap(),
+            bodiesIter
         )
+    }
+    private fun getValuesMap(params: MutableMap<String, Iterator<*>>) : MutableMap<String, ParamPosition<*>> {
+        return params.map { entry -> entry.key to ParamPosition(entry.value) }.toMap().toMutableMap()
     }
 }

@@ -1,8 +1,6 @@
 package org.shaper.generators.model
 
 import kotlinx.serialization.json.JsonObject
-import org.shaper.swagger.model.EndpointSpec
-import org.shaper.swagger.model.ParameterSpec
 
 class SimpleTestInput(
     queryParams: Map<String, List<*>>, //TODO - this should take a sequence instead of list!
@@ -33,10 +31,10 @@ class SimpleTestInput(
         override fun hasNext(): Boolean {
             return (!hasStarted && !isEmpty())
                     ||
-                    !(isOnLastParam(position.queryParams, queryParams)
-                            && isOnLastParam(position.pathParams, pathParams)
-                            && isOnLastParam(position.headers, headers)
-                            && isOnLastParam(position.cookies, cookies))
+                    !(isOnLastParam(position.queryParams)
+                            && isOnLastParam(position.pathParams)
+                            && isOnLastParam(position.headers)
+                            && isOnLastParam(position.cookies))
         }
 
         private fun isEmpty(): Boolean {
@@ -55,32 +53,16 @@ class SimpleTestInput(
                 hasStarted = true
                 return inputFromPosition(position)
             }
-            val previousPosition = position.copy()
-            position.queryParams = nextParam(queryParams, position.queryParams)
-            if (!isParamReset(
-                    position.queryParams,
-                    previousPosition.queryParams,
-                    queryParams
-                )
-            ) return inputFromPosition(position)
+            nextParam(position.queryParams, queryParams)
+            if (!isParamReset(position.queryParams)) return inputFromPosition(position)
 
-            position.pathParams = nextParam(pathParams, position.pathParams)
-            if (!isParamReset(
-                    position.pathParams,
-                    previousPosition.pathParams,
-                    pathParams
-                )
-            ) return inputFromPosition(position)
+            nextParam(position.pathParams, pathParams)
+            if (!isParamReset(position.pathParams)) return inputFromPosition(position)
 
-            position.headers = nextParam(headers, position.headers)
-            if (!isParamReset(
-                    position.headers,
-                    previousPosition.headers,
-                    headers
-                )
-            ) return inputFromPosition(position)
+            nextParam(position.headers, headers)
+            if (!isParamReset(position.headers)) return inputFromPosition(position)
 
-            position.cookies = nextParam(cookies, position.cookies)
+            nextParam(position.cookies, cookies)
 //            if (!isParamReset(position.cookies, previousPosition.cookies, cookies)) hasNext = false
             return inputFromPosition(position)
         }

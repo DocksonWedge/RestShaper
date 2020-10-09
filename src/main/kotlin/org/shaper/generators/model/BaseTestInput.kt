@@ -2,6 +2,7 @@ package org.shaper.generators.model
 
 import kotlinx.serialization.json.JsonObject
 import org.shaper.generators.shared.IterPosition
+import org.shaper.generators.shared.ParamPosition
 
 // TODO - adding in weights/priorities?
 // TODO user should be able to pass in their own function to add things like auth headers that they need to calculate
@@ -29,7 +30,10 @@ abstract class BaseTestInput(
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
 
-        val getInitPosition = { entry: Map.Entry<String, List<*>> -> if (entry.value.isNotEmpty()) 0 else -1 }
+        val getInitPosition =
+            { entry: Map.Entry<String, List<*>> ->
+                if (entry.value.isEmpty()) sequenceOf<Any>().iterator() else entry.value.listIterator()
+            }
 
         // Start as -1 to run at least once
         var position = IterPosition(
@@ -37,7 +41,7 @@ abstract class BaseTestInput(
             pathParams.mapValues { getInitPosition(it) }.toMutableMap(),
             headers.mapValues { getInitPosition(it) }.toMutableMap(),
             cookies.mapValues { getInitPosition(it) }.toMutableMap(),
-            0
+            sequenceOf<Any>().iterator()
         )
 
         abstract override fun hasNext(): Boolean
@@ -45,17 +49,20 @@ abstract class BaseTestInput(
 
         //returns position of set of parameters
         protected open fun nextParam(
-            params: Map<String, List<*>>,
-            position: MutableMap<String, Int>
-        ): MutableMap<String, Int> {
-            params.forEach { param ->
-                val currentPos = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
-                if (currentPos + 1 >= param.value.size) {
-                    position[param.key] = 0
+            position: MutableMap<String, ParamPosition<*>>,
+            paramVals: Map<String, Iterable<*>>
+        ): MutableMap<String, ParamPosition<*>> {
+            position.forEach { param ->
+                val paramPos = param.value
+                if (!paramPos.hasNext()) {
+                    position[param.key] = ParamPosition(
+                        (paramVals[param.key] ?: error("Mismatched param key with position: ${param.key}"))
+                            .iterator()
+                    )
                     //and we continue since we are doing duplicates!
                 } else {
                     //the first one we need to increment, we are done!
-                    position[param.key] = position[param.key]!! + 1
+                    paramPos.next()
                     return position
                 }
             }
@@ -64,35 +71,30 @@ abstract class BaseTestInput(
 
         protected fun getParamValuesAtPosition(
             params: Map<String, List<*>>,
-            position: MutableMap<String, Int>
+            position: MutableMap<String, ParamPosition<*>>
         ): Map<String, *> {
             return params.mapValues { param ->
                 val inputPosition = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
-                val currentPosition = if (inputPosition < 0) 0 else inputPosition
-                param.value[currentPosition]
+                inputPosition.currentVal
             }
         }
 
         protected open fun isParamReset(
-            position: MutableMap<String, Int>,
-            previousPosition: MutableMap<String, Int>,
-            paramVals: Map<String, List<*>>
+            position: MutableMap<String, ParamPosition<*>>
         ): Boolean {
             return position.all {
-                it.value == 0 //only reset if we are back at 0
-                        && previousPosition[it.key] != it.value //only reset if we changed values
-                        && !paramVals[it.key].isNullOrEmpty() //never reset if no values to reset
+                val paramPosition = it.value
+                paramPosition.hasNext() //only reset if we are back at 0
+                        && paramPosition.wasReset //only reset if we changed values
+                        && !paramPosition.isEmpty //never reset if no values to reset
             }
         }
 
         protected open fun isOnLastParam(
-            position: MutableMap<String, Int>,
-            paramVals: Map<String, List<*>>
+            position: MutableMap<String, ParamPosition<*>>
         ): Boolean {
             return position.all {
-                val numberOfParams = paramVals[it.key]?.size
-                    ?: error("Checking size of a parameter that doesn't exist!")
-                (it.value + 1) >= numberOfParams || numberOfParams == 0
+                !it.value.hasNext()
             }
         }
 
