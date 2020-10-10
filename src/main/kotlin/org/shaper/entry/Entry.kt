@@ -23,7 +23,6 @@ fun main(args: Array<String>) {
         val iter = results.iterator()
         iter.next()
         iter.next()
-        iter.next()
         //results.toList()
     }
 

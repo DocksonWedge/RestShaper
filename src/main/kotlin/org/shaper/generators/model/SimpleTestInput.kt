@@ -3,11 +3,11 @@ package org.shaper.generators.model
 import kotlinx.serialization.json.JsonObject
 
 class SimpleTestInput(
-    queryParams: Map<String, List<*>>, //TODO - this should take a sequence instead of list!
-    pathParams: Map<String, List<*>>,
-    headers: Map<String, List<*>>,
-    cookies: Map<String, List<*>>,
-    bodies: List<JsonObject>
+    queryParams: Map<String, Sequence<*>>, //TODO - this should take a sequence instead of list!
+    pathParams: Map<String, Sequence<*>>,
+    headers: Map<String, Sequence<*>>,
+    cookies: Map<String, Sequence<*>>,
+    bodies: Sequence<JsonObject>
 ) : BaseTestInput(queryParams, pathParams, headers, cookies, bodies) {
 
     override fun iterator(): Iterator<TestInputConcretion> {
@@ -21,11 +21,11 @@ class SimpleTestInput(
     }
 
     class SimpleTestInputIterator(
-        queryParams: Map<String, List<*>>,
-        pathParams: Map<String, List<*>>,
-        headers: Map<String, List<*>>,
-        cookies: Map<String, List<*>>,
-        bodies: List<JsonObject>
+        queryParams: Map<String, Sequence<*>>,
+        pathParams: Map<String, Sequence<*>>,
+        headers: Map<String, Sequence<*>>,
+        cookies: Map<String, Sequence<*>>,
+        bodies: Sequence<JsonObject>
     ) : BaseTestInputIterator(queryParams, pathParams, headers, cookies, bodies) {
 
         override fun hasNext(): Boolean {

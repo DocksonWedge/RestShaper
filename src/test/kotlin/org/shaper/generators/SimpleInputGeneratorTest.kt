@@ -16,8 +16,8 @@ class SimpleInputGeneratorTest {
         1 to 1,
         5 to 5,
         17 to 17,
-        0 to 0,
-        -1 to 0
+        0 to 0
+        //-1 to 0 //-1 is infinite!
     ).map { (number, expected) ->
         DynamicTest.dynamicTest(
             "when I retrieve '${number}' values from SimpleInputGenerator.getInput " +
@@ -33,7 +33,7 @@ class SimpleInputGeneratorTest {
                     .getInput(endpoint) //TODO - this is the slow line
             val orderIdValues = input.pathParams["orderId"]
 
-            Assertions.assertEquals(expected, orderIdValues!!.size)
+            Assertions.assertEquals(expected, orderIdValues!!.toList().size)
             orderIdValues.forEach {
                 Assertions.assertDoesNotThrow { it as Long }
             }

@@ -8,11 +8,11 @@ import org.shaper.generators.shared.ParamPosition
 // TODO user should be able to pass in their own function to add things like auth headers that they need to calculate
 // Allows for nulls so we can "curry" the constructor
 abstract class BaseTestInput(
-    var queryParams: Map<String, List<*>>,
-    var pathParams: Map<String, List<*>>,
-    var headers: Map<String, List<*>>,
-    var cookies: Map<String, List<*>>,
-    var bodies: List<JsonObject>
+    var queryParams: Map<String, Sequence<*>>,
+    var pathParams: Map<String, Sequence<*>>,
+    var headers: Map<String, Sequence<*>>,
+    var cookies: Map<String, Sequence<*>>,
+    var bodies: Sequence<JsonObject>
     // val additionalConfig: () -> Unit TODO - move this a level higher
 ) : Sequence<TestInputConcretion> {
 
@@ -22,18 +22,16 @@ abstract class BaseTestInput(
     //TODO why do we have ot pass params explicitly? Is there ever an iterator that doesn't
     // need to know what it's iterating over?
     abstract class BaseTestInputIterator(
-        var queryParams: Map<String, List<*>>,
-        var pathParams: Map<String, List<*>>,
-        var headers: Map<String, List<*>>,
-        var cookies: Map<String, List<*>>,
-        var bodies: List<JsonObject> // TODO - should probably be map of maps
+        var queryParams: Map<String, Sequence<*>>,
+        var pathParams: Map<String, Sequence<*>>,
+        var headers: Map<String, Sequence<*>>,
+        var cookies: Map<String, Sequence<*>>,
+        var bodies: Sequence<JsonObject> // TODO - should probably be map of maps
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
 
         val getInitPosition =
-            { entry: Map.Entry<String, List<*>> ->
-                if (entry.value.isEmpty()) sequenceOf<Any>().iterator() else entry.value.listIterator()
-            }
+            { entry: Map.Entry<String, Sequence<*>> -> entry.value.iterator() }
 
         // Start as -1 to run at least once
         var position = IterPosition(
@@ -50,7 +48,7 @@ abstract class BaseTestInput(
         //returns position of set of parameters
         protected open fun nextParam(
             position: MutableMap<String, ParamPosition<*>>,
-            paramVals: Map<String, Iterable<*>>
+            paramVals: Map<String, Sequence<*>>
         ): MutableMap<String, ParamPosition<*>> {
             position.forEach { param ->
                 val paramPos = param.value
@@ -70,7 +68,7 @@ abstract class BaseTestInput(
         }
 
         protected fun getParamValuesAtPosition(
-            params: Map<String, List<*>>,
+            params: Map<String, Sequence<*>>,
             position: MutableMap<String, ParamPosition<*>>
         ): Map<String, *> {
             return params.mapValues { param ->
@@ -98,8 +96,8 @@ abstract class BaseTestInput(
             }
         }
 
-        protected open fun hasNoValues(paramVals: Map<String, List<*>>): Boolean {
-            return paramVals.isEmpty() || paramVals.all { it.value.isEmpty() }
+        protected open fun hasNoValues(paramVals: Map<String, Sequence<*>>): Boolean {
+            return paramVals.isEmpty() || paramVals.all { !it.value.iterator().hasNext() }
         }
 
         protected fun inputFromPosition(position: IterPosition): TestInputConcretion {

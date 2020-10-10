@@ -1,9 +1,10 @@
-SimpleTestInput should take maps of sequences instead of maps of lists - or just be combined?
-mock `Test callWithConcretion successfully calls an endpoint`
+static results global
 create test result serializer
+passing results back to sequence
 create test result output to file
 test other parameter types- need to find endpoints
 other parameter type generation
+mock `Test callWithConcretion successfully calls an endpoint`
 
 ------next big picture------
 include reading test result for input - while input is generated
