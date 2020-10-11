@@ -1,0 +1,20 @@
+package org.shaper.mocks
+
+import io.mockk.every
+import io.mockk.mockk
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.Operation
+import io.swagger.v3.oas.models.PathItem
+import org.shaper.swagger.model.EndpointSpec
+
+object EndpointSpecMock {
+    fun getWithMockedSwagger(url: String, path: String, method: PathItem.HttpMethod) : EndpointSpec{
+        val swaggerSpec = mockk<OpenAPI>()
+        val swaggerOperation = mockk<Operation>()
+        every { swaggerSpec.servers[0].url } returns url
+        every { swaggerSpec.paths[path]?.readOperationsMap()?.get(method) } returns swaggerOperation
+        every { swaggerOperation.parameters } returns listOf()
+
+        return EndpointSpec(swaggerSpec, PathItem.HttpMethod.GET, path)
+    }
+}

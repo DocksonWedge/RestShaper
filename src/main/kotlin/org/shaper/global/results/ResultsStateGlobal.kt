@@ -2,14 +2,16 @@ package org.shaper.global.results
 
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import org.shaper.generators.model.BaseTestInput
+import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
+import org.shaper.swagger.model.EndpointSpec
 
 object ResultsStateGlobal {
     // map endpoint, method, response code, input -> return list<result>
     val index = mutableMapOf<String,
             MutableMap<HttpMethod,
                     MutableMap<Int,
-                            MutableMap<BaseTestInput,
+                            MutableMap<Int,
                                     MutableList<TestResult>
                                     >
                             >
@@ -17,27 +19,23 @@ object ResultsStateGlobal {
             >()
 
     fun saveToGlobal(
-        endpoint: String,
-        method: HttpMethod,
+        endpoint: EndpointSpec,
+        input: TestInputConcretion,
         responseCode: Int,
-        input: BaseTestInput,
         result: TestResult
     ) {
         val previousList = index
-            .getOrPut(endpoint, { mutableMapOf() })
-            .getOrPut(method, { mutableMapOf() })
-            .getOrPut(responseCode, { mutableMapOf() })
-            .getOrPut(input, { mutableListOf() })
+            .getOrPut(endpoint.paramUrl(), { mutableMapOf() })
+            .getOrPut(endpoint.method, { mutableMapOf() })
+            .getOrPut(input.hashCode(),  { mutableMapOf() })
+            .getOrPut(responseCode,{ mutableListOf() })
         previousList.add(result)
     }
-
+    fun getResultsFromEndpoint(endpoint: EndpointSpec) :List<TestResult> {
+        return index[endpoint.paramUrl()]?.get(endpoint.method)?.flatMap { inputKey -> inputKey.value.flatMap { it.value } }
+            ?: throw error("No results found for specified endpoint ${endpoint.method}:${endpoint.paramUrl()}")
+    }
     fun loadInitialResultsSet(loadFunction: () -> Unit) {
         loadFunction()
     }
-
-    private fun <K, V> MutableMap<K, V>.addWithReturn(key: K, item: V): V {
-        this[key] = item
-        return item
-    }
-
 }

@@ -12,13 +12,13 @@ object BaseTestRunner {
     fun <T> shapeEndpoint(
         endpoint: EndpointSpec,
         inputGenerator: (EndpointSpec) -> BaseTestInput,
-        outputGenerator: (EndpointSpec, BaseTestInput, Sequence<TestResult>) -> T
+        outputGenerator: (EndpointSpec, Sequence<TestResult>) -> T
     ) : T {
         //TODO - document input-output interface/how-to
         val paramValues = inputGenerator(endpoint)
         // This doesn't actually run until the out put gen because it's a sequence!
         val results = paramValues.map { runTest(it, endpoint ) }
-        return outputGenerator(endpoint, paramValues, results)
+        return outputGenerator(endpoint, results)
     }
 
     fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec): TestResult {

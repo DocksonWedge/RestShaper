@@ -46,6 +46,9 @@ class EndpointSpec(
         }
         url + pathConcretion
     }
+    val paramUrl = {
+        url + path
+    }
 
     fun callWithConcretion(input: TestInputConcretion): TestResult {
         return callFunction(this, input)

@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     BaseTestRunner.shapeEndpoint(
         endpoints[0],
         SimpleInputGenerator()::getInput
-    ) { endpoint: EndpointSpec, input: BaseTestInput, results: Sequence<TestResult> ->
+    ) { endpoint: EndpointSpec, results: Sequence<TestResult> ->
         val iter = results.iterator()
         iter.next()
         iter.next()

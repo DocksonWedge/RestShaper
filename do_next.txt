@@ -1,9 +1,15 @@
-static results global
-create test result serializer
-passing results back to sequence
-create test result output to file
+
+rethink how sequences - simplify to target values  respect numVals - maybe SimpleTestInput.next can ignore curretvals?
+-- iterate over every parameter everytime?
+-- how to handle edge cases like 0 or ""
+
+read from result global in input gen
+
+create test result serializer/create test result output to file
 test other parameter types- need to find endpoints
 other parameter type generation
+set up a db
+
 mock `Test callWithConcretion successfully calls an endpoint`
 
 ------next big picture------

@@ -12,8 +12,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.model.TestInputConcretion
-import java.time.Instant
-import java.time.format.DateTimeFormatter
+import org.shaper.mocks.EndpointSpecMock.getWithMockedSwagger
 
 import java.util.*
 
@@ -71,13 +70,7 @@ class EndpointSpecTest {
             DynamicTest.dynamicTest(
                 "when I CALL the url for $path with values then I expect a real response"
             ) {
-                val swaggerSpec = mockk<OpenAPI>()
-                val swaggerOperation = mockk<Operation>()
-                every { swaggerSpec.servers[0].url } returns "http://api.dataatwork.org/v1"
-                every { swaggerSpec.paths[path]?.readOperationsMap()?.get(HttpMethod.GET) } returns swaggerOperation
-                every { swaggerOperation.parameters } returns listOf()
-
-                val endpoint = EndpointSpec(swaggerSpec, HttpMethod.GET, path)
+                val endpoint = getWithMockedSwagger("http://api.dataatwork.org/v1", path, HttpMethod.GET)
 
                 val input = TestInputConcretion(
                     mapOf("limit" to 3),
@@ -88,7 +81,7 @@ class EndpointSpecTest {
                 )
                 //todo mock
                 Assertions.assertDoesNotThrow {
-                    endpoint.callWithConcretion(input).result.prettyPeek()
+                    endpoint.callWithConcretion(input).response.prettyPeek()
                         .then().assertThat()
                         .body("size()", equalTo(expected))
                 }
