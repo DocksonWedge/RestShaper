@@ -8,14 +8,14 @@ object Results {
     fun saveToGlobal(
         endpoint: EndpointSpec,
         results: Sequence<TestResult>
-        // TODO - Paramterize predicate to deermine failing test?
+        // TODO - Paramterize predicate to determine failing test?
     ): Boolean {
         var allPassed = true
         results.forEach { result ->
             ResultsStateGlobal.saveToGlobal(
                 endpoint,
-                result.input,
                 result.response.statusCode,
+                result.input,
                 result
             )
             allPassed == allPassed && isFailing(endpoint, result)

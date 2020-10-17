@@ -1,8 +1,8 @@
 package org.shaper.generators.shared
 
-data class ParamPosition<T>(val _iter: Iterator<T>, var currentVal: T? = null) : Iterator<T> {
+data class ParamPosition<T>(private val _iter: Iterator<T>, var currentVal: T? = null) : Iterator<T> {
     var wasReset = true
-    var iter: Iterator<T> = _iter
+    private var iter: Iterator<T> = _iter
         set(value) {
             wasReset = true
             field = value
@@ -10,11 +10,6 @@ data class ParamPosition<T>(val _iter: Iterator<T>, var currentVal: T? = null) :
         }
 
     val isEmpty = !iter.hasNext()
-    init {
-        if(!isEmpty) {
-            next()
-        }
-    }
 
     override fun hasNext(): Boolean {
         return iter.hasNext()

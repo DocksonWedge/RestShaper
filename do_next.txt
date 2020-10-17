@@ -1,7 +1,4 @@
-
-rethink how sequences - simplify to target values  respect numVals - maybe SimpleTestInput.next can ignore curretvals?
--- iterate over every parameter everytime?
--- how to handle edge cases like 0 or ""
+Do we need ParamPosition anymore or can we use iterator? - I think we leave it for now.
 
 read from result global in input gen
 

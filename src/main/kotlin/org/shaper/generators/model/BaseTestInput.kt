@@ -42,64 +42,6 @@ abstract class BaseTestInput(
             sequenceOf<Any>().iterator()
         )
 
-        abstract override fun hasNext(): Boolean
-        abstract override fun next(): TestInputConcretion
-
-        //returns position of set of parameters
-        protected open fun nextParam(
-            position: MutableMap<String, ParamPosition<*>>,
-            paramVals: Map<String, Sequence<*>>
-        ): MutableMap<String, ParamPosition<*>> {
-            position.forEach { param ->
-                val paramPos = param.value
-                if (!paramPos.hasNext()) {
-                    position[param.key] = ParamPosition(
-                        (paramVals[param.key] ?: error("Mismatched param key with position: ${param.key}"))
-                            .iterator()
-                    )
-                    //and we continue since we are doing duplicates!
-                } else {
-                    //the first one we need to increment, we are done!
-                    paramPos.next()
-                    return position
-                }
-            }
-            return position
-        }
-
-        protected fun getParamValuesAtPosition(
-            params: Map<String, Sequence<*>>,
-            position: MutableMap<String, ParamPosition<*>>
-        ): Map<String, *> {
-            return params.mapValues { param ->
-                val inputPosition = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
-                inputPosition.currentVal
-            }
-        }
-
-        protected open fun isParamReset(
-            position: MutableMap<String, ParamPosition<*>>
-        ): Boolean {
-            return position.all {
-                val paramPosition = it.value
-                paramPosition.hasNext() //only reset if we are back at 0
-                        && paramPosition.wasReset //only reset if we changed values
-                        && !paramPosition.isEmpty //never reset if no values to reset
-            }
-        }
-
-        protected open fun isOnLastParam(
-            position: MutableMap<String, ParamPosition<*>>
-        ): Boolean {
-            return position.all {
-                !it.value.hasNext()
-            }
-        }
-
-        protected open fun hasNoValues(paramVals: Map<String, Sequence<*>>): Boolean {
-            return paramVals.isEmpty() || paramVals.all { !it.value.iterator().hasNext() }
-        }
-
         protected fun inputFromPosition(position: IterPosition): TestInputConcretion {
             return TestInputConcretion(
                 getParamValuesAtPosition(queryParams, position.queryParams),
@@ -108,6 +50,16 @@ abstract class BaseTestInput(
                 getParamValuesAtPosition(cookies, position.cookies),
                 JsonObject(mapOf()) //TODO
             )
+        }
+
+        private fun getParamValuesAtPosition(
+            params: Map<String, Sequence<*>>,
+            position: MutableMap<String, ParamPosition<*>>
+        ): Map<String, *> {
+            return params.mapValues { param ->
+                val inputPosition = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
+                inputPosition.currentVal
+            }
         }
 
     }

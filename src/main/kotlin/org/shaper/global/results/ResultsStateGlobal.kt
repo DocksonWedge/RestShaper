@@ -1,5 +1,6 @@
 package org.shaper.global.results
 
+import io.ktor.http.*
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.TestInputConcretion
@@ -20,20 +21,29 @@ object ResultsStateGlobal {
 
     fun saveToGlobal(
         endpoint: EndpointSpec,
-        input: TestInputConcretion,
         responseCode: Int,
+        input: TestInputConcretion,
         result: TestResult
     ) {
         val previousList = index
             .getOrPut(endpoint.paramUrl(), { mutableMapOf() })
             .getOrPut(endpoint.method, { mutableMapOf() })
-            .getOrPut(input.hashCode(),  { mutableMapOf() })
-            .getOrPut(responseCode,{ mutableListOf() })
+            .getOrPut(responseCode,{ mutableMapOf() })
+            .getOrPut(input.hashCode(),  { mutableListOf() })
         previousList.add(result)
     }
+
     fun getResultsFromEndpoint(endpoint: EndpointSpec) :List<TestResult> {
         return index[endpoint.paramUrl()]?.get(endpoint.method)?.flatMap { inputKey -> inputKey.value.flatMap { it.value } }
             ?: throw error("No results found for specified endpoint ${endpoint.method}:${endpoint.paramUrl()}")
+    }
+
+    fun getStatusCodesFromEndpoint(endpoint: EndpointSpec) :List<Int> {
+        return getResultsFromEndpoint(endpoint).map { it.response.statusCode }
+    }
+
+    fun getIndexFromStatusCode(endpoint: EndpointSpec, statusCode: Int): Map<Int, MutableList<TestResult>> {
+        return index[endpoint.paramUrl()]?.get(endpoint.method)?.get(statusCode) ?: mapOf()
     }
     fun loadInitialResultsSet(loadFunction: () -> Unit) {
         loadFunction()

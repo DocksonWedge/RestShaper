@@ -6,10 +6,11 @@ import kotlinx.serialization.json.JsonObject
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 import org.shaper.generators.model.SimpleTestInput
+import org.shaper.global.results.ResultsStateGlobal
 
 //simple doesn't read past results?
 class SimpleInputGenerator(
-    val numCases: Int = 5,
+    val numCases: Int = 25,
     val additionalConfig: (EndpointSpec, SimpleTestInput) -> Unit
     = { endpointSpec: EndpointSpec, testInput: SimpleTestInput -> }
 ) {
@@ -22,20 +23,22 @@ class SimpleInputGenerator(
     fun getInput(endpoint: EndpointSpec): SimpleTestInput {
         return SimpleTestInput(
             //TODO  - divide numCases across  param vals evenly. Somehow.
-            endpoint.queryParams.mapValues { getParamVals(it.value, numCases) },
-            endpoint.pathParams.mapValues { getParamVals(it.value, numCases) },
-            endpoint.headerParams.mapValues { getParamVals(it.value, numCases) },
-            endpoint.cookieParams.mapValues { getParamVals(it.value, numCases) },
-            sequenceOf<JsonObject>() //TODO - implement body gen
+            endpoint.queryParams.mapValues { getParamVals(it.value) },
+            endpoint.pathParams.mapValues { getParamVals(it.value) },
+            endpoint.headerParams.mapValues { getParamVals(it.value) },
+            endpoint.cookieParams.mapValues { getParamVals(it.value) },
+            sequenceOf<JsonObject>(), //TODO - implement body gen
+            numCases
         )
     }
+
     // TODO calculate function based on requirements, then pass it in
     // TODO can we have a way here to know when we have done something invalid and push that to the expected results
-    private fun getParamVals(spec: ParameterSpec, numVals: Int = 5): Sequence<*> {
+    private fun getParamVals(spec: ParameterSpec): Sequence<*> {
         return when (spec.dataType) {
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
-            Long::class -> RandomLongGenerator(numVals)
-            String::class -> RandomStringGenerator(numVals)
+            Long::class -> RandomLongGenerator()
+            String::class -> RandomStringGenerator()
             else -> throw NotImplementedError(
                 "Parameters with specs other than " +
                         "integer or string are not yet implemented."
@@ -43,34 +46,44 @@ class SimpleInputGenerator(
         }
     }
 
-    class RandomLongGenerator(max: Int) :
+    class RandomLongGenerator() :
         RandomBaseGenerator<Long>(
-            max,
-            { idx: Int ->
-                faker.number().numberBetween(-100L, 100L)
+            {
+                val percentZero = .25
+                if (faker.number().randomDouble(3, 0, 1) < percentZero) {
+                    0
+                } else {
+
+                    faker.number().numberBetween(-10000L, 10000L)
+                }
             }
         )
 
-    class RandomStringGenerator(max: Int) :
+    class RandomStringGenerator() :
         RandomBaseGenerator<String>(
-            max,
-            { idx: Int ->
-                faker.regexify("[A-z1-9]{0,10}")
+            {
+                val percentEmptyString = .25
+                if (faker.number().randomDouble(3, 0, 1) < percentEmptyString) {
+                    ""
+                } else {
+                    faker.regexify("[A-z1-9]{0,10}")
+                }
             }
         )
 
-    abstract class RandomBaseGenerator<T>(val count: Int, val fakerFun: (Int) -> T) : Sequence<T> {
+
+    abstract class RandomBaseGenerator<T>(val fakerFun: () -> T) : Sequence<T> {
         override fun iterator(): Iterator<T> = object : Iterator<T> {
-            private var currentIdx = 0
             override fun next(): T {
-                currentIdx++
-                return fakerFun(currentIdx)
+                return fakerFun()
             }
 
             override fun hasNext(): Boolean {
-                // negative number means infinite!
-                return currentIdx < count || count < 0
+                return true
             }
+        }
+        fun getErroredParams(endpoint: EndpointSpec){
+            ResultsStateGlobal.getIndexFromStatusCode(endpoint, 500)
         }
     }
 }

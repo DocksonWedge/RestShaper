@@ -4,6 +4,8 @@ package org.shaper.entry
 import org.shaper.generators.SimpleInputGenerator
 import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.TestResult
+import org.shaper.global.results.Results
+import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.tester.BaseTestRunner
@@ -20,9 +22,23 @@ fun main(args: Array<String>) {
         endpoints[0],
         SimpleInputGenerator()::getInput
     ) { endpoint: EndpointSpec, results: Sequence<TestResult> ->
-        val iter = results.iterator()
-        iter.next()
-        iter.next()
+
+        Results.saveToGlobal(endpoint, results)
+        println(ResultsStateGlobal.getResultsFromEndpoint(endpoint).map { it.response.statusCode })
+//        val iter = results.iterator()
+//        iter.next()
+//
+//        iter.next()
+//        iter.next()
+//        iter.next()
+//        iter.next()
+//
+//        iter.next()
+//        iter.next()
+//        iter.next()
+//        iter.next()
+//        iter.next()
+
         //results.toList()
     }
 

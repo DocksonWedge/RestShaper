@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.SimpleInputGenerator
-import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.global.results.Results
-import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.global.results.ResultsStateGlobal.getResultsFromEndpoint
+import org.shaper.global.results.ResultsStateGlobal.getStatusCodesFromEndpoint
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.model.EndpointSpec
 
@@ -44,6 +43,9 @@ class BaseTestRunnerTest {
             //todo rethink how sequences loop over all the things
             val allResultsFromGlobal = getResultsFromEndpoint(endpoints[0])
             Assertions.assertEquals(expected, allResultsFromGlobal.size)
+            Assertions.assertDoesNotThrow {
+                getStatusCodesFromEndpoint(endpoints[0]).forEach { it < 1000 }
+            }
         }
     }
 }

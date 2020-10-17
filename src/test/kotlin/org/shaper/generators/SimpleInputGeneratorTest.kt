@@ -12,12 +12,12 @@ class SimpleInputGeneratorTest {
 
     @TestFactory
     fun `Test getInput returns ints correctly`() = listOf(
-        null to 5,
+        null to 25,
         1 to 1,
         5 to 5,
         17 to 17,
-        0 to 0
-        //-1 to 0 //-1 is infinite!
+        0 to 0,
+        -1 to 0
     ).map { (number, expected) ->
         DynamicTest.dynamicTest(
             "when I retrieve '${number}' values from SimpleInputGenerator.getInput " +
@@ -31,11 +31,11 @@ class SimpleInputGeneratorTest {
             val input =
                 (if (number == null) SimpleInputGenerator() else SimpleInputGenerator(number))
                     .getInput(endpoint) //TODO - this is the slow line
-            val orderIdValues = input.pathParams["orderId"]
 
-            Assertions.assertEquals(expected, orderIdValues!!.toList().size)
-            orderIdValues.forEach {
-                Assertions.assertDoesNotThrow { it as Long }
+            Assertions.assertEquals(expected, input.toList().size)
+            input.forEach {
+                println("test run! ${it.pathParams["orderId"]}")
+                Assertions.assertDoesNotThrow { it.pathParams["orderId"] as Long }
             }
             // count() uses the sequence to count the total, so it IS different than checking .size
             Assertions.assertEquals(expected, input.count())
