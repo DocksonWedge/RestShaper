@@ -11,15 +11,15 @@ class ParameterSpec(
     private val param: Parameter
 ) {
 
-    //TODO
+    //TODO - add as generic type somehow
     val dataType: KClass<*> = when (param.schema.type.toLowerCase()) {
-        "string"    -> String::class //TODO - handle format param
-        "number"    -> Double::class
-        "integer"   -> Long::class
-        "boolean"   -> Boolean::class
-        "array"     -> List::class
-        "object"    -> Map::class
-        "uuid"      -> UUID::class
+        "string" -> String::class //TODO - handle format param
+        "number" -> Double::class
+        "integer" -> Long::class
+        "boolean" -> Boolean::class
+        "array" -> List::class
+        "object" -> Map::class
+        "uuid" -> UUID::class
         //TODO - does style matter here if type is exhaustive?
         else -> {
             when (param.style) {
@@ -32,19 +32,49 @@ class ParameterSpec(
     }
     val name: String = param.name
     val paramType: String = param.`in`
-    val maxNum = 10000000
-    val minNum = -10000000
+
+    var maxNum = 100000000000L
+    var minNum = -100000000000L
+    val failingValues = mutableSetOf<Any>()
+    val passingValues = mutableSetOf<Any>()
+
     val isID = (
-         dataType == UUID::class
-                 || name.matches(Regex("^.*(Id|ID).*$"))
-                 || name.matches(Regex("^.*[-_](id)[-_].*$"))
-                 || name.matches(Regex("^(id)*[-_].*|.*[-_](id)*\$"))
-    )
+            dataType == UUID::class
+                    || name.matches(Regex("^.*(Id|ID).*$"))
+                    || name.matches(Regex("^.*[-_](id)[-_].*$"))
+                    || name.matches(Regex("^(id)*[-_].*|.*[-_](id)*\$"))
+            )
+
     // TODO tighten up return type
-    fun <T> getAvailableValues(iterations: Int, endpoint: EndpointSpec, getSelectedOrPreviousData: (EndpointSpec, ParameterSpec) -> List<T> ): List<T>{
+    fun <T> getAvailableValues(
+        iterations: Int,
+        endpoint: EndpointSpec,
+        getSelectedOrPreviousData: (EndpointSpec, ParameterSpec) -> List<T>
+    ): List<T> {
         //TODO get values based on type
         val values = listOf<T>()
-        return  values + getSelectedOrPreviousData(endpoint, this)
+        return values + getSelectedOrPreviousData(endpoint, this)
     }
 
+    fun addFailingValue(value: Any) {
+        if (passingValues.contains(value)) return
+        if (value is Long) {
+            val diffWithMax = maxNum - value
+            val diffWithMin =  value - minNum
+            if (diffWithMax > 0 && diffWithMin > 0){
+                if(diffWithMax > diffWithMin){
+                    minNum = value
+                }else if(diffWithMax < diffWithMin){
+                    maxNum = value
+                }
+            }
+        } else if (value is String) {
+
+        }
+        failingValues.add(value)
+    }
+    fun addPassingValue(value: Any) {
+        passingValues.add(value)
+        failingValues.remove(value)
+    }
 }

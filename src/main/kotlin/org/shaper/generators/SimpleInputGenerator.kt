@@ -34,11 +34,11 @@ class SimpleInputGenerator(
 
     // TODO calculate function based on requirements, then pass it in
     // TODO can we have a way here to know when we have done something invalid and push that to the expected results
-    private fun getParamVals(spec: ParameterSpec): Sequence<*> {
-        return when (spec.dataType) {
+    private fun getParamVals(param: ParameterSpec): Sequence<*> {
+        return when (param.dataType) {
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
-            Long::class -> RandomLongGenerator()
-            String::class -> RandomStringGenerator()
+            Long::class -> RandomLongGenerator(param)
+            String::class -> RandomStringGenerator(param)
             else -> throw NotImplementedError(
                 "Parameters with specs other than " +
                         "integer or string are not yet implemented."
@@ -46,20 +46,19 @@ class SimpleInputGenerator(
         }
     }
 
-    class RandomLongGenerator() :
+    class RandomLongGenerator(param: ParameterSpec) :
         RandomBaseGenerator<Long>(
             {
                 val percentZero = .25
                 if (faker.number().randomDouble(3, 0, 1) < percentZero) {
                     0
                 } else {
-
-                    faker.number().numberBetween(-10000L, 10000L)
+                    faker.number().numberBetween(param.minNum, param.maxNum)
                 }
             }
         )
 
-    class RandomStringGenerator() :
+    class RandomStringGenerator(param: ParameterSpec) :
         RandomBaseGenerator<String>(
             {
                 val percentEmptyString = .25

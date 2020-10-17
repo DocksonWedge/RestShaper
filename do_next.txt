@@ -2,6 +2,12 @@ Do we need ParamPosition anymore or can we use iterator? - I think we leave it f
 
 read from result global in input gen
 
+make ParameterSpec more strongly typed
+
+play with inlines in shapeEndpoint
+break up ResultsStateGlobalTest function
+consolidate results saveToGlobal and results GlobalState saveToGlobal
+
 create test result serializer/create test result output to file
 test other parameter types- need to find endpoints
 other parameter type generation

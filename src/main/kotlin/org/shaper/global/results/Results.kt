@@ -2,6 +2,7 @@ package org.shaper.global.results
 
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.EndpointSpec
+import org.shaper.swagger.model.ParameterSpec
 
 object Results {
     // TODO cap the max executions?
@@ -18,9 +19,36 @@ object Results {
                 result.input,
                 result
             )
-            allPassed == allPassed && isFailing(endpoint, result)
+            if (isFailing(endpoint, result)) {
+                allPassed = false
+                addParamResult(endpoint.queryParams, result.input.queryParams, addFailing)
+            } else {
+                addParamResult(endpoint.queryParams, result.input.queryParams, addPassing)
+            }
         }
         return allPassed
+    }
+
+    private fun addParamResult(
+        endpointParams: Map<String, ParameterSpec>,
+        resultParams: Map<String, *>,
+        addFun: (ParameterSpec, Any) -> Unit
+    ) {
+        endpointParams.forEach {
+            addFun(
+                it.value, resultParams[it.key]
+                    ?: throw error(
+                        "Mismatched parameter in results saving!"
+                    )
+            )
+        }
+    }
+
+    private val addPassing = { param: ParameterSpec, value: Any ->
+        param.addPassingValue(value)
+    }
+    private val addFailing = { param: ParameterSpec, value: Any ->
+        param.addFailingValue(value)
     }
 
     private fun isFailing(

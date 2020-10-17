@@ -39,6 +39,7 @@ class BaseTestRunnerTest {
                 Assertions.assertEquals(expected, resultsList.size)
                 Results.saveToGlobal(endpoint, resultsList.asSequence())
             }
+
             Assertions.assertEquals(true, passed)
             //todo rethink how sequences loop over all the things
             val allResultsFromGlobal = getResultsFromEndpoint(endpoints[0])
@@ -46,6 +47,7 @@ class BaseTestRunnerTest {
             Assertions.assertDoesNotThrow {
                 getStatusCodesFromEndpoint(endpoints[0]).forEach { it < 1000 }
             }
+            Assertions.assertTrue(endpoints[0].params.values.flatMap { it.passingValues }.size > 3)
         }
     }
 }
