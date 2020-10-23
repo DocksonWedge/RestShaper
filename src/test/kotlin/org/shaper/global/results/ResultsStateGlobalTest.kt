@@ -8,12 +8,13 @@ import kotlinx.serialization.json.JsonObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.shaper.generators.model.SimpleTestInput
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.mocks.EndpointSpecMock
 
-
+@ResourceLock("ResultsStateGlobal")
 class ResultsStateGlobalTest {
     private val input = TestInputConcretion(
         mapOf<String, Any>(),

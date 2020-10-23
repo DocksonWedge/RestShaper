@@ -38,6 +38,18 @@ object ResultsStateGlobal {
             ?: throw error("No results found for specified endpoint ${endpoint.method}:${endpoint.paramUrl()}")
     }
 
+    fun getAllResults(): List<TestResult>{
+        return index.flatMap { url ->
+            url.value.flatMap { method ->
+                method.value.flatMap { responseCode ->
+                    responseCode.value.flatMap {
+                        it.value
+                    }
+                }
+            }
+        }
+    }
+
     fun getStatusCodesFromEndpoint(endpoint: EndpointSpec) :List<Int> {
         return getResultsFromEndpoint(endpoint).map { it.response.statusCode }
     }

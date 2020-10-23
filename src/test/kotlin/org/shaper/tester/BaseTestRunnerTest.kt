@@ -6,6 +6,7 @@ import io.restassured.response.Response
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.shaper.generators.SimpleInputGenerator
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
@@ -15,6 +16,7 @@ import org.shaper.global.results.ResultsStateGlobal.getStatusCodesFromEndpoint
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.model.EndpointSpec
 
+@ResourceLock("ResultsStateGlobal")
 class BaseTestRunnerTest {
 
     @TestFactory

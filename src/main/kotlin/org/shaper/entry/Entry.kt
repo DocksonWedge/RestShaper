@@ -12,35 +12,38 @@ import org.shaper.tester.BaseTestRunner
 
 //run params http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs GET:/skills
 fun main(args: Array<String>) {
-    args.forEach { println(it) }
-    val spec = SpecFinder(args[0], args.slice(1 until args.size).toList())
-    val endpoints = spec.getRelevantSpecs()
 
-    endpoints.forEach { it.queryParams.forEach { println("${it.key} ${it.value.dataType}") } }
+    println(dataAtWorkRun())
 
-    BaseTestRunner.shapeEndpoint(
-        endpoints[0],
-        SimpleInputGenerator()::getInput
-    ) { endpoint: EndpointSpec, results: Sequence<TestResult> ->
-
-        Results.saveToGlobal(endpoint, results)
-        println(ResultsStateGlobal.getResultsFromEndpoint(endpoint).map { it.response.statusCode })
-//        val iter = results.iterator()
-//        iter.next()
+//    args.forEach { println(it) }
+//    val spec = SpecFinder(args[0], args.slice(1 until args.size).toList())
+//    val endpoints = spec.getRelevantSpecs()
 //
-//        iter.next()
-//        iter.next()
-//        iter.next()
-//        iter.next()
+//    endpoints.forEach { it.queryParams.forEach { println("${it.key} ${it.value.dataType}") } }
 //
-//        iter.next()
-//        iter.next()
-//        iter.next()
-//        iter.next()
-//        iter.next()
-
-        //results.toList()
-    }
+//    BaseTestRunner.shapeEndpoint(
+//        endpoints[0],
+//        SimpleInputGenerator()::getInput
+//    ) { endpoint: EndpointSpec, results: Sequence<TestResult> ->
+//
+//        Results.saveToGlobal(endpoint, results)
+//        println(ResultsStateGlobal.getResultsFromEndpoint(endpoint).map { it.response.statusCode })
+////        val iter = results.iterator()
+////        iter.next()
+////
+////        iter.next()
+////        iter.next()
+////        iter.next()
+////        iter.next()
+////
+////        iter.next()
+////        iter.next()
+////        iter.next()
+////        iter.next()
+////        iter.next()
+//
+//        //results.toList()
+//    }
 
 }
 

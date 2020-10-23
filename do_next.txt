@@ -1,14 +1,19 @@
-Do we need ParamPosition anymore or can we use iterator? - I think we leave it for now.
+figure out what to do with num cases
+create test result serializer/create test result output to file
 
 read from result global in input gen
 
 make ParameterSpec more strongly typed
 
+
+give TestResults awareness of ids
+passing Ids forward to next "chain" of api
+
 play with inlines in shapeEndpoint
 break up ResultsStateGlobalTest function
 consolidate results saveToGlobal and results GlobalState saveToGlobal
 
-create test result serializer/create test result output to file
+
 test other parameter types- need to find endpoints
 other parameter type generation
 set up a db
@@ -18,5 +23,5 @@ mock `Test callWithConcretion successfully calls an endpoint`
 ------next big picture------
 include reading test result for input - while input is generated
 request body generation
-allow config of num tests
+allow org.shaper.config of num tests
 smarten up test case generation - searching for vals w/ prev results
