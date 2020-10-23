@@ -1,6 +1,5 @@
 package org.shaper.swagger.model
 
-import arrow.core.mapOf
 import io.mockk.every
 import io.mockk.mockk
 import io.swagger.v3.oas.models.OpenAPI

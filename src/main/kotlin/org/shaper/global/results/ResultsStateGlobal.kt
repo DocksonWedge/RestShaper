@@ -1,12 +1,13 @@
 package org.shaper.global.results
 
-import io.ktor.http.*
 import io.swagger.v3.oas.models.PathItem.HttpMethod
+import kotlinx.serialization.Serializable
 import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.EndpointSpec
 
+@Serializable
 object ResultsStateGlobal {
     // map endpoint, method, response code, input -> return list<result>
     val index = mutableMapOf<String,

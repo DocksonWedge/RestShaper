@@ -1,6 +1,5 @@
 package org.shaper.generators
 
-import arrow.core.extensions.sequence.foldable.size
 import com.github.javafaker.Faker
 import kotlinx.serialization.json.JsonObject
 import org.shaper.swagger.model.EndpointSpec
