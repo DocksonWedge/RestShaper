@@ -1,6 +1,8 @@
 package org.shaper.entry
 
 
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import org.shaper.generators.SimpleInputGenerator
 import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.TestResult
@@ -13,8 +15,11 @@ import org.shaper.tester.BaseTestRunner
 //run params http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs GET:/skills
 fun main(args: Array<String>) {
 
-    println(dataAtWorkRun())
-
+    println(dataAtWorkRun(1))
+    val resultsSerializer = ListSerializer(TestResult.serializer())
+    val results = ResultsStateGlobal.getAllResults()
+    Json.encodeToString(resultsSerializer, results)
+    val x = Json.decodeFromString( resultsSerializer, Json.encodeToString(resultsSerializer, results))
 //    args.forEach { println(it) }
 //    val spec = SpecFinder(args[0], args.slice(1 until args.size).toList())
 //    val endpoints = spec.getRelevantSpecs()

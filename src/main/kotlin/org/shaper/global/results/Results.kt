@@ -13,7 +13,7 @@ object Results {
     ): Boolean {
         var allPassed = true
         results.forEach { result ->
-            ResultsStateGlobal.saveToGlobal(
+            ResultsStateGlobal.save(
                 endpoint,
                 result.response.statusCode,
                 result.input,

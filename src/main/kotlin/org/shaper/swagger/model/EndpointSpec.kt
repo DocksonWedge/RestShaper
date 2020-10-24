@@ -8,12 +8,13 @@ import org.shaper.generators.model.TestResult
 import org.shaper.swagger.SwaggerOperationNotFound
 import org.shaper.tester.client.RestAssuredClient
 
-
 class EndpointSpec(
     private val swaggerSpec: OpenAPI,
     val method: HttpMethod,
     val path: String,
-    var callFunction: (EndpointSpec, TestInputConcretion) -> TestResult = RestAssuredClient.callRestAssured
+    // TODO can call function be private val?
+    var callFunction: (EndpointSpec, TestInputConcretion) -> TestResult = RestAssuredClient.callRestAssured,
+    private val swaggerUrlOrFile: String = ""
 ) {
 
     private val swaggerOperation = swaggerSpec.paths[path]?.readOperationsMap()?.get(method)
@@ -22,9 +23,6 @@ class EndpointSpec(
     val params = swaggerOperation.parameters?.map {
         it.name to ParameterSpec(it)
     }?.toMap() ?: mapOf()
-
-    var headers = mutableMapOf<String, ParameterSpec>()
-    var cookies = mutableMapOf<String, ParameterSpec>()
 
     // could be a parameter spec if terminal
     // could be a nested list or map
@@ -49,6 +47,7 @@ class EndpointSpec(
     val paramUrl = {
         url + path
     }
+    val endpoint = Endpoint(method, url, path, swaggerUrlOrFile)
 
     fun callWithConcretion(input: TestInputConcretion): TestResult {
         return callFunction(this, input)

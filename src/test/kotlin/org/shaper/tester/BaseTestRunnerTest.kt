@@ -31,7 +31,13 @@ class BaseTestRunnerTest {
             //mock out call to external system for speed
             val mockResponse = mockk<Response>()
             every { mockResponse.statusCode } returns 200
-            endpoints[0].callFunction = { e: EndpointSpec, i: TestInputConcretion -> TestResult(mockResponse, i, e) }
+            endpoints[0].callFunction = { e: EndpointSpec, i: TestInputConcretion ->
+                TestResult(
+                    TestResult.fromResponse(mockResponse),
+                    i,
+                    e.endpoint
+                )
+            }
 
             val passed = BaseTestRunner.shapeEndpoint(
                 endpoints[0],

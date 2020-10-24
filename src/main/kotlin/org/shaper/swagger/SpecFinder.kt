@@ -13,19 +13,22 @@ class SpecFinder(
 ) {
 
     private val fullSpec = OpenAPIV3Parser().read(urlOrFilePath)
+
     //TODO lvl 1 - handle no endpoints as check all
     private val endpoints = formattedEndpoints.union(
-            rawEndpoints.map { endpointString ->
-                endpointString.split(":").let { HttpMethod.valueOf(it[0].toUpperCase()) to it[1] }
-            }
-        )
-
+        rawEndpoints.map { endpointString ->
+            endpointString.split(":").let { HttpMethod.valueOf(it[0].toUpperCase()) to it[1] }
+        }
+    )
 
 
     //TODO make work with multiple specs
     fun getRelevantSpecs(): List<EndpointSpec> {
         return endpoints.mapNotNull { methodPathPair ->
-            EndpointSpec(fullSpec, methodPathPair.first, methodPathPair.second)
+            EndpointSpec(
+                fullSpec, methodPathPair.first, methodPathPair.second,
+                swaggerUrlOrFile = urlOrFilePath
+            )
         }
     }
 }

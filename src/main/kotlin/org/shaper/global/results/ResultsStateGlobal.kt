@@ -20,7 +20,7 @@ object ResultsStateGlobal {
                     >
             >()
 
-    fun saveToGlobal(
+    fun save(
         endpoint: EndpointSpec,
         responseCode: Int,
         input: TestInputConcretion,

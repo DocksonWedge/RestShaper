@@ -1,11 +1,31 @@
 package org.shaper.generators.model
 
 import io.restassured.response.Response
-import org.shaper.swagger.model.EndpointSpec
-import java.time.Instant
+import kotlinx.serialization.Serializable
+import org.joda.time.DateTime
+import org.shaper.serialization.DateTimeSerializer
+import org.shaper.serialization.ResponseSerializer
+import org.shaper.swagger.model.Endpoint
 import java.time.LocalDateTime
 
-data class TestResult(val response: Response, val input: TestInputConcretion, val endpoint: EndpointSpec){
-    val creationTime: LocalDateTime = LocalDateTime.now()
-    //aadd pass/fail field
+@Serializable
+class TestResult(
+    val response: ResponseData,
+    val input: TestInputConcretion,
+    val endpoint: Endpoint
+) {
+    @Serializable(with = DateTimeSerializer::class)
+    val creationTime = DateTime.now()
+
+    companion object{
+        fun fromResponse(_response: Response): ResponseData {
+            return ResponseData(
+                _response.asString(),
+                _response.statusCode,
+                _response.headers.asList().map { it.name to it.value }.toMap(),
+                _response.cookies
+            )
+        }
+    }
+    //add pass/fail field
 }

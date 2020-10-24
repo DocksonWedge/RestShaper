@@ -2,14 +2,11 @@ package org.shaper.global.results
 
 import io.mockk.every
 import io.mockk.mockk
-import io.restassured.internal.common.assertion.Assertion
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import kotlinx.serialization.json.JsonObject
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.shaper.generators.model.SimpleTestInput
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.mocks.EndpointSpecMock
@@ -49,20 +46,20 @@ class ResultsStateGlobalTest {
     fun `Test ResultsStateGlobal saves correctly`() {
 
         // test save on empty index
-        ResultsStateGlobal.saveToGlobal(endpoint, 200, input, result1)
+        ResultsStateGlobal.save(endpoint, 200, input, result1)
         val resultList1 =
             ResultsStateGlobal.index[endpoint.paramUrl()]?.get(endpoint.method)?.get(200)?.get(input.hashCode())
         Assertions.assertEquals(1, resultList1!!.size)
         Assertions.assertEquals(result1, resultList1[0])
         // test save on a previously created index
-        ResultsStateGlobal.saveToGlobal(endpoint, 200, input, result2)
+        ResultsStateGlobal.save(endpoint, 200, input, result2)
         val resultList2 =
             ResultsStateGlobal.index[endpoint.paramUrl()]?.get(endpoint.method)?.get(200)?.get(input.hashCode())
         Assertions.assertEquals(2, resultList2!!.size)
         Assertions.assertEquals(result1, resultList2[0])
         Assertions.assertEquals(result2, resultList2[1])
         // test save on a half created index
-        ResultsStateGlobal.saveToGlobal(endpoint, 400, input, result2)
+        ResultsStateGlobal.save(endpoint, 400, input, result2)
         val resultList3 =
             ResultsStateGlobal.index[endpoint.paramUrl()]?.get(endpoint.method)?.get(400)?.get(input.hashCode())
 
