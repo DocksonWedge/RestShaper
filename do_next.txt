@@ -1,15 +1,25 @@
-figure out what to do with num cases
-create test result serializer/create test result output to file
+pick out apis to test with
+-- headers
+-- cookies
+-- bodies
+-- path param
+-- query param
 
+findByStatus - read enum from swagger doc for valid values
+passing Ids forward to next "chain" of api
+
+
+let user input list of valid values
 create a way to tell what results were actually generated/run
+output to file
+
+figure out what to do with num cases
 
 make all test input concretion values strings!
-make non-deterministic tests deterministic D:
 
 read from result global in input gen
 
 make ParameterSpec more strongly typed
-
 
 give TestResults awareness of ids
 passing Ids forward to next "chain" of api

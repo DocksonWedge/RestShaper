@@ -13,15 +13,17 @@ class RunnerConfigBuilder {
     lateinit var endpointConfig: EndpointConfigBuilder.() -> Unit
 
     fun run(): Boolean {
-        return EndpointConfigBuilder()
+        var passing = true
+         EndpointConfigBuilder()
             .apply(endpointConfig)
             .build()
-            .all { endpointSpec ->
-                BaseTestRunner.shapeEndpoint(
+            .forEach { endpointSpec ->
+                passing = BaseTestRunner.shapeEndpoint(
                     endpointSpec,
                     inputFunction,
                     outputFunction
-                )
+                ) && passing
             }
+        return passing
     }
 }

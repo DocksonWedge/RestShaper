@@ -15,10 +15,11 @@ import org.shaper.tester.BaseTestRunner
 //run params http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs GET:/skills
 fun main(args: Array<String>) {
 
-    println(dataAtWorkRun(1))
+    println(petStoreGetPet(10))
     val resultsSerializer = ListSerializer(TestResult.serializer())
     val results = ResultsStateGlobal.getAllResults()
     val string = Json.encodeToString(resultsSerializer, results)
+    println(string)
     val x = Json.decodeFromString(resultsSerializer, string)
     println(x)
 //    args.forEach { println(it) }

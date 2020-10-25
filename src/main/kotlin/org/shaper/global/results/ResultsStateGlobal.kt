@@ -19,7 +19,7 @@ object ResultsStateGlobal {
                             >
                     >
             >()
-
+    @Synchronized
     fun save(
         endpoint: EndpointSpec,
         responseCode: Int,
@@ -63,7 +63,7 @@ object ResultsStateGlobal {
     fun loadInitialResultsSet(loadFunction: () -> Unit) {
         loadFunction()
     }
-
+    @Synchronized
     fun clearResults() {
         index.clear()
     }

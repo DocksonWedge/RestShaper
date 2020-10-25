@@ -6,6 +6,7 @@ import org.shaper.swagger.model.ParameterSpec
 
 object Results {
     // TODO cap the max executions?
+    @Synchronized
     fun saveToGlobal(
         endpoint: EndpointSpec,
         results: Sequence<TestResult>
@@ -29,6 +30,7 @@ object Results {
         return allPassed
     }
 
+    @Synchronized
     private fun addParamResult(
         endpointParams: Map<String, ParameterSpec>,
         resultParams: Map<String, *>,
