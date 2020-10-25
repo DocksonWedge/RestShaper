@@ -11,7 +11,7 @@ import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.mocks.EndpointSpecMock
 
-@ResourceLock("ResultsStateGlobal")
+
 class ResultsStateGlobalTest {
     private val input = TestInputConcretion(
         mapOf<String, Any>(),
@@ -42,9 +42,10 @@ class ResultsStateGlobalTest {
 
     private val endpoint = EndpointSpecMock.getWithMockedSwagger("http://endpoint/", "path", HttpMethod.GET)
 
+    @ResourceLock("ResultsStateGlobal")
     @Test
     fun `Test ResultsStateGlobal saves correctly`() {
-
+        ResultsStateGlobal.clearResults()
         // test save on empty index
         ResultsStateGlobal.save(endpoint, 200, input, result1)
         val resultList1 =

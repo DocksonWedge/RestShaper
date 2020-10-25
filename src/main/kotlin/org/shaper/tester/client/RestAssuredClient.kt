@@ -11,6 +11,6 @@ object RestAssuredClient {
             .queryParams(input.queryParams)
             .request(endpointSpec.method.toString(), endpointSpec.fullUrl(input.pathParams))
             ?: throw error("Calling ${endpointSpec.method} ${endpointSpec.url} with input $input failed to return a request!")
-        TestResult(TestResult.fromResponse(result), input, endpointSpec.endpoint)
+        TestResult(result, input, endpointSpec.endpoint)
     }
 }

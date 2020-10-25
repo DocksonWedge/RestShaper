@@ -1,6 +1,8 @@
 figure out what to do with num cases
 create test result serializer/create test result output to file
 
+create a way to tell what results were actually generated/run
+
 make all test input concretion values strings!
 make non-deterministic tests deterministic D:
 

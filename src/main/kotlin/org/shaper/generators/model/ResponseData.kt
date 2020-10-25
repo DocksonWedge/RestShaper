@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class ResponseData(
     val body: String,
     val statusCode: Int,
-    val Headers: Map<String, String>,
+    val headers: Map<String, String>,
     val cookies: Map<String, String>
 )

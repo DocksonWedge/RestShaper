@@ -29,17 +29,18 @@ object ResultsStateGlobal {
         val previousList = index
             .getOrPut(endpoint.paramUrl(), { mutableMapOf() })
             .getOrPut(endpoint.method, { mutableMapOf() })
-            .getOrPut(responseCode,{ mutableMapOf() })
-            .getOrPut(input.hashCode(),  { mutableListOf() })
+            .getOrPut(responseCode, { mutableMapOf() })
+            .getOrPut(input.hashCode(), { mutableListOf() })
         previousList.add(result)
     }
 
-    fun getResultsFromEndpoint(endpoint: EndpointSpec) :List<TestResult> {
-        return index[endpoint.paramUrl()]?.get(endpoint.method)?.flatMap { inputKey -> inputKey.value.flatMap { it.value } }
+    fun getResultsFromEndpoint(endpoint: EndpointSpec): List<TestResult> {
+        return index[endpoint.paramUrl()]?.get(endpoint.method)
+            ?.flatMap { inputKey -> inputKey.value.flatMap { it.value } }
             ?: throw error("No results found for specified endpoint ${endpoint.method}:${endpoint.paramUrl()}")
     }
 
-    fun getAllResults(): List<TestResult>{
+    fun getAllResults(): List<TestResult> {
         return index.flatMap { url ->
             url.value.flatMap { method ->
                 method.value.flatMap { responseCode ->
@@ -51,14 +52,19 @@ object ResultsStateGlobal {
         }
     }
 
-    fun getStatusCodesFromEndpoint(endpoint: EndpointSpec) :List<Int> {
+    fun getStatusCodesFromEndpoint(endpoint: EndpointSpec): List<Int> {
         return getResultsFromEndpoint(endpoint).map { it.response.statusCode }
     }
 
     fun getIndexFromStatusCode(endpoint: EndpointSpec, statusCode: Int): Map<Int, MutableList<TestResult>> {
         return index[endpoint.paramUrl()]?.get(endpoint.method)?.get(statusCode) ?: mapOf()
     }
+
     fun loadInitialResultsSet(loadFunction: () -> Unit) {
         loadFunction()
+    }
+
+    fun clearResults() {
+        index.clear()
     }
 }

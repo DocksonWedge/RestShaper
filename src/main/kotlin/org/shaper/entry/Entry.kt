@@ -18,8 +18,9 @@ fun main(args: Array<String>) {
     println(dataAtWorkRun(1))
     val resultsSerializer = ListSerializer(TestResult.serializer())
     val results = ResultsStateGlobal.getAllResults()
-    Json.encodeToString(resultsSerializer, results)
-    val x = Json.decodeFromString( resultsSerializer, Json.encodeToString(resultsSerializer, results))
+    val string = Json.encodeToString(resultsSerializer, results)
+    val x = Json.decodeFromString(resultsSerializer, string)
+    println(x)
 //    args.forEach { println(it) }
 //    val spec = SpecFinder(args[0], args.slice(1 until args.size).toList())
 //    val endpoints = spec.getRelevantSpecs()

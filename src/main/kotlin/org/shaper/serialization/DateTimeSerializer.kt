@@ -14,7 +14,8 @@ import java.time.format.FormatStyle
 import java.util.*
 
 object DateTimeSerializer : KSerializer<DateTime> {
-    private val formatter = DateTimeFormat.fullDateTime()
+
+    private val formatter = DateTimeFormat.mediumDateTime().withLocale(Locale.ENGLISH)
     override val descriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: DateTime) {
@@ -22,6 +23,7 @@ object DateTimeSerializer : KSerializer<DateTime> {
     }
 
     override fun deserialize(decoder: Decoder): DateTime {
-        return formatter.parseDateTime(decoder.decodeString())
+        val dateString = decoder.decodeString()
+        return formatter.parseDateTime(dateString)
     }
 }

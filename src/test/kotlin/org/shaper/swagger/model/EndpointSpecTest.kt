@@ -80,7 +80,8 @@ class EndpointSpecTest {
                 )
                 //todo mock
                 Assertions.assertDoesNotThrow {
-                    endpoint.callWithConcretion(input).response.prettyPeek()
+                    endpoint.callWithConcretion(input)
+                        .restAssuredResponse.prettyPeek()
                         .then().assertThat()
                         .body("size()", equalTo(expected))
                 }
