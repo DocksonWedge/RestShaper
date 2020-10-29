@@ -1,15 +1,21 @@
 pick out apis to test with
--- headers
--- cookies
--- bodies
+-- headers - DELETE /pet/{petId}
+-- cookies - need to find test
+-- bodies***
 -- path param
 -- query param
+
+implementing arrays and decimals
+implement request body stuff
+
+allow passing in static value for parameter
+-- should be able to be always or % of the time used
 
 findByStatus - read enum from swagger doc for valid values
 passing Ids forward to next "chain" of api
 
+should endpointSpec have a generator function for each parameter?
 
-let user input list of valid values
 create a way to tell what results were actually generated/run
 output to file
 

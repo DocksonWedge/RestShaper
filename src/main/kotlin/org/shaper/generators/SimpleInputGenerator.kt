@@ -49,10 +49,14 @@ class SimpleInputGenerator(
         RandomBaseGenerator<Long>(
             {
                 val percentZero = .25
-                if (faker.number().randomDouble(3, 0, 1) < percentZero) {
+                val percentInvalid = .15
+                val randomNum = faker.number().randomDouble(3, 0, 1)
+                if (randomNum < percentZero) {
                     0
+                } else if(randomNum < percentZero + percentInvalid) {
+                    faker.number().randomNumber()
                 } else {
-                    faker.number().numberBetween(param.minNum, param.maxNum)
+                    faker.number().numberBetween(param.minInt, param.maxInt)
                 }
             }
         )
@@ -61,10 +65,18 @@ class SimpleInputGenerator(
         RandomBaseGenerator<String>(
             {
                 val percentEmptyString = .25
-                if (faker.number().randomDouble(3, 0, 1) < percentEmptyString) {
+                val percentInvalid = .15
+                val randomNum = faker.number().randomDouble(3, 0, 1)
+                if (randomNum< percentEmptyString) {
                     ""
-                } else {
+                } else if(randomNum < percentEmptyString + percentInvalid) {
                     faker.regexify("[A-z1-9]{0,10}")
+                } else {
+                    if( param.passingValues.isEmpty() ) {
+                        faker.regexify("[A-z1-9]{0,10}")
+                    }else{
+                        param.passingValues.random().toString()
+                    }
                 }
             }
         )

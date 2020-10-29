@@ -5,13 +5,15 @@ import io.mockk.mockk
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
 import org.junit.jupiter.api.*
+import java.math.BigDecimal
+import java.util.*
 
 
 class ParameterSpecTest {
 
 
     @TestFactory
-    fun `Test getRelevantSpecs returns correct total number of params`() = listOf(
+    fun `Test ParameterSpec returns the correct data type`() = listOf(
         Triple("order_id", "integer", true),
         Triple("id-pet", "integer", true),
         Triple("order_identity", "integer", false),
@@ -26,14 +28,23 @@ class ParameterSpecTest {
         .map { (name, type, expected) ->
             val param = mockk<Parameter>()
             every { param.schema.type } returns type
+            every { param.schema.maximum } returns null
+            every { param.schema.minimum } returns BigDecimal(-1)
             every { param.name } returns name
             every { param.`in` } returns "query"
 
             DynamicTest.dynamicTest("when I check '$name' with class $type then I find isID == $expected") {
-                Assertions.assertEquals(
-                    expected,
-                    ParameterSpec(param).isID
-                )
+                val spec = ParameterSpec(param)
+                Assertions.assertEquals(expected, spec.isID)
+                Assertions.assertEquals(-1L, spec.minInt)
+                Assertions.assertEquals(BigDecimal(-1), spec.minDecimal)
+                Assertions.assertEquals(10000000000, spec.maxInt)
+                Assertions.assertEquals(BigDecimal(10000000000), spec.maxDecimal)
+                when (type) {
+                    "integer" -> Assertions.assertEquals(Long::class, spec.dataType)
+                    "uuid" -> Assertions.assertEquals(UUID::class, spec.dataType)
+                    "string" -> Assertions.assertEquals(String::class, spec.dataType)
+                }
             }
         }
 }

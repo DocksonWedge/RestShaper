@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.parameters.Parameter
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
+import java.math.BigDecimal
 
 object EndpointSpecMock {
     fun getWithMockedSwagger(url: String, path: String, method: PathItem.HttpMethod) : EndpointSpec{
@@ -17,6 +18,8 @@ object EndpointSpecMock {
         every { swaggerSpec.servers[0].url } returns url
         every { swaggerSpec.paths[path]?.readOperationsMap()?.get(method) } returns swaggerOperation
         every { swaggerParameter.schema.type } returns "integer"
+        every { swaggerParameter.schema.maximum } returns BigDecimal(-1.2351)
+        every { swaggerParameter.schema.minimum } returns null
         every { swaggerParameter.`in` } returns "query"
         every { swaggerParameter.name } returns "someId"
         every { swaggerOperation.parameters } returns listOf(swaggerParameter)

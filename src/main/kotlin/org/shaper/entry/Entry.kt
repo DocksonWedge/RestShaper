@@ -15,7 +15,7 @@ import org.shaper.tester.BaseTestRunner
 //run params http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs GET:/skills
 fun main(args: Array<String>) {
 
-    println(petStoreGetPet(10))
+    println(basePetStoreConfig(10))
     val resultsSerializer = ListSerializer(TestResult.serializer())
     val results = ResultsStateGlobal.getAllResults()
     val string = Json.encodeToString(resultsSerializer, results)

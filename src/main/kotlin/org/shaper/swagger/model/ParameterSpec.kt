@@ -1,7 +1,9 @@
 package org.shaper.swagger.model
 
 
+import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.parameters.Parameter
+import java.math.BigDecimal
 
 import java.util.*
 import kotlin.reflect.KClass
@@ -17,7 +19,7 @@ class ParameterSpec(
         "number" -> Double::class
         "integer" -> Long::class
         "boolean" -> Boolean::class
-        "array" -> List::class
+        "array" -> String::class //List::class TODO- fix badness used for testing
         "object" -> Map::class
         "uuid" -> UUID::class
         //TODO - does style matter here if type is exhaustive?
@@ -33,10 +35,20 @@ class ParameterSpec(
     val name: String = param.name
     val paramType: String = param.`in`
 
-    var maxNum = 100000000000L
-    var minNum = -100000000000L
+    var maxInt = param.schema?.maximum?.toLong() ?: 10000000000L
+    var minInt = param.schema?.minimum?.toLong() ?: -10000000000L
+    val maxDecimal = param.schema?.maximum ?: BigDecimal(10000000000)
+    val minDecimal = param.schema?.minimum ?: BigDecimal(-10000000000)
+
     val failingValues = mutableSetOf<Any>()
     val passingValues = mutableSetOf<Any>()
+    init{
+        passingValues.addAll(param.schema?.enum ?: listOf())
+        //TODO - recursively go down the nested schemas
+        if (param.schema is ArraySchema) {
+            passingValues.addAll((param.schema as ArraySchema).items?.enum ?: listOf())
+        }
+    }
 
     val isID = (
             dataType == UUID::class
@@ -58,19 +70,6 @@ class ParameterSpec(
 
     fun addFailingValue(value: Any) {
         if (passingValues.contains(value)) return
-        if (value is Long) {
-            val diffWithMax = maxNum - value
-            val diffWithMin =  value - minNum
-            if (diffWithMax > 0 && diffWithMin > 0){
-                if(diffWithMax > diffWithMin){
-                    minNum = value
-                }else if(diffWithMax < diffWithMin){
-                    maxNum = value
-                }
-            }
-        } else if (value is String) {
-
-        }
         failingValues.add(value)
     }
     fun addPassingValue(value: Any) {

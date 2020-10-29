@@ -85,7 +85,6 @@ class ResultsStateGlobalTest {
         Assertions.assertTrue{
             endpoint.params.all { it.value.failingValues.contains(4L) }
         }
-        Assertions.assertEquals(4L, endpoint.params["someId"]!!.maxNum)
         //check that we save fails correctly
         every { result4.response.statusCode } returns 200
         every { result4.input } returns input3
@@ -93,6 +92,5 @@ class ResultsStateGlobalTest {
         Assertions.assertTrue{
             endpoint.params.all { it.value.passingValues.contains(-23L) }
         }
-        Assertions.assertNotEquals(-23, endpoint.params["someId"]!!.minNum)
     }
 }
