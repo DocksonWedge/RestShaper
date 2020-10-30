@@ -7,6 +7,8 @@ pick out apis to test with
 
 implementing arrays and decimals
 implement request body stuff
+test non-url swagger doc
+allow "no endpoints" to mean test all endpoints.
 
 allow passing in static value for parameter
 -- should be able to be always or % of the time used
