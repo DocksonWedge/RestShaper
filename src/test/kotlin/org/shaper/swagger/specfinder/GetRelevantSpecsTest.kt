@@ -5,10 +5,12 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.SwaggerOperationNotFound
+import kotlin.math.exp
 
 class GetRelevantSpecsTest {
     private val exampleFolder = "src\\test\\Resources\\TestExamples"
     private val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
+    private val petStoreSwaggerLocationEdited = "${exampleFolder}\\PetStoreSwaggerEdited.yaml"
 
     @TestFactory
     fun `Test getRelevantSpecs returns correct total number of params`() = listOf(
@@ -51,8 +53,7 @@ class GetRelevantSpecsTest {
                     "paramType" to "path",
                     "dataTypes" to Long::class,
                     "isId" to true
-                )
-        ,
+                ),
         listOf("get:/user/login")
                 to
                 mapOf(
@@ -61,8 +62,7 @@ class GetRelevantSpecsTest {
                     "paramType" to "query",
                     "dataTypes" to String::class,
                     "isId" to false
-                )
-        ,
+                ),
         listOf("get:/user/logout", "get:/store/inventory")
                 to
                 mapOf(
@@ -71,8 +71,7 @@ class GetRelevantSpecsTest {
                     "paramType" to "",
                     "dataTypes" to Any::class,
                     "isId" to false
-                )
-        ,
+                ),
         //This is unique because it has form data the is NOT set in params right now
         listOf("post:/pet/{petId}")
                 to
@@ -114,6 +113,93 @@ class GetRelevantSpecsTest {
                         .all { isId -> isId == expected["isId"] }
                 })
 
+            }
+        }
+
+    @TestFactory
+    fun `Test getRelevantSpecs returns params with the correct min max`() = listOf(
+        petStoreSwaggerLocation
+                to
+                mapOf(
+                    "max" to 10L,
+                    "min" to 1L
+                ),
+        petStoreSwaggerLocationEdited
+                to
+                mapOf(
+                    "max" to 100.0,
+                    "min" to -1.0
+                )
+
+    )
+        .map { (swaggerLocation, expected) ->
+            DynamicTest.dynamicTest(
+                "when I retrieve '$swaggerLocation' " +
+                        "then I find ${expected["max"]} max value " +
+                        "and I find ${expected["min"]} min value"
+            ) {
+                //actualSpecs calls swagger for spec, so only run once per test
+                val actualSpecs = SpecFinder(
+                    swaggerLocation,
+                    listOf("get:/store/order/{orderId}")
+                ).getRelevantSpecs()
+                val param = actualSpecs[0].params.values.toList()[0]
+                when (param.dataType) {
+                    Long::class -> {
+                        Assertions.assertEquals(expected["max"], param.maxInt)
+                        Assertions.assertEquals(expected["min"], param.minInt)
+                    }
+                    Double::class -> {
+                        Assertions.assertEquals(expected["max"], param.maxDecimal)
+                        Assertions.assertEquals(expected["min"], param.minDecimal)
+                    }
+                }
+            }
+        }
+
+    @TestFactory
+    fun `Test getRelevantSpecs returns params with the correct enum`() = listOf(
+        listOf("get:/pet/findByStatus")
+                to
+                setOf("available", "pending", "sold")
+    )
+        .map { (rawEndpoints, expected) ->
+            DynamicTest.dynamicTest(
+                "when I retrieve '${rawEndpoints}' " +
+                        "then I find $expected values in the passing values."
+            ) {
+                //actualSpecs calls swagger for spec, so only run once per test
+                val actualSpecs = SpecFinder(
+                    petStoreSwaggerLocation,
+                    rawEndpoints
+                ).getRelevantSpecs()
+                val param = actualSpecs[0].params.values.toList()[0]
+                Assertions.assertEquals(expected, param.passingValues)
+            }
+        }
+
+    @TestFactory
+    fun `Test getRelevantSpecs returns correct parameter location`() = listOf(
+        listOf("delete:/pet/{petId}")
+                to
+                mapOf(
+                    "api_key" to "header",
+                    "petId" to "path"
+                )
+
+    )
+        .map { (rawEndpoints, expected) ->
+            DynamicTest.dynamicTest(
+                "when I retrieve '${rawEndpoints}' " +
+                        "then I find the expected parameter types: $expected"
+            ) {
+                //actualSpecs calls swagger for spec, so only run once per test
+                SpecFinder(petStoreSwaggerLocation, rawEndpoints)
+                    .getRelevantSpecs()[0]
+                    .params
+                    .forEach() {
+                        Assertions.assertEquals(expected[it.key], it.value.paramType)
+                    }
             }
         }
 }

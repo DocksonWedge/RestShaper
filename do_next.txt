@@ -1,14 +1,18 @@
 pick out apis to test with
--- headers - DELETE /pet/{petId}
+-- headers
 -- cookies - need to find test
 -- bodies***
 -- path param
 -- query param
 
-implementing arrays and decimals
-implement request body stuff
-test non-url swagger doc
+generate random list input - how to store sub-types?
+-- nested parameter spec?
 allow "no endpoints" to mean test all endpoints.
+E2E tests from simpleRunner
+implement request body stuff
+
+can min/max be exclusive?
+don't pass results to a global?
 
 allow passing in static value for parameter
 -- should be able to be always or % of the time used

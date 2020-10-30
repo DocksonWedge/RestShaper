@@ -30,6 +30,7 @@ class ParameterSpecTest {
             every { param.schema.type } returns type
             every { param.schema.maximum } returns null
             every { param.schema.minimum } returns BigDecimal(-1)
+            every { param.schema.enum } returns null
             every { param.name } returns name
             every { param.`in` } returns "query"
 
@@ -37,9 +38,9 @@ class ParameterSpecTest {
                 val spec = ParameterSpec(param)
                 Assertions.assertEquals(expected, spec.isID)
                 Assertions.assertEquals(-1L, spec.minInt)
-                Assertions.assertEquals(BigDecimal(-1), spec.minDecimal)
+                Assertions.assertEquals(-1.0, spec.minDecimal)
                 Assertions.assertEquals(10000000000, spec.maxInt)
-                Assertions.assertEquals(BigDecimal(10000000000), spec.maxDecimal)
+                Assertions.assertEquals(10000000000.0, spec.maxDecimal)
                 when (type) {
                     "integer" -> Assertions.assertEquals(Long::class, spec.dataType)
                     "uuid" -> Assertions.assertEquals(UUID::class, spec.dataType)

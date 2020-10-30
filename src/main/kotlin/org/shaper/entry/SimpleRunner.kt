@@ -1,6 +1,7 @@
 package org.shaper.entry
 
 import io.swagger.v3.oas.models.PathItem.HttpMethod.GET
+import io.swagger.v3.oas.models.PathItem.HttpMethod.DELETE
 import org.shaper.config.runnerConfig
 import org.shaper.generators.SimpleInputGenerator
 
@@ -31,6 +32,18 @@ fun petStoreGetPet(numCases: Int = 5): Boolean {
     }.run()
 }
 
+fun petStoreGetOrderFromFile(numCases: Int = 5): Boolean {
+    return runnerConfig {
+        inputFunction = SimpleInputGenerator(numCases)::getInput
+
+        endpointConfig = {
+            swaggerUrl = "src\\test\\Resources\\TestExamples\\PetStoreSwaggerEdited.yaml"
+            endpoints = listOf(
+                GET to "/store/order/{orderId}"
+            )
+        }
+    }.run()
+}
 fun petStoreGetOrder(numCases: Int = 5): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
@@ -44,7 +57,7 @@ fun petStoreGetOrder(numCases: Int = 5): Boolean {
     }.run()
 }
 
-fun basePetStoreConfig(numCases: Int = 5): Boolean {
+fun petStoreFindByStatus(numCases: Int = 5): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
 
@@ -52,6 +65,18 @@ fun basePetStoreConfig(numCases: Int = 5): Boolean {
             swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
             endpoints = listOf(
                 GET to "/pet/findByStatus"
+            )
+        }
+    }.run()
+}
+fun petStoreDeletePet(numCases: Int = 5): Boolean {
+    return runnerConfig {
+        inputFunction = SimpleInputGenerator(numCases)::getInput
+
+        endpointConfig = {
+            swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
+            endpoints = listOf(
+                DELETE to "/pet/{petId}"
             )
         }
     }.run()

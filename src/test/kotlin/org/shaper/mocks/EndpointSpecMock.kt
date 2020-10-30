@@ -20,6 +20,7 @@ object EndpointSpecMock {
         every { swaggerParameter.schema.type } returns "integer"
         every { swaggerParameter.schema.maximum } returns BigDecimal(-1.2351)
         every { swaggerParameter.schema.minimum } returns null
+        every { swaggerParameter.schema.enum } returns null
         every { swaggerParameter.`in` } returns "query"
         every { swaggerParameter.name } returns "someId"
         every { swaggerOperation.parameters } returns listOf(swaggerParameter)

@@ -22,7 +22,6 @@ object BaseTestRunner {
     }
 
     private fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec): TestResult {
-        println("${testInput.queryParams["offset"]} || ${testInput.queryParams["limit"]}")
         return endpoint.callWithConcretion(testInput)
     }
 

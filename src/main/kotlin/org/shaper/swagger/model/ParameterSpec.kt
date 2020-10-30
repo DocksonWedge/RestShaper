@@ -2,6 +2,7 @@ package org.shaper.swagger.model
 
 
 import io.swagger.v3.oas.models.media.ArraySchema
+import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
 import java.math.BigDecimal
 
@@ -37,16 +38,22 @@ class ParameterSpec(
 
     var maxInt = param.schema?.maximum?.toLong() ?: 10000000000L
     var minInt = param.schema?.minimum?.toLong() ?: -10000000000L
-    val maxDecimal = param.schema?.maximum ?: BigDecimal(10000000000)
-    val minDecimal = param.schema?.minimum ?: BigDecimal(-10000000000)
+    val maxDecimal = param.schema?.maximum?.toDouble() ?: 10000000000.0
+    val minDecimal = param.schema?.minimum?.toDouble()  ?: -10000000000.0
 
     val failingValues = mutableSetOf<Any>()
     val passingValues = mutableSetOf<Any>()
     init{
-        passingValues.addAll(param.schema?.enum ?: listOf())
-        //TODO - recursively go down the nested schemas
-        if (param.schema is ArraySchema) {
-            passingValues.addAll((param.schema as ArraySchema).items?.enum ?: listOf())
+        passingValues.addAll(getAllEnumValues(param.schema))
+    }
+
+    private tailrec fun <T> getAllEnumValues(schema: Schema<T>): MutableSet<Any> {
+        val setOfVals = mutableSetOf<T>()
+        setOfVals.addAll(schema.enum ?: listOf())
+        return if (schema !is ArraySchema) {
+            setOfVals as MutableSet<Any>
+        }else{
+            getAllEnumValues(schema.items)
         }
     }
 
