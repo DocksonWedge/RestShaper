@@ -83,14 +83,14 @@ class ResultsStateGlobalTest {
         every { result3.input } returns input2
         Results.saveToGlobal(endpoint, sequenceOf(result3))
         Assertions.assertTrue{
-            endpoint.params.all { it.value.failingValues.contains(4L) }
+            endpoint.params.all { it.value.info.failingValues.contains(4L) }
         }
         //check that we save fails correctly
         every { result4.response.statusCode } returns 200
         every { result4.input } returns input3
         Results.saveToGlobal(endpoint, sequenceOf(result4))
         Assertions.assertTrue{
-            endpoint.params.all { it.value.passingValues.contains(-23L) }
+            endpoint.params.all { it.value.info.passingValues.contains(-23L) }
         }
     }
 }

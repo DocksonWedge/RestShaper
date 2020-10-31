@@ -105,11 +105,11 @@ class GetRelevantSpecsTest {
                         .all { pType -> pType == expected["paramType"] }
                 })
                 Assertions.assertTrue(actualSpecs.all {
-                    it.params.values.map { p -> p.dataType }
+                    it.params.values.map { p -> p.info.dataType }
                         .all { dType -> dType == expected["dataTypes"] }
                 })
                 Assertions.assertTrue(actualSpecs.all {
-                    it.params.values.map { p -> p.isID }
+                    it.params.values.map { p -> p.info.isID(p.name) }
                         .all { isId -> isId == expected["isId"] }
                 })
 
@@ -143,7 +143,7 @@ class GetRelevantSpecsTest {
                     swaggerLocation,
                     listOf("get:/store/order/{orderId}")
                 ).getRelevantSpecs()
-                val param = actualSpecs[0].params.values.toList()[0]
+                val param = actualSpecs[0].params.values.toList()[0].info
                 when (param.dataType) {
                     Long::class -> {
                         Assertions.assertEquals(expected["max"], param.maxInt)
@@ -174,7 +174,7 @@ class GetRelevantSpecsTest {
                     rawEndpoints
                 ).getRelevantSpecs()
                 val param = actualSpecs[0].params.values.toList()[0]
-                Assertions.assertEquals(expected, param.passingValues)
+                Assertions.assertEquals(expected, param.info.passingValues)
             }
         }
 

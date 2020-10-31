@@ -57,7 +57,7 @@ class BaseTestRunnerTest {
             Assertions.assertDoesNotThrow {
                 getStatusCodesFromEndpoint(endpoints[0]).forEach { it < 1000 }
             }
-            Assertions.assertTrue(endpoints[0].params.values.flatMap { it.passingValues }.size > 3)
+            Assertions.assertTrue(endpoints[0].params.values.flatMap { it.info.passingValues }.size > 3)
         }
     }
 }

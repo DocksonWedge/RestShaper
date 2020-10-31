@@ -48,6 +48,7 @@ class EndpointSpecTest {
                 every { swaggerSpec.servers[0].url } returns "https://myUrl"
                 every { swaggerSpec.paths[path]?.readOperationsMap()?.get(HttpMethod.POST) } returns swaggerOperation
                 every { swaggerOperation.parameters } returns listOf()
+                every { swaggerOperation.requestBody } returns null
 
                 val endpoint = EndpointSpec(swaggerSpec, HttpMethod.POST, path)
                 Assertions.assertEquals(

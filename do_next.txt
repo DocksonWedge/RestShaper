@@ -1,7 +1,7 @@
 pick out apis to test with
 -- headers
 -- cookies - need to find test
--- bodies***
+-- bodies ***
 -- path param
 -- query param
 
@@ -10,6 +10,8 @@ generate random list input - how to store sub-types?
 allow "no endpoints" to mean test all endpoints.
 E2E tests from simpleRunner
 implement request body stuff
+
+less copy and past for config
 
 can min/max be exclusive?
 don't pass results to a global?

@@ -47,10 +47,10 @@ object Results {
     }
 
     private val addPassing = { param: ParameterSpec, value: Any ->
-        param.addPassingValue(value)
+        param.info.addPassingValue(value)
     }
     private val addFailing = { param: ParameterSpec, value: Any ->
-        param.addFailingValue(value)
+        param.info.addFailingValue(value)
     }
 
     private fun isFailing(

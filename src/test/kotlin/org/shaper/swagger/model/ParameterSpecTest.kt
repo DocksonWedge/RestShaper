@@ -36,15 +36,15 @@ class ParameterSpecTest {
 
             DynamicTest.dynamicTest("when I check '$name' with class $type then I find isID == $expected") {
                 val spec = ParameterSpec(param)
-                Assertions.assertEquals(expected, spec.isID)
-                Assertions.assertEquals(-1L, spec.minInt)
-                Assertions.assertEquals(-1.0, spec.minDecimal)
-                Assertions.assertEquals(10000000000, spec.maxInt)
-                Assertions.assertEquals(10000000000.0, spec.maxDecimal)
+                Assertions.assertEquals(expected, spec.info.isID(name))
+                Assertions.assertEquals(-1L, spec.info.minInt)
+                Assertions.assertEquals(-1.0, spec.info.minDecimal)
+                Assertions.assertEquals(10000000000, spec.info.maxInt)
+                Assertions.assertEquals(10000000000.0, spec.info.maxDecimal)
                 when (type) {
-                    "integer" -> Assertions.assertEquals(Long::class, spec.dataType)
-                    "uuid" -> Assertions.assertEquals(UUID::class, spec.dataType)
-                    "string" -> Assertions.assertEquals(String::class, spec.dataType)
+                    "integer" -> Assertions.assertEquals(Long::class, spec.info.dataType)
+                    "uuid" -> Assertions.assertEquals(UUID::class, spec.info.dataType)
+                    "string" -> Assertions.assertEquals(String::class, spec.info.dataType)
                 }
             }
         }

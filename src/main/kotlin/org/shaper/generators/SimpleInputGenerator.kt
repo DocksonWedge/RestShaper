@@ -3,9 +3,9 @@ package org.shaper.generators
 import com.github.javafaker.Faker
 import kotlinx.serialization.json.JsonObject
 import org.shaper.swagger.model.EndpointSpec
-import org.shaper.swagger.model.ParameterSpec
 import org.shaper.generators.model.SimpleTestInput
 import org.shaper.global.results.ResultsStateGlobal
+import org.shaper.swagger.model.ParamInfo
 import java.util.concurrent.ThreadLocalRandom
 
 //simple doesn't read past results?
@@ -24,10 +24,10 @@ class SimpleInputGenerator(
     fun getInput(endpoint: EndpointSpec): SimpleTestInput {
         return SimpleTestInput(
             //TODO  - divide numCases across  param vals evenly. Somehow.
-            endpoint.queryParams.mapValues { getParamVals(it.value) },
-            endpoint.pathParams.mapValues { getParamVals(it.value) },
-            endpoint.headerParams.mapValues { getParamVals(it.value) },
-            endpoint.cookieParams.mapValues { getParamVals(it.value) },
+            endpoint.queryParams.mapValues { getParamVals(it.value.info) },
+            endpoint.pathParams.mapValues { getParamVals(it.value.info) },
+            endpoint.headerParams.mapValues { getParamVals(it.value.info) },
+            endpoint.cookieParams.mapValues { getParamVals(it.value.info) },
             sequenceOf<JsonObject>(), //TODO - implement body gen
             numCases
         )
@@ -35,7 +35,7 @@ class SimpleInputGenerator(
 
     // TODO calculate function based on requirements, then pass it in
     // TODO can we have a way here to know when we have done something invalid and push that to the expected results
-    private fun getParamVals(param: ParameterSpec): Sequence<*> {
+    private fun getParamVals(param: ParamInfo<Any>): Sequence<*> {
         return when (param.dataType) {
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
             Long::class -> RandomLongGenerator(param)
@@ -48,7 +48,7 @@ class SimpleInputGenerator(
         }
     }
 
-    class RandomLongGenerator(param: ParameterSpec) :
+    class RandomLongGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Long>(
             param,
             { 0L },
@@ -56,7 +56,7 @@ class SimpleInputGenerator(
             { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
     )
 
-    class RandomDoubleGenerator(param: ParameterSpec) :
+    class RandomDoubleGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Double>(
             param,
             { 0.0 },
@@ -64,7 +64,7 @@ class SimpleInputGenerator(
             { p -> threadLocalRandom.nextDouble(p.minDecimal, p.maxDecimal) }
         )
 
-    class RandomStringGenerator(param: ParameterSpec) :
+    class RandomStringGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<String>(
             param,
             { "" },
@@ -73,10 +73,10 @@ class SimpleInputGenerator(
         )
 
     abstract class RandomBaseGenerator<T>(
-        val param: ParameterSpec,
-        val nullFun: (ParameterSpec) -> T,
-        val invalidFun: (ParameterSpec) -> T,
-        val validFun: (ParameterSpec) -> T,
+        val param: ParamInfo<Any>,
+        val nullFun: (ParamInfo<Any>) -> T,
+        val invalidFun: (ParamInfo<Any>) -> T,
+        val validFun: (ParamInfo<Any>) -> T,
     ) : Sequence<T> {
         override fun iterator(): Iterator<T> = object : Iterator<T> {
 

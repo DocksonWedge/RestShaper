@@ -127,6 +127,7 @@
                     <compilerPlugins>
                         <plugin>kotlinx-serialization</plugin>
                     </compilerPlugins>
+                    <languageVersion>1.4</languageVersion>
                 </configuration>
                 <executions>
                     <execution>
