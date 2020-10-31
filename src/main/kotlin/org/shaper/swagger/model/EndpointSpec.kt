@@ -28,7 +28,7 @@ class EndpointSpec(
     // could be a parameter spec if terminal
     // could be a nested list or map
     // TODO - for any requests that are just lists, wrap in a "data {[]}" map first
-    var body = BodySpec(swaggerOperation.requestBody ?: RequestBody())
+    var body = BodySpec(swaggerOperation.requestBody ?: RequestBody(), swaggerSpec)
 
     val queryParams = params.filter { it.value.paramType == "query" }
     val pathParams = params.filter { it.value.paramType == "path" }

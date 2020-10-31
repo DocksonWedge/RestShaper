@@ -5,49 +5,40 @@ pick out apis to test with
 -- path param
 -- query param
 
+Generate list and map for params
+
 generate random list input - how to store sub-types?
 -- nested parameter spec?
-allow "no endpoints" to mean test all endpoints.
+
 E2E tests from simpleRunner
-implement request body stuff
 
 less copy and past for config
 
-can min/max be exclusive?
+can min/max be exclusive? -yes
 don't pass results to a global?
 
 allow passing in static value for parameter
 -- should be able to be always or % of the time used
 
-findByStatus - read enum from swagger doc for valid values
+read from result global in input gen
+give TestResults awareness of ids
 passing Ids forward to next "chain" of api
 
 should endpointSpec have a generator function for each parameter?
-
-create a way to tell what results were actually generated/run
 output to file
 
-figure out what to do with num cases
-
-make all test input concretion values strings!
-
-read from result global in input gen
-
-make ParameterSpec more strongly typed
-
-give TestResults awareness of ids
-passing Ids forward to next "chain" of api
+make ParameterSpec/paramInfo more strongly typed
 
 play with inlines in shapeEndpoint
 break up ResultsStateGlobalTest function
 consolidate results saveToGlobal and results GlobalState saveToGlobal
 
-
 test other parameter types- need to find endpoints
 other parameter type generation
 set up a db
 
-mock `Test callWithConcretion successfully calls an endpoint`
+make all test input concretion values strings!
+
 
 ------next big picture------
 include reading test result for input - while input is generated

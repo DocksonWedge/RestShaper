@@ -9,7 +9,7 @@ object BaseTestRunner {
     //TODO shrink Any return type of output once we have a better idea what it looks like
     // TODO should list allow for a map or anything? - list should have it's own test-input object
     //TODO "Any output should be a results object we don't have yet
-    fun <T> shapeEndpoint(
+    inline fun <T> shapeEndpoint(
         endpoint: EndpointSpec,
         inputGenerator: (EndpointSpec) -> BaseTestInput,
         outputGenerator: (EndpointSpec, Sequence<TestResult>) -> T
@@ -20,8 +20,10 @@ object BaseTestRunner {
         val results = paramValues.map { runTest(it, endpoint ) }
         return outputGenerator(endpoint, results)
     }
-
-    private fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec): TestResult {
+    /**
+        Use shapeEndpoint instead unless you really know what you are doing!
+    */
+    fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec): TestResult {
         return endpoint.callWithConcretion(testInput)
     }
 

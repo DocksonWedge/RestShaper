@@ -21,14 +21,27 @@ class SpecFinder(
         }
     )
 
-
-    //TODO make work with multiple specs
     fun getRelevantSpecs(): List<EndpointSpec> {
-        return endpoints.mapNotNull { methodPathPair ->
-            EndpointSpec(
-                fullSpec, methodPathPair.first, methodPathPair.second,
-                swaggerUrlOrFile = urlOrFilePath
-            )
+        return if (endpoints.isEmpty()) {
+            // if no endpoints loop through all of them!
+            fullSpec.paths.flatMap { path
+                ->
+                path.value.readOperationsMap()
+                    .mapNotNull { operation ->
+                        EndpointSpec(
+                            fullSpec, operation.key, path.key,
+                            swaggerUrlOrFile = urlOrFilePath
+                        )
+                    }
+            }
+        } else {
+            //otherwise, get endpoints only for those provided.
+            endpoints.mapNotNull { methodPathPair ->
+                EndpointSpec(
+                    fullSpec, methodPathPair.first, methodPathPair.second,
+                    swaggerUrlOrFile = urlOrFilePath
+                )
+            }
         }
     }
 }

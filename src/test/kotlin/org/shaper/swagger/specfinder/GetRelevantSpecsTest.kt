@@ -13,11 +13,12 @@ class GetRelevantSpecsTest {
     private val petStoreSwaggerLocationEdited = "${exampleFolder}\\PetStoreSwaggerEdited.yaml"
 
     @TestFactory
-    fun `Test getRelevantSpecs returns correct total number of params`() = listOf(
+    fun `Test getRelevantSpecs returns correct total number of endpoints`() = listOf(
         //Triple(petStoreSwaggerLocation, listOf(""), 0),  TODO lvl 1 - handle no endpoints as check all
         listOf("delete:/store/order/{orderId}") to 1,
         listOf("post:/pet/{petId}", "GET:/pet/{petId}", "delETE:/pet/{petId}") to 3,
-        listOf("post:/pet", "post:/pet/{petId}") to 2
+        listOf("post:/pet", "post:/pet/{petId}") to 2,
+        listOf<String>() to 20
     )
         .map { (rawEndpoints, expected) ->
             DynamicTest.dynamicTest("when I retrieve '${rawEndpoints}' then I find ${expected} endpoints") {
