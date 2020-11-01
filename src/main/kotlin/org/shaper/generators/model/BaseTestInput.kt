@@ -1,6 +1,9 @@
 package org.shaper.generators.model
 
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import org.shaper.generators.shared.IterPosition
 import org.shaper.generators.shared.ParamPosition
 
@@ -12,7 +15,7 @@ abstract class BaseTestInput(
     var pathParams: Map<String, Sequence<*>>,
     var headers: Map<String, Sequence<*>>,
     var cookies: Map<String, Sequence<*>>,
-    var bodies: Sequence<JsonObject>
+    var bodies: Sequence<*>
     // val additionalConfig: () -> Unit TODO - move this a level higher
 ) : Sequence<TestInputConcretion> {
 
@@ -26,7 +29,7 @@ abstract class BaseTestInput(
         var pathParams: Map<String, Sequence<*>>,
         var headers: Map<String, Sequence<*>>,
         var cookies: Map<String, Sequence<*>>,
-        var bodies: Sequence<JsonObject> // TODO - should probably be map of maps
+        var bodies: Sequence<*> // TODO - should probably be map of maps
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
 
@@ -39,7 +42,7 @@ abstract class BaseTestInput(
             pathParams.mapValues { getInitPosition(it) }.toMutableMap(),
             headers.mapValues { getInitPosition(it) }.toMutableMap(),
             cookies.mapValues { getInitPosition(it) }.toMutableMap(),
-            sequenceOf<Any>().iterator()
+            bodies.iterator()
         )
 
         protected fun inputFromPosition(position: IterPosition): TestInputConcretion {
@@ -48,7 +51,7 @@ abstract class BaseTestInput(
                 getParamValuesAtPosition(pathParams, position.pathParams),
                 getParamValuesAtPosition(headers, position.headers),
                 getParamValuesAtPosition(cookies, position.cookies),
-                JsonObject(mapOf()) //TODO
+                getBodyValuesAtPosition(position.bodiesIter)//TODO
             )
         }
 
@@ -61,6 +64,20 @@ abstract class BaseTestInput(
                 inputPosition.currentVal
             }
         }
+
+        private fun getBodyValuesAtPosition(position: Iterator<*>): JsonElement {
+            val nextVal = position.next() ?: ""
+            return if (nextVal is Map<*,*>) {
+                JsonObject(nextVal as Map<String, JsonElement>)
+            } else if (nextVal is List<*>) {
+                JsonArray (nextVal as List<JsonElement>)
+            } else if(nextVal is String) {
+                JsonPrimitive(nextVal as String)
+            } else {
+                JsonPrimitive("")
+            }
+        }
+
 
     }
 }

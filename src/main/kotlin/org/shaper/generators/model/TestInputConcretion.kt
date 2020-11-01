@@ -1,8 +1,7 @@
 package org.shaper.generators.model
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonElement
 import org.shaper.serialization.AnySerializer
 
 @Serializable
@@ -12,7 +11,7 @@ data class TestInputConcretion(
     val pathParams: Map<String, @Serializable(with = AnySerializer::class) Any?>,
     val headers: Map<String, @Serializable(with = AnySerializer::class) Any?>,
     val cookies: Map<String, @Serializable(with = AnySerializer::class) Any?>,
-    val body: JsonObject
+    val body: JsonElement
     ){
     fun requestBody(): String {
         return body.toString()

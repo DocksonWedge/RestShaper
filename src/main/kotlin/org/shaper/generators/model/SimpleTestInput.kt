@@ -7,7 +7,7 @@ class SimpleTestInput(
     pathParams: Map<String, Sequence<*>>,
     headers: Map<String, Sequence<*>>,
     cookies: Map<String, Sequence<*>>,
-    bodies: Sequence<JsonObject>,
+    bodies: Sequence<*>,
     private val numCases: Int = 25
 ) : BaseTestInput(queryParams, pathParams, headers, cookies, bodies) {
 
@@ -27,7 +27,7 @@ class SimpleTestInput(
         pathParams: Map<String, Sequence<*>>,
         headers: Map<String, Sequence<*>>,
         cookies: Map<String, Sequence<*>>,
-        bodies: Sequence<JsonObject>,
+        bodies: Sequence<*>,
         private val numCases: Int
     ) : BaseTestInputIterator(queryParams, pathParams, headers, cookies, bodies) {
         private var i = 0

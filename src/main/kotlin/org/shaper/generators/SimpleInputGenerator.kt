@@ -1,7 +1,7 @@
 package org.shaper.generators
 
 import com.github.javafaker.Faker
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.generators.model.SimpleTestInput
 import org.shaper.global.results.ResultsStateGlobal
@@ -20,27 +20,30 @@ class SimpleInputGenerator(
         val threadLocalRandom = ThreadLocalRandom.current()
     }
 
-    //TODO this is the functional test starting point
     fun getInput(endpoint: EndpointSpec): SimpleTestInput {
         return SimpleTestInput(
-            //TODO  - divide numCases across  param vals evenly. Somehow.
             endpoint.queryParams.mapValues { getParamVals(it.value.info) },
             endpoint.pathParams.mapValues { getParamVals(it.value.info) },
             endpoint.headerParams.mapValues { getParamVals(it.value.info) },
             endpoint.cookieParams.mapValues { getParamVals(it.value.info) },
-            sequenceOf<JsonObject>(), //TODO - implement body gen
+            getParamVals(endpoint.body.bodyInfo), //TODO - implement body gen
             numCases
         )
     }
 
     // TODO calculate function based on requirements, then pass it in
     // TODO can we have a way here to know when we have done something invalid and push that to the expected results
-    private fun getParamVals(param: ParamInfo<Any>): Sequence<*> {
+    private fun getParamVals(param: ParamInfo<Any>?): Sequence<*> {
+        if (param == null) {
+            return emptyGenerator()
+        }
         return when (param.dataType) {
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
             Long::class -> RandomLongGenerator(param)
             String::class -> RandomStringGenerator(param)
             Double::class -> RandomDoubleGenerator(param)
+            List::class -> RandomListGenerator(param)
+            Map::class -> RandomMapGenerator(param)
             else -> throw NotImplementedError(
                 "Parameters with specs other than " +
                         "integer, number, or string are not yet implemented."
@@ -48,7 +51,13 @@ class SimpleInputGenerator(
         }
     }
 
-    class RandomLongGenerator(param: ParamInfo<Any>) :
+    private class emptyGenerator() : Sequence<String> {
+        override fun iterator(): Iterator<String> = object : Iterator<String> {
+            override fun hasNext(): Boolean { return true }
+            override fun next(): String { return "" }
+        }
+    }
+    private class RandomLongGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Long>(
             param,
             { 0L },
@@ -56,7 +65,7 @@ class SimpleInputGenerator(
             { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
     )
 
-    class RandomDoubleGenerator(param: ParamInfo<Any>) :
+    private class RandomDoubleGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Double>(
             param,
             { 0.0 },
@@ -64,12 +73,28 @@ class SimpleInputGenerator(
             { p -> threadLocalRandom.nextDouble(p.minDecimal, p.maxDecimal) }
         )
 
-    class RandomStringGenerator(param: ParamInfo<Any>) :
+    private class RandomStringGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<String>(
             param,
             { "" },
             { faker.regexify("[A-z1-9]{0,10}") },
             { p -> p.passingValues.random().toString() }
+        )
+
+    private class RandomMapGenerator(param: ParamInfo<Any>) :
+        RandomBaseGenerator<Map<String, Any>>(
+            param,
+            { mapOf() },
+            { mapOf("invalid" to JsonPrimitive("AAFHSHBKAS")) },
+            { p -> mapOf("valid" to JsonPrimitive(true)) } //TODO finish algorithm
+        )
+
+    private class RandomListGenerator(param: ParamInfo<Any>) :
+        RandomBaseGenerator<List<Any>>(
+            param,
+            { listOf() },
+            { listOf() },
+            { p -> listOf() } //TODO finish algorithm
         )
 
     abstract class RandomBaseGenerator<T>(
