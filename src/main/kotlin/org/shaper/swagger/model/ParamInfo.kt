@@ -8,21 +8,10 @@ import kotlin.reflect.KClass
 
 class ParamInfo<T>(schema: Schema<T>) {
 
-    val dataType: KClass<*> = when (schema.type?.toLowerCase() ?: "") {
-        "string" -> String::class //TODO - handle format param
-        "number" -> Double::class
-        "integer" -> Long::class
-        "boolean" -> Boolean::class
-        "array" -> String::class //List::class TODO- fix badness used for testing
-        "object" -> Map::class
-        "uuid" -> UUID::class
-        else -> {
-            String::class //TODO - reference schemas
-        }
-    }
+    val dataType: KClass<*> = swaggerTypeToKClass(schema.type?.toLowerCase() ?: "")
 
-    var maxInt = schema?.maximum?.toLong() ?: 10000000000L
-    var minInt = schema?.minimum?.toLong() ?: -10000000000L
+    val maxInt = schema?.maximum?.toLong() ?: 10000000000L
+    val minInt = schema?.minimum?.toLong() ?: -10000000000L
     val maxDecimal = schema?.maximum?.toDouble() ?: 10000000000.0
     val minDecimal = schema?.minimum?.toDouble() ?: -10000000000.0
 
@@ -31,10 +20,30 @@ class ParamInfo<T>(schema: Schema<T>) {
 
     val nestedParams = mutableMapOf<String, ParamInfo<*>>()
 
+    var listParam: ParamInfo<Any>? = null
+
     init {
         passingValues.addAll(getAllEnumValues(schema))
-        if (dataType == Map::class) {
-            nestedParams.putAll(getNestedParms(schema))
+        when (dataType) {
+            Map::class ->
+                nestedParams.putAll(getNestedParms(schema))
+            List::class ->
+                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>)
+        }
+    }
+
+    private fun swaggerTypeToKClass(type: String): KClass<*> {
+        return when (type) {
+            "string" -> String::class //TODO - handle format param
+            "number" -> Double::class
+            "integer" -> Long::class
+            "boolean" -> Boolean::class
+            "array" -> List::class //TODO- fix badness used for testing
+            "object" -> Map::class
+            "uuid" -> UUID::class
+            else -> {
+                String::class //TODO - reference schemas
+            }
         }
     }
 

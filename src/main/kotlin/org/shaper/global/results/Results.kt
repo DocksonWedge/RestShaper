@@ -57,7 +57,7 @@ object Results {
         endpoint: EndpointSpec,
         result: TestResult
     ): Boolean {
-        return result.response.statusCode >= 500
+        return result.response.statusCode >= 400
     }
 
 }

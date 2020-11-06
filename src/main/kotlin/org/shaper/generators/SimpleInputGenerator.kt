@@ -1,12 +1,16 @@
 package org.shaper.generators
 
 import com.github.javafaker.Faker
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.generators.model.SimpleTestInput
 import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.swagger.model.ParamInfo
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.reflect.KClass
 
 //simple doesn't read past results?
 class SimpleInputGenerator(
@@ -18,6 +22,55 @@ class SimpleInputGenerator(
         //instantiate this as little as possible using a static companion - it is apparently very slow
         val faker = Faker()
         val threadLocalRandom = ThreadLocalRandom.current()
+
+        //TODO map any could be json elements
+        fun streamMapParamSequence(param: ParamInfo<Any>): Map<String, Any> {
+            //TODO add required fields handling
+            return param
+                .nestedParams
+                .mapValues {
+                    pokoToJsonElement(
+                        SimpleInputGenerator()
+                            .getParamVals(it.value as ParamInfo<Any>)
+                            .iterator()
+                            .next() ?: ""
+                    )
+                }
+        }
+
+        fun streamListParamSequence(param: ParamInfo<Any>): List<Any> {
+            //TODO add max length handling
+            return (1..faker.number().numberBetween(1, 5)).map { _ ->
+                SimpleInputGenerator()
+                    .getParamVals(param.listParam)
+                    .iterator()
+                    .next() ?: ""
+            }
+        }
+
+        // TODO move converison to request body part
+        private fun pokoToJsonElement(poko: Any): JsonElement {
+            return if (poko is Map<*, *>) {
+                JsonObject(
+                    poko.mapValues { pokoToJsonElement(it.value ?: "") }
+                        .mapKeys { it.key as String }
+                )
+            } else if (poko is List<*>) {
+                // !! because w/ mapNotNull list entry should never be null
+                JsonArray(poko.mapNotNull { pokoToJsonElement(it!!) })
+            } else if (poko is Boolean) {
+                JsonPrimitive(poko)
+            } else if (poko is Number) {
+                JsonPrimitive(poko)
+            } else if (poko is String) {
+                JsonPrimitive(poko)
+            } else {
+                throw NotImplementedError(
+                    "When converting to JSON, " +
+                            "found a data type that we could not parse: $poko of type ${poko::class}"
+                )
+            }
+        }
     }
 
     fun getInput(endpoint: EndpointSpec): SimpleTestInput {
@@ -33,7 +86,7 @@ class SimpleInputGenerator(
 
     // TODO calculate function based on requirements, then pass it in
     // TODO can we have a way here to know when we have done something invalid and push that to the expected results
-    private fun getParamVals(param: ParamInfo<Any>?): Sequence<*> {
+    fun getParamVals(param: ParamInfo<Any>?): Sequence<*> {
         if (param == null) {
             return emptyGenerator()
         }
@@ -53,23 +106,29 @@ class SimpleInputGenerator(
 
     private class emptyGenerator() : Sequence<String> {
         override fun iterator(): Iterator<String> = object : Iterator<String> {
-            override fun hasNext(): Boolean { return true }
-            override fun next(): String { return "" }
+            override fun hasNext(): Boolean {
+                return true
+            }
+
+            override fun next(): String {
+                return ""
+            }
         }
     }
+
     private class RandomLongGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Long>(
             param,
             { 0L },
             { faker.number().randomNumber() },
             { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
-    )
+        )
 
     private class RandomDoubleGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Double>(
             param,
             { 0.0 },
-            { faker.number().randomDouble(5, -10000000,10000000) },
+            { faker.number().randomDouble(5, -10000000, 10000000) },
             { p -> threadLocalRandom.nextDouble(p.minDecimal, p.maxDecimal) }
         )
 
@@ -77,24 +136,30 @@ class SimpleInputGenerator(
         RandomBaseGenerator<String>(
             param,
             { "" },
-            { faker.regexify("[A-z1-9]{0,10}") },
-            { p -> p.passingValues.random().toString() }
+            { faker.regexify("[A-z1-9]{0,25}") },
+            { p ->
+                if (p.passingValues.isEmpty()) {
+                    faker.regexify("[A-z1-9]{0,25}")
+                } else {
+                    p.passingValues.random().toString()
+                }
+            }
         )
 
     private class RandomMapGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Map<String, Any>>(
             param,
             { mapOf() },
-            { mapOf("invalid" to JsonPrimitive("AAFHSHBKAS")) },
-            { p -> mapOf("valid" to JsonPrimitive(true)) } //TODO finish algorithm
+            SimpleInputGenerator::streamMapParamSequence,
+            SimpleInputGenerator::streamMapParamSequence //TODO finish algorithm
         )
 
     private class RandomListGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<List<Any>>(
             param,
             { listOf() },
-            { listOf() },
-            { p -> listOf() } //TODO finish algorithm
+            SimpleInputGenerator::streamListParamSequence,
+            SimpleInputGenerator::streamListParamSequence //TODO finish algorithm
         )
 
     abstract class RandomBaseGenerator<T>(
@@ -106,8 +171,8 @@ class SimpleInputGenerator(
         override fun iterator(): Iterator<T> = object : Iterator<T> {
 
             override fun next(): T {
-                val percentNull = .25
-                val percentInvalid = .15
+                val percentNull = .15
+                val percentInvalid = .10
                 val randomNum = faker.number().randomDouble(3, 0, 1)
                 return if (randomNum < percentNull) {
                     nullFun(param)
