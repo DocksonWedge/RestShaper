@@ -1,0 +1,14 @@
+{
+  "numCases": 5,
+  "swaggerLocation": "https://petstore.swagger.io/v2/swagger.json",
+  "endpoints": [
+    {
+      "method":  "POST",
+      "path": "/pet"
+    },
+    {
+      "method":  "GET",
+      "path": "/pet/{petId}"
+    }
+  ]
+}

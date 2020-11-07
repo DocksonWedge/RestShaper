@@ -18,6 +18,7 @@ object EndpointSpecMock {
         every { swaggerSpec.servers[0].url } returns url
         every { swaggerSpec.paths[path]?.readOperationsMap()?.get(method) } returns swaggerOperation
         every { swaggerParameter.schema.type } returns "integer"
+        every { swaggerParameter.schema.`$ref` } returns ""
         every { swaggerParameter.schema.maximum } returns BigDecimal(-1.2351)
         every { swaggerParameter.schema.minimum } returns null
         every { swaggerParameter.schema.enum } returns null

@@ -64,6 +64,8 @@ class SimpleInputGenerator(
                 JsonPrimitive(poko)
             } else if (poko is String) {
                 JsonPrimitive(poko)
+            } else if (poko is JsonElement){
+                poko
             } else {
                 throw NotImplementedError(
                     "When converting to JSON, " +

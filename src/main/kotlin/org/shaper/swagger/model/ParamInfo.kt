@@ -1,13 +1,16 @@
 package org.shaper.swagger.model
 
+import io.swagger.v3.core.util.RefUtils
+import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.ObjectSchema
 import io.swagger.v3.oas.models.media.Schema
 import java.util.*
 import kotlin.reflect.KClass
 
-class ParamInfo<T>(schema: Schema<T>) {
+class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI) {
 
+    val schema = deriveSchema(_schema)
     val dataType: KClass<*> = swaggerTypeToKClass(schema.type?.toLowerCase() ?: "")
 
     val maxInt = schema?.maximum?.toLong() ?: 10000000000L
@@ -28,7 +31,7 @@ class ParamInfo<T>(schema: Schema<T>) {
             Map::class ->
                 nestedParams.putAll(getNestedParms(schema))
             List::class ->
-                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>)
+                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>, fullSpec)
         }
     }
 
@@ -38,7 +41,7 @@ class ParamInfo<T>(schema: Schema<T>) {
             "number" -> Double::class
             "integer" -> Long::class
             "boolean" -> Boolean::class
-            "array" -> List::class //TODO- fix badness used for testing
+            "array" -> List::class
             "object" -> Map::class
             "uuid" -> UUID::class
             else -> {
@@ -65,10 +68,20 @@ class ParamInfo<T>(schema: Schema<T>) {
         return schema
             .properties //todo add additional properties as well
             .filter { it.value != null }
-            .mapValues { ParamInfo(it.value) }
+            .mapValues { ParamInfo(it.value, fullSpec) }
             .toMutableMap()
 
     }
+
+    private fun deriveSchema(_schema: Schema<T>): Schema<Any> {
+        return if (_schema.`$ref` == null || !_schema.`$ref`.contains("/")) {
+            _schema as Schema<Any>
+        } else {
+            val schemaName = RefUtils.extractSimpleName(_schema.`$ref`).left as String
+            fullSpec.components.schemas[schemaName] as Schema<Any>
+        }
+    }
+
 
     val isID = { name: String ->
         dataType == UUID::class
@@ -76,17 +89,6 @@ class ParamInfo<T>(schema: Schema<T>) {
                 || name.matches(Regex("^.*[-_](id)[-_].*$"))
                 || name.matches(Regex("^(id)*[-_].*|.*[-_](id)*\$"))
     }
-
-//    // TODO tighten up return type
-//    fun <Y> getAvailableValues(
-//        iterations: Int,
-//        endpoint: EndpointSpec,
-//        getSelectedOrPreviousData: (EndpointSpec, ParamInfo<T>) -> List<Y>
-//    ): List<Y> {
-//        //TODO get values based on type
-//        val values = listOf<Y>()
-//        return values + getSelectedOrPreviousData(endpoint, this)
-//    }
 
     fun addFailingValue(value: Any) {
         if (passingValues.contains(value)) return

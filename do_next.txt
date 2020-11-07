@@ -7,14 +7,11 @@ pick out apis to test with
 
 difference * and Any
 Needed for mvp release:
-- referenced schemas!
--- https://github.com/swagger-api/swagger-core/blob/e260f6c3b811a920870aab3d11d59b3df1bee6f4/modules/swagger-core/src/main/java/io/swagger/v3/core/filter/SpecFilter.java#L436
--- ? - generating swagger object - "category": "2W", does not generate the right object
-- readable output flagging 500s
 - dockerized
 -- running simple runner with just a json file + command line command
-- output to file
-- automate E2E config tests
+- readable output flagging 500s
+-- output to file
+- testing/experimenting
 
 
 pokoToJsonElement move to higher level, not in param sequence - test with object param
@@ -25,6 +22,10 @@ difference between query param = null and not including param
 POST /pet photoUrls in body - how to handle Valid urls?
 - allowed through config file
 
+share test parameter mock code
+
+support cookies
+
 referenced schemas!
 -- https://github.com/swagger-api/swagger-core/blob/e260f6c3b811a920870aab3d11d59b3df1bee6f4/modules/swagger-core/src/main/java/io/swagger/v3/core/filter/SpecFilter.java#L436
 
@@ -33,7 +34,7 @@ generate random list input - how to store sub-types?
 
 required parameters
 
-E2E tests from simpleRunner
+figure out content-type header
 
 less copy and past for config
 

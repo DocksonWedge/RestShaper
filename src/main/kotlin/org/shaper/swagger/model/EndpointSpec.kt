@@ -22,7 +22,7 @@ class EndpointSpec(
         ?: throw SwaggerOperationNotFound("Could not find ${method} ${path} in swagger spec.")
 
     val params = swaggerOperation.parameters?.map {
-        it.name to ParameterSpec(it)
+        it.name to ParameterSpec(it, swaggerSpec)
     }?.toMap() ?: mapOf()
 
     // could be a parameter spec if terminal
@@ -32,8 +32,20 @@ class EndpointSpec(
 
     val queryParams = params.filter { it.value.paramType == "query" }
     val pathParams = params.filter { it.value.paramType == "path" }
-    val headerParams = params.filter { it.value.paramType == "header" }
+    val headerParams = deriveHeaderParams()
     val cookieParams = params.filter { it.value.paramType == "cookie" }
+
+    //TODO figure out how to handle contenttype here - being overriden in RESTAssured call
+    private fun deriveHeaderParams() : Map<String, ParameterSpec> {
+        val headers = params.filter { it.value.paramType == "header" }
+        return if (body.hasBody()) {
+            // add json application type if there is a body
+            headers.plus("Content-Type" to ParameterSpec.getContentTypeParam(swaggerSpec))
+        }else{
+            headers
+        }
+
+    }
 
     // TODO support multiple servers
     // TODO support url parameters in the server

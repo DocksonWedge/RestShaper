@@ -2,6 +2,7 @@ package org.shaper.swagger.model
 
 import io.mockk.every
 import io.mockk.mockk
+import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
 import org.junit.jupiter.api.*
@@ -28,14 +29,17 @@ class ParameterSpecTest {
         .map { (name, type, expected) ->
             val param = mockk<Parameter>()
             every { param.schema.type } returns type
+            every { param.schema.`$ref` } returns null
             every { param.schema.maximum } returns null
             every { param.schema.minimum } returns BigDecimal(-1)
             every { param.schema.enum } returns null
             every { param.name } returns name
             every { param.`in` } returns "query"
+            val fullSwagger = mockk<OpenAPI>()
+
 
             DynamicTest.dynamicTest("when I check '$name' with class $type then I find isID == $expected") {
-                val spec = ParameterSpec(param)
+                val spec = ParameterSpec(param, fullSwagger)
                 Assertions.assertEquals(expected, spec.info.isID(name))
                 Assertions.assertEquals(-1L, spec.info.minInt)
                 Assertions.assertEquals(-1.0, spec.info.minDecimal)

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.PathItem.HttpMethod.GET
 import io.swagger.v3.oas.models.PathItem.HttpMethod.POST
 import io.swagger.v3.oas.models.PathItem.HttpMethod.DELETE
 import org.shaper.config.runnerConfig
+import org.shaper.entry.model.SimpleEndpoint
 import org.shaper.generators.SimpleInputGenerator
 
 fun dataAtWorkRun(numCases: Int = 5): Boolean {
@@ -45,6 +46,7 @@ fun petStoreGetOrderFromFile(numCases: Int = 5): Boolean {
         }
     }.run()
 }
+
 fun petStoreGetOrder(numCases: Int = 5): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
@@ -70,6 +72,7 @@ fun petStoreFindByStatus(numCases: Int = 5): Boolean {
         }
     }.run()
 }
+
 fun petStoreDeletePet(numCases: Int = 5): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
@@ -92,6 +95,21 @@ fun petStorePostPet(numCases: Int = 5): Boolean {
             endpoints = listOf(
                 POST to "/pet"
             )
+        }
+    }.run()
+}
+
+fun GeneralRun(
+    numCases: Int = 5,
+    swaggerLocation: String,
+    _endpoints: List<SimpleEndpoint>
+): Boolean {
+    return runnerConfig {
+        inputFunction = SimpleInputGenerator(numCases)::getInput
+
+        endpointConfig = {
+            swaggerUrl = swaggerLocation
+            endpoints = _endpoints.map { it.method to it.path }
         }
     }.run()
 }

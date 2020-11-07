@@ -9,9 +9,13 @@ object RestAssuredClient {
     val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion ->
         val result = RestAssured.given()
             .queryParams(input.queryParams)
+            .headers(input.headers)
+            .header("Content-Type", "application/json")
             .body(input.requestBody())
             .request(endpointSpec.method.toString(), endpointSpec.fullUrl(input.pathParams))
             ?: throw error("Calling ${endpointSpec.method} ${endpointSpec.url} with input $input failed to return a request!")
+        println("Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}")
+        result.prettyPeek()
         TestResult(result, input, endpointSpec.endpoint)
     }
 }
