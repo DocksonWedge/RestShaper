@@ -99,6 +99,19 @@ fun petStorePostPet(numCases: Int = 5): Boolean {
     }.run()
 }
 
+fun petStorePostOrder(numCases: Int = 5): Boolean {
+    return runnerConfig {
+        inputFunction = SimpleInputGenerator(numCases)::getInput
+
+        endpointConfig = {
+            swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
+            endpoints = listOf(
+                POST to "/store/order"
+            )
+        }
+    }.run()
+}
+
 fun GeneralRun(
     numCases: Int = 5,
     swaggerLocation: String,

@@ -3,6 +3,7 @@ package org.shaper.generators
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import org.shaper.generators.model.SimpleTestInput
 import org.shaper.swagger.SpecFinder
 
 class SimpleInputGeneratorTest {
@@ -39,6 +40,27 @@ class SimpleInputGeneratorTest {
             }
             // count() uses the sequence to count the total, so it IS different than checking .size
             Assertions.assertEquals(expected, input.count())
+        }
+    }
+
+    @TestFactory
+    fun `Test getInput returns correct data type`() = listOf(
+        Triple("get:/pet/findByStatus", List::class, {input: SimpleTestInput -> input.queryParams["status"] }),
+        Triple("delete:/user/{username}", String::class, {input: SimpleTestInput -> input.pathParams["username"]}),
+    ).map { (endpoint, type, getParamValues) ->
+        DynamicTest.dynamicTest(
+            "when I retrieve '${endpoint}' values from SimpleInputGenerator.getInput " +
+                    "then I find $type inputs are generated."
+        ) {
+
+            val endpointSpec =
+                SpecFinder(petStoreSwaggerLocation, listOf(endpoint))
+                    .getRelevantSpecs()[0]
+
+            val input = SimpleInputGenerator() .getInput(endpointSpec)
+            val concreteValue = getParamValues(input)?.iterator()?.next()
+            Assertions.assertTrue(type.isInstance(concreteValue))
+
         }
     }
 

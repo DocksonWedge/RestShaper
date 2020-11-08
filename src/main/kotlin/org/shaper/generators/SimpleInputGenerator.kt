@@ -10,6 +10,7 @@ import org.shaper.generators.model.SimpleTestInput
 import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.swagger.model.ParamInfo
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.random.Random
 import kotlin.reflect.KClass
 
 //simple doesn't read past results?
@@ -64,7 +65,7 @@ class SimpleInputGenerator(
                 JsonPrimitive(poko)
             } else if (poko is String) {
                 JsonPrimitive(poko)
-            } else if (poko is JsonElement){
+            } else if (poko is JsonElement) {
                 poko
             } else {
                 throw NotImplementedError(
@@ -97,11 +98,12 @@ class SimpleInputGenerator(
             Long::class -> RandomLongGenerator(param)
             String::class -> RandomStringGenerator(param)
             Double::class -> RandomDoubleGenerator(param)
+            Boolean::class -> RandomBooleanGenerator(param)
             List::class -> RandomListGenerator(param)
             Map::class -> RandomMapGenerator(param)
             else -> throw NotImplementedError(
-                "Parameters with specs other than " +
-                        "integer, number, or string are not yet implemented."
+                "Parameters with data type other than " +
+                        "integer, number, boolean, or string are not yet implemented."
             )
         }
     }
@@ -124,6 +126,14 @@ class SimpleInputGenerator(
             { 0L },
             { faker.number().randomNumber() },
             { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
+        )
+
+    private class RandomBooleanGenerator(param: ParamInfo<Any>) :
+        RandomBaseGenerator<Boolean>(
+            param,
+            { Random.nextBoolean() },
+            { Random.nextBoolean() },
+            { Random.nextBoolean() }
         )
 
     private class RandomDoubleGenerator(param: ParamInfo<Any>) :
