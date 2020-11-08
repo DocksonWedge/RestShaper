@@ -12,7 +12,9 @@ Needed for mvp release:
 - readable output flagging 500s
 -- output to file
 - testing/experimenting
+- change swagger url to swagger loctaion
 
+multi thread runner/make async
 
 pokoToJsonElement move to higher level, not in param sequence - test with object param
 
