@@ -1,0 +1,6 @@
+version: "3.3"
+services:
+  restshaper:
+    build: .
+    volumes:
+      - ./target:/target

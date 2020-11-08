@@ -3,3 +3,4 @@ target/
 */.idea/
 .DS_store/
 RestShaper.iml
+test-config.json

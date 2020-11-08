@@ -12,6 +12,7 @@ Needed for mvp release:
 - readable output flagging 500s
 -- output to file
 - testing/experimenting
+-- leaving empty vs null 'endpoints'
 - change swagger url to swagger loctaion
 
 multi thread runner/make async
@@ -25,6 +26,8 @@ POST /pet photoUrls in body - how to handle Valid urls?
 - allowed through config file
 
 share test parameter mock code
+
+parameter to print runs
 
 support cookies
 
