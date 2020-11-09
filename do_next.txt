@@ -32,9 +32,6 @@ support cookies
 
 support date types(read "date" in name)
 
-referenced schemas!
--- https://github.com/swagger-api/swagger-core/blob/e260f6c3b811a920870aab3d11d59b3df1bee6f4/modules/swagger-core/src/main/java/io/swagger/v3/core/filter/SpecFilter.java#L436
-
 generate random list input - how to store sub-types?
 -- nested parameter spec?
 
@@ -42,7 +39,7 @@ required parameters
 
 figure out content-type header
 
-less copy and past for config
+less copy and paste for config
 
 can min/max be exclusive? -yes
 don't pass results to a global?
