@@ -10,6 +10,15 @@
     <packaging>jar</packaging>
 
     <name>org.dockson.shaper RestShaper</name>
+    <description>Utility to test REST APIs with their OpenAPI specification</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
