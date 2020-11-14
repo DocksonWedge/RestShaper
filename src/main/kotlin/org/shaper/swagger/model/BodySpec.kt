@@ -8,7 +8,12 @@ import io.swagger.v3.oas.models.parameters.RequestBody
 class BodySpec(private val requestBody: RequestBody?, private val fullSpec: OpenAPI) {
 
     //TODO support xml
-    private val jsonContentRef = requestBody?.content?.get("application/json")?.schema?.`$ref` ?: ""
+    private val contentType = listOf("application/json", "*/*")
+        .firstOrNull {
+            requestBody?.content?.get(it)?.schema != null
+        }
+    private val jsonSchema = requestBody?.content?.get(contentType)?.schema
+    private val jsonContentRef = jsonSchema?.`$ref` ?: ""
     private val schemaRef = RefUtils.extractSimpleName(jsonContentRef)
 
     val bodyInfo = getBody()
@@ -20,7 +25,9 @@ class BodySpec(private val requestBody: RequestBody?, private val fullSpec: Open
     private fun getBody(): ParamInfo<Any>? {
         return if (jsonContentRef != "") {
             ParamInfo(fullSpec.components.schemas[schemaRef.left] as Schema<Any>, fullSpec)
-        } else {
+        } else if (jsonSchema != null) {
+            ParamInfo(jsonSchema, fullSpec)
+        } else{
             null
         }
     }

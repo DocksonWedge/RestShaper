@@ -111,6 +111,18 @@ fun petStorePostOrder(numCases: Int = 5): Boolean {
         }
     }.run()
 }
+fun petStoreCreateWithArray(numCases: Int = 5): Boolean {
+    return runnerConfig {
+        inputFunction = SimpleInputGenerator(numCases)::getInput
+
+        endpointConfig = {
+            swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
+            endpoints = listOf(
+                POST to "/user/createWithArray"
+            )
+        }
+    }.run()
+}
 
 fun GeneralRun(
     numCases: Int = 5,

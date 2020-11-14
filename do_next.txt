@@ -18,8 +18,6 @@ Needed for mvp release:
 
 multi thread runner/make async
 
-pokoToJsonElement move to higher level, not in param sequence - test with object param
-
 difference between query param = null and not including param
 -- analagous problem for request body/body fields?
 

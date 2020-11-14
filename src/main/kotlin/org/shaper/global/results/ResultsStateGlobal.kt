@@ -52,12 +52,15 @@ object ResultsStateGlobal {
         }
     }
 
-    fun getStatusCodesFromEndpoint(endpoint: EndpointSpec): List<Int> {
-        return getResultsFromEndpoint(endpoint).map { it.response.statusCode }
+    fun getStatusCodesFromEndpoint(endpoint: EndpointSpec): Set<Int> {
+        return getResultsFromEndpoint(endpoint).map { it.response.statusCode }.toSet()
     }
 
     fun getIndexFromStatusCode(endpoint: EndpointSpec, statusCode: Int): Map<Int, MutableList<TestResult>> {
         return index[endpoint.paramUrl()]?.get(endpoint.method)?.get(statusCode) ?: mapOf()
+    }
+    fun getResultsFromStatusCode(endpoint: EndpointSpec, statusCode: Int): List<TestResult> {
+        return getIndexFromStatusCode(endpoint, statusCode).flatMap { it.value }
     }
 
     fun loadInitialResultsSet(loadFunction: () -> Unit) {

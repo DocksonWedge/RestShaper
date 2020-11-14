@@ -1,6 +1,8 @@
 package org.shaper.global.results
 
 import org.shaper.generators.model.TestResult
+import org.shaper.global.results.ResultsStateGlobal.getResultsFromStatusCode
+import org.shaper.global.results.ResultsStateGlobal.getStatusCodesFromEndpoint
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 
@@ -28,6 +30,14 @@ object Results {
             }
         }
         return allPassed
+    }
+
+    fun printSummary(endpoint: EndpointSpec) {
+        println("Summary for endpoint ${endpoint.method} : ${endpoint.path}")
+        getStatusCodesFromEndpoint(endpoint).forEach {
+            val numResponses = getResultsFromStatusCode(endpoint, it).size
+            println("  Status $it returned $numResponses times.")
+        }
     }
 
     @Synchronized

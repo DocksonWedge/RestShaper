@@ -15,6 +15,7 @@ class EndToEndSmoke {
         ::petStoreGetOrder,
         ::petStoreGetOrderFromFile,
         ::petStorePostOrder,
+        ::petStoreCreateWithArray
     ).map { configFun ->
         DynamicTest.dynamicTest(
             "when I run '${configFun}' I get no error "

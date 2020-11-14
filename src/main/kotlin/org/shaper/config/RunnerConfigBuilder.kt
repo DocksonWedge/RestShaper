@@ -10,6 +10,7 @@ import org.shaper.tester.BaseTestRunner
 class RunnerConfigBuilder {
     var inputFunction: (EndpointSpec) -> BaseTestInput = SimpleInputGenerator(5)::getInput
     var outputFunction: (EndpointSpec, Sequence<TestResult>) -> Boolean = Results::saveToGlobal
+    var summarizeFunction: (EndpointSpec) -> Unit = Results::printSummary
     lateinit var endpointConfig: EndpointConfigBuilder.() -> Unit
 
     fun run(): Boolean {
@@ -23,6 +24,7 @@ class RunnerConfigBuilder {
                     inputFunction,
                     outputFunction
                 ) && passing
+                summarizeFunction(endpointSpec)
             }
         return passing
     }

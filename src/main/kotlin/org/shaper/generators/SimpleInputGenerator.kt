@@ -30,12 +30,10 @@ class SimpleInputGenerator(
             return param
                 .nestedParams
                 .mapValues {
-                    pokoToJsonElement(
                         SimpleInputGenerator()
                             .getParamVals(it.value as ParamInfo<Any>)
                             .iterator()
                             .next() ?: ""
-                    )
                 }
         }
 
@@ -82,9 +80,18 @@ class SimpleInputGenerator(
             endpoint.pathParams.mapValues { getParamVals(it.value.info) },
             endpoint.headerParams.mapValues { getParamVals(it.value.info) },
             endpoint.cookieParams.mapValues { getParamVals(it.value.info) },
-            getParamVals(endpoint.body.bodyInfo), //TODO - implement body gen
+            getBodyVals(endpoint.body.bodyInfo),
             numCases
         )
+    }
+
+    fun getBodyVals(param: ParamInfo<Any>?): Sequence<*> {
+        return sequence {
+            val iter = getParamVals(param).iterator()
+            while (iter.hasNext()){
+                yield(pokoToJsonElement(iter.next() ?: ""))
+            }
+        }
     }
 
     // TODO calculate function based on requirements, then pass it in
