@@ -7,7 +7,7 @@ import org.shaper.entry.*
 
 class EndToEndSmoke {
     @TestFactory
-    fun `Test E2E stest run without error`() = listOf(
+    fun `Test E2E test run without error`() = listOf(
         ::petStorePostPet,
         ::petStoreDeletePet,
         ::petStoreGetPet,

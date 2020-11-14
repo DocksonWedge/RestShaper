@@ -9,9 +9,12 @@ difference * and Any
 Needed for mvp release:
 - readable output flagging 500s
 -- output to file
+-- summary of results
+-- reading file back in for new run
 - testing/experimenting
 -- leaving empty vs null 'endpoints'
 - change swagger url to swagger location
+- packaging jar or docker
 
 multi thread runner/make async
 
