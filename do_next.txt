@@ -11,6 +11,7 @@ Needed for mvp release:
 -- output to file
 -- summary of results
 -- reading file back in for new run
+- call chaining
 - testing/experimenting
 -- leaving empty vs null 'endpoints'
 - change swagger url to swagger location

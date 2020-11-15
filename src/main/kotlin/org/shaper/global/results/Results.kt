@@ -7,7 +7,7 @@ import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 
 object Results {
-    // TODO cap the max executions?
+    // TODO purify function so it doesn't actually touch the global?
     @Synchronized
     fun saveToGlobal(
         endpoint: EndpointSpec,
@@ -31,7 +31,7 @@ object Results {
         }
         return allPassed
     }
-
+    //TODO get linkages function - takes one result an previous links
     fun printSummary(endpoint: EndpointSpec) {
         println("Summary for endpoint ${endpoint.method} : ${endpoint.path}")
         getStatusCodesFromEndpoint(endpoint).forEach {
