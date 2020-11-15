@@ -18,7 +18,7 @@ class RunnerConfigBuilder {
         val endpointList = EndpointConfigBuilder()
             .apply(endpointConfig)
             .build()
-        (0..maxChainDepth).forEach { _ -> //todo multithread this
+        (1..maxChainDepth).forEach { _ -> //todo multithread this
             endpointList.forEach { endpointSpec -> //todo multithread this?
                 passing = BaseTestRunner.shapeEndpoint(
                     endpointSpec,
