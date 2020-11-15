@@ -12,6 +12,8 @@ Needed for mvp release:
 -- summary of results
 -- reading file back in for new run
 - call chaining
+-- endpoint spec needs out put parameters
+--- index output param values in results
 -- multi thread running or allow choice of endpoint?
 --- need runId to determine current information to use?
 --- allow shuffling run order based on numCases
