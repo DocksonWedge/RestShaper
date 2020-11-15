@@ -13,12 +13,13 @@ class RunnerConfigBuilder {
     var summarizeFunction: (EndpointSpec) -> Unit = Results::printSummary
     lateinit var endpointConfig: EndpointConfigBuilder.() -> Unit
 
-    fun run(): Boolean {
+    fun run(maxChainDepth: Int = 1): Boolean {
         var passing = true
-         EndpointConfigBuilder()
+        val endpointList = EndpointConfigBuilder()
             .apply(endpointConfig)
             .build()
-            .forEach { endpointSpec ->
+        (0..maxChainDepth).forEach { _ -> //todo multithread this
+            endpointList.forEach { endpointSpec -> //todo multithread this?
                 passing = BaseTestRunner.shapeEndpoint(
                     endpointSpec,
                     inputFunction,
@@ -26,6 +27,7 @@ class RunnerConfigBuilder {
                 ) && passing
                 summarizeFunction(endpointSpec)
             }
+        }
         return passing
     }
 }
