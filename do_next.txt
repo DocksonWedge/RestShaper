@@ -7,16 +7,20 @@ pick out apis to test with
 
 difference * and Any
 Needed for mvp release:
+- passing concrete header in - for auth
 - readable output flagging 500s
 -- output to file
 -- summary of results
 -- reading file back in for new run
+
 - call chaining
 -- endpoint spec needs out put parameters
+--- match between pascal case and snake case for response
 --- index output param values in results
 -- multi thread running or allow choice of endpoint?
 --- need runId to determine current information to use?
 --- allow shuffling run order based on numCases
+
 - testing/experimenting
 -- leaving empty vs null 'endpoints'
 - change swagger url to swagger location

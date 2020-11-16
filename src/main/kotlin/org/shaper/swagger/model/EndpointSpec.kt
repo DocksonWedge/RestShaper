@@ -35,6 +35,8 @@ class EndpointSpec(
     val headerParams = deriveHeaderParams()
     val cookieParams = params.filter { it.value.paramType == "cookie" }
 
+    //val outputBodyParams = ResponseBodySpec(swaggerOperation.responses, swaggerSpec)
+
     //TODO figure out how to handle contenttype here - being overriden in RESTAssured call
     private fun deriveHeaderParams() : Map<String, ParameterSpec> {
         val headers = params.filter { it.value.paramType == "header" }
