@@ -26,6 +26,7 @@ object EndpointSpecMock {
         every { swaggerParameter.name } returns "someId"
         every { swaggerOperation.parameters } returns listOf(swaggerParameter)
         every { swaggerOperation.requestBody } returns null
+        every { swaggerOperation.responses } returns null
 
         return EndpointSpec(swaggerSpec, PathItem.HttpMethod.GET, path)
     }

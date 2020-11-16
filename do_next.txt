@@ -26,6 +26,8 @@ Needed for mvp release:
 - change swagger url to swagger location
 - packaging jar or docker
 
+handle undefined response fields
+
 multi thread runner/make async
 
 difference between query param = null and not including param
@@ -47,7 +49,7 @@ generate random list input - how to store sub-types?
 -- nested parameter spec?
 
 required parameters
-
+`Test Categories field in request body is an object` test is flaky
 figure out content-type header
 
 less copy and paste for config
