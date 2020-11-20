@@ -27,7 +27,7 @@ class ResponseBodySpec(responses: ApiResponses?, private val fullSpec: OpenAPI) 
             getFlatKeys("", schema) // extract the property names
         }
         .filter { it.isNotBlank() } //if only "" exists remove it
-        .map { if (it.subSequence(0,1) == ":") it.substring(1) else it  } //remove leading :
+        .map { if (it.subSequence(0, 1) == ":") it.substring(1) else it } //remove leading :
 
     private fun getFlatKeys(key: String, _schema: Schema<*>)
             : List<String> {

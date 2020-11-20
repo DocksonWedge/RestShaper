@@ -14,7 +14,9 @@ Needed for mvp release:
 -- reading file back in for new run
 
 - call chaining
+-- list input parameters in same format as output
 -- endpoint spec needs out put parameters
+--- find api "name" e.g. /pets/{petId} name = pet/pets so in response "Id" ~= "Pet:Id"
 --- match between pascal case and snake case for response
 --- index output param values in results
 -- multi thread running or allow choice of endpoint?
