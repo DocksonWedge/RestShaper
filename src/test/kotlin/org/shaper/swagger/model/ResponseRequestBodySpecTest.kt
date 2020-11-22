@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.swagger.SpecFinder
 
-class ResponseBodySpecTest {
+class ResponseRequestBodySpecTest {
     private val exampleFolder = "src\\test\\Resources\\TestExamples"
     private val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
 

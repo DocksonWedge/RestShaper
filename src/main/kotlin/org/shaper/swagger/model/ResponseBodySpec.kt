@@ -49,15 +49,15 @@ class ResponseBodySpec(responses: ApiResponses?, private val fullSpec: OpenAPI) 
         }
     }
 
-    private fun getDirectSchemas(schemas: List<Schema<*>>): Set<Schema<*>> {
-        return schemas
-            .filter { !it.`$ref`.isNullOrBlank() }
-            .map { RefUtils.extractSimpleName(it.`$ref`).left as String }
-            .flatMap { getDirectSchemas(listOf(fullSpec.components.schemas[it] as Schema<Any>)) }
-            .union(
-                schemas.filter { it.`$ref`.isNullOrBlank() } //direct non-ref schemas
-            )
-    }
+//    private fun getDirectSchemas(schemas: List<Schema<*>>): Set<Schema<*>> {
+//        return schemas
+//            .filter { !it.`$ref`.isNullOrBlank() }
+//            .map { RefUtils.extractSimpleName(it.`$ref`).left as String }
+//            .flatMap { getDirectSchemas(listOf(fullSpec.components.schemas[it] as Schema<Any>)) }
+//            .union(
+//                schemas.filter { it.`$ref`.isNullOrBlank() } //direct non-ref schemas
+//            )
+//    }
 
     private fun getDirectSchema(schema: Schema<*>): Schema<*> {
         return if (!schema.`$ref`.isNullOrBlank()) {

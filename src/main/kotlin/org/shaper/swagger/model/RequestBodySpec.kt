@@ -5,7 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.RequestBody
 
-class BodySpec(private val requestBody: RequestBody?, private val fullSpec: OpenAPI) {
+class RequestBodySpec(private val requestBody: RequestBody?, private val fullSpec: OpenAPI) {
 
     //TODO support xml
     private val contentType = listOf("application/json", "*/*")
