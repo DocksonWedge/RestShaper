@@ -41,10 +41,11 @@ POST /pet photoUrls in body - how to handle Valid urls?
 share test parameter mock code
 
 parameter to print runs
+share the example spec url in tests rather than paste everywhere
 
 formdata support additionalMetadata- /pet/{petId}/uploadImage
 support cookies
-
+handle multiple request schemas
 support date types(read "date" in name)
 
 generate random list input - how to store sub-types?

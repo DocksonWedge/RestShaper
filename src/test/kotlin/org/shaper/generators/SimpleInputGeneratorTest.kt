@@ -70,7 +70,7 @@ class SimpleInputGeneratorTest {
 
         }
     }
-    //TODO - why is this flaky?
+    //TODO - why is this flaky? - due to mapOf() in RandomMapGenerator
     @Test
     fun `Test Categories field in request body is an object`() {
         val endpointSpec =

@@ -28,7 +28,7 @@ class EndpointSpec(
     // could be a parameter spec if terminal
     // could be a nested list or map
     // TODO - for any requests that are just lists, wrap in a "data {[]}" map first?
-    var body = RequestBodySpec(swaggerOperation.requestBody ?: RequestBody(), swaggerSpec)
+    var requestBody = RequestBodySpec(swaggerOperation.requestBody ?: RequestBody(), swaggerSpec)
 
     val queryParams = params.filter { it.value.paramType == "query" }
     val pathParams = params.filter { it.value.paramType == "path" }
@@ -40,7 +40,7 @@ class EndpointSpec(
     //TODO figure out how to handle contenttype here - being overriden in RESTAssured call
     private fun deriveHeaderParams() : Map<String, ParameterSpec> {
         val headers = params.filter { it.value.paramType == "header" }
-        return if (body.hasBody()) {
+        return if (requestBody.hasBody()) {
             // add json application type if there is a body
             headers.plus("Content-Type" to ParameterSpec.getContentTypeParam(swaggerSpec))
         }else{

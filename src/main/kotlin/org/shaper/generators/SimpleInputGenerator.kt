@@ -11,7 +11,6 @@ import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.swagger.model.ParamInfo
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
-import kotlin.reflect.KClass
 
 //simple doesn't read past results?
 class SimpleInputGenerator(
@@ -80,7 +79,7 @@ class SimpleInputGenerator(
             endpoint.pathParams.mapValues { getParamVals(it.value.info) },
             endpoint.headerParams.mapValues { getParamVals(it.value.info) },
             endpoint.cookieParams.mapValues { getParamVals(it.value.info) },
-            getBodyVals(endpoint.body.bodyInfo),
+            getBodyVals(endpoint.requestBody.bodyInfo),
             numCases
         )
     }
