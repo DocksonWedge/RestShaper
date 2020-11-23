@@ -8,10 +8,13 @@ import io.swagger.v3.oas.models.media.Schema
 
 abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
 
-    abstract val properties: List<String>
+    abstract val properties: Set<String>
 
-    protected fun getFlatKeys(_schema: Schema<*>) : List<String>{
-        return getFlatKeys("", _schema).filter { it.isNotBlank() }
+    protected fun getFlatKeys(_schema: Schema<*>) : Set<String>{
+        return getFlatKeys("", _schema) //TODO pass in name maybe?
+            .filter { it.isNotBlank() }
+            .map { it.toLowerCase() }
+            .toSet()
     }
 
     private fun getFlatKeys(key: String, _schema: Schema<*>)
@@ -21,7 +24,7 @@ abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
             schema.properties.flatMap { property ->
                 getFlatKeys(property.key, property.value)
                     .flatMap {
-                        listOf(key.capitalize(), key.capitalize() + ":" + it)
+                        listOf(key.capitalize(), key.capitalize() + it)
                     }
             }
         } else if (schema is ArraySchema) {

@@ -25,5 +25,5 @@ class ResponseBodySpec(responses: ApiResponses?, fullSpec: OpenAPI) : BaseBodySp
     override val properties = jsonSchemas //todo remove since on the lower level?
         .flatMap { schema ->
             getFlatKeys(schema) // extract the property names
-        }
+        }.toSet()
 }

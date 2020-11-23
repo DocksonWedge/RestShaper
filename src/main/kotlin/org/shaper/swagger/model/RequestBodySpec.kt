@@ -20,7 +20,7 @@ class RequestBodySpec(private val requestBody: RequestBody?, fullSpec: OpenAPI) 
     val bodyInfo = getBody()
 
     override val properties = if (bodyInfo != null) getFlatKeys( bodyInfo.schema)
-    else listOf()
+    else setOf()
 
     fun hasBody(): Boolean {
         return bodyInfo != null

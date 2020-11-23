@@ -14,14 +14,12 @@ Needed for mvp release:
 -- reading file back in for new run
 
 - call chaining
--- list input parameters in same format as output
 -- endpoint spec needs out put parameters
+--- !!index output param values in results - need to save
 --- find api "name" e.g. /pets/{petId} name = pet/pets so in response "Id" ~= "Pet:Id"
+---- see base body spec TODO
 --- match between pascal case and snake case for response
---- index output param values in results
--- multi thread running or allow choice of endpoint?
---- need runId to determine current information to use?
---- allow shuffling run order based on numCases
+
 
 - testing/experimenting
 -- leaving empty vs null 'endpoints'
@@ -34,7 +32,8 @@ multi thread runner/make async
 
 difference between query param = null and not including param
 -- analagous problem for request body/body fields?
-
+multi thread running
+need runId to determine current information to use?
 POST /pet photoUrls in body - how to handle Valid urls?
 - allowed through config file
 

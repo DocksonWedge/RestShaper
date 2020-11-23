@@ -14,24 +14,24 @@ class RequestBodySpecTest {
     fun `Test ResponseBodySpec has right properties`() = listOf(
         listOf("delete:/store/order/{orderId}") to setOf(),
         listOf("POST:/pet") to setOf(
-            ":Id",
-            ":Category",
-            ":Name",
-            ":PhotoUrls",
-            ":Tags",
-            ":Status",
-            ":Category:Id",
-            ":Category:Name",
-            ":Tags:Id",
-            ":Tags:Name"
+            "id",
+            "category",
+            "name",
+            "photourls",
+            "tags",
+            "status",
+            "categoryid",
+            "categoryname",
+            "tagsid",
+            "tagsname"
         ),
         listOf("post:/store/order") to setOf(
-            ":Id",
-            ":PetId",
-            ":Quantity",
-            ":ShipDate",
-            ":Status",
-            ":Complete"
+            "id",
+            "petid",
+            "quantity",
+            "shipdate",
+            "status",
+            "complete"
         ),
     )
         .map { (rawEndpoints, expected) ->
