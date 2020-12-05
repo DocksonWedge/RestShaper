@@ -2,6 +2,7 @@ package org.shaper.generators
 
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import org.docksonwedge.kotmatcher.DockMatcher
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
