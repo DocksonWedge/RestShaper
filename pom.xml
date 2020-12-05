@@ -112,6 +112,14 @@
             <url>https://dl.bintray.com/jannis/propCheck-kt</url>
         </repository>
         <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-docksonwedge-DockMatcher</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/docksonwedge/DockMatcher</url>
+        </repository>
+        <repository>
             <id>mavencentral</id>
             <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
