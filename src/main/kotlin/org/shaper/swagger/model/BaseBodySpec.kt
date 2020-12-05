@@ -34,7 +34,7 @@ abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
                 }
         } else {
             listOf(key.capitalize())
-        } //if only "" exists remove it
+        }
     }
 
     protected fun getDirectSchema(schema: Schema<*>): Schema<*> {

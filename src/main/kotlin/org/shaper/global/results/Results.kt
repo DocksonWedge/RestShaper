@@ -1,5 +1,8 @@
 package org.shaper.global.results
 
+import com.github.fge.jsonschema.main.JsonSchema
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import org.shaper.generators.model.TestResult
 import org.shaper.global.results.ResultsStateGlobal.getResultsFromStatusCode
 import org.shaper.global.results.ResultsStateGlobal.getStatusCodesFromEndpoint
@@ -16,21 +19,33 @@ object Results {
     ): Boolean {
         var allPassed = true
         results.forEach { result ->
-            ResultsStateGlobal.save(
-                endpoint,
-                result.response.statusCode,
-                result.input,
-                result
-            )
-            if (isFailing(endpoint, result)) {
-                allPassed = false
-                addParamResult(endpoint.queryParams, result.input.queryParams, addFailing)
-            } else {
-                addParamResult(endpoint.queryParams, result.input.queryParams, addPassing)
-            }
+            allPassed = saveResultState(result, endpoint) && allPassed
+            saveResultFields(result, endpoint)
         }
         return allPassed
     }
+
+    private fun saveResultState(result: TestResult, endpoint: EndpointSpec): Boolean{
+        ResultsStateGlobal.save(
+            endpoint,
+            result.response.statusCode,
+            result.input,
+            result
+        )
+        return if (isFailing(endpoint, result)) {
+            addParamResult(endpoint.queryParams, result.input.queryParams, addFailing)
+            false
+        } else {
+            addParamResult(endpoint.queryParams, result.input.queryParams, addPassing)
+            true
+        }
+    }
+
+    private fun saveResultFields(result: TestResult, endpoint: EndpointSpec){
+        val responseJson = Json.parseToJsonElement(result.response.body)
+
+    }
+
     //TODO get linkages function - takes one result an previous links
     fun printSummary(endpoint: EndpointSpec) {
         println("Summary for endpoint ${endpoint.method} : ${endpoint.path}")

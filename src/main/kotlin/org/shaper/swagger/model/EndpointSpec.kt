@@ -19,7 +19,7 @@ class EndpointSpec(
 ) {
 
     private val swaggerOperation = swaggerSpec.paths[path]?.readOperationsMap()?.get(method)
-        ?: throw SwaggerOperationNotFound("Could not find ${method} ${path} in swagger spec.")
+        ?: throw SwaggerOperationNotFound("Could not find $method $path in swagger spec.")
 
     val params = swaggerOperation.parameters?.map {
         it.name to ParameterSpec(it, swaggerSpec)
@@ -36,6 +36,8 @@ class EndpointSpec(
     val cookieParams = params.filter { it.value.paramType == "cookie" }
 
     val responseBody = ResponseBodySpec(swaggerOperation.responses, swaggerSpec)
+
+    val pathTitle = path.substringAfterLast("/")
 
     //TODO figure out how to handle contenttype here - being overriden in RESTAssured call
     private fun deriveHeaderParams() : Map<String, ParameterSpec> {
