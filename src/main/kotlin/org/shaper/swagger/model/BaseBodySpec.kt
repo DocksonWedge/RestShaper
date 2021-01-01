@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.ObjectSchema
 import io.swagger.v3.oas.models.media.Schema
+import org.shaper.swagger.constants.JsonProperties.keyDelim
 
 abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
 
@@ -13,24 +14,24 @@ abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
     protected fun getFlatKeys(_schema: Schema<*>) : Set<String>{
         return getFlatKeys("", _schema) //TODO pass in name maybe?
             .filter { it.isNotBlank() }
-            .map { it.toLowerCase() }
+            .map { it.toLowerCase().substringAfter(keyDelim) }
             .toSet()
     }
 
     private fun getFlatKeys(key: String, _schema: Schema<*>)
-            : List<String> {
+            : List<String> { //todo - parameterize to return list of keys or a map of keys to values
         val schema = getDirectSchema(_schema)
         return if (schema is ObjectSchema && schema.properties != null) {
             schema.properties.flatMap { property ->
                 getFlatKeys(property.key, property.value)
                     .flatMap {
-                        listOf(key.capitalize(), key.capitalize() + it)
+                        listOf(key.capitalize(), key.capitalize() + keyDelim + it)
                     }
             }
         } else if (schema is ArraySchema) {
             getFlatKeys("", schema.items)
                 .flatMap {
-                    listOf(key.capitalize(), key.capitalize() + it) // since "" the : is added already
+                    listOf(key.capitalize(), key.capitalize() + it) // since "" the -> is added already
                 }
         } else {
             listOf(key.capitalize())
