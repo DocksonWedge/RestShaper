@@ -5,12 +5,12 @@ import io.mockk.mockk
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import kotlinx.serialization.json.JsonObject
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.mocks.EndpointSpecMock
-
 
 class ResultsStateGlobalTest {
     private val input = TestInputConcretion(

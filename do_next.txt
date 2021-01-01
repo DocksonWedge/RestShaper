@@ -14,7 +14,8 @@ Needed for mvp release:
 -- reading file back in for new run
 
 - call chaining
--- endpoint spec needs out put parameters
+-- BaseBodySpec parameterize to return list of keys or a map of keys to values
+-- endpoint spec needs output parameters
 --- !!index output param values in results - need to save
 --- find api "name" e.g. /pets/{petId} name = pet/pets so in response "Id" ~= "Pet:Id"
 ---- see base body spec TODO
