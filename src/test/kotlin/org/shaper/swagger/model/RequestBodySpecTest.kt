@@ -20,10 +20,10 @@ class RequestBodySpecTest {
             "photourls",
             "tags",
             "status",
-            "categoryid",
-            "categoryname",
-            "tagsid",
-            "tagsname"
+            "category|~>id",
+            "category|~>name",
+            "tags|~>id",
+            "tags|~>name"
         ),
         listOf("post:/store/order") to setOf(
             "id",
