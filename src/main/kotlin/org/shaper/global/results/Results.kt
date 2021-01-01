@@ -42,8 +42,8 @@ object Results {
     }
 
     private fun saveResultFields(result: TestResult, endpoint: EndpointSpec){
-        val responseJson = Json.parseToJsonElement(result.response.body)
-
+        //TODO - finish
+        // val responseJson = Json.parseToJsonElement(result.response.body)
     }
 
     //TODO get linkages function - takes one result an previous links
