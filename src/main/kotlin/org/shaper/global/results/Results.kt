@@ -1,8 +1,5 @@
 package org.shaper.global.results
 
-import com.github.fge.jsonschema.main.JsonSchema
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.shaper.generators.model.TestResult
 import org.shaper.global.results.ResultsStateGlobal.getResultsFromStatusCode
 import org.shaper.global.results.ResultsStateGlobal.getStatusCodesFromEndpoint
@@ -21,6 +18,7 @@ object Results {
         results.forEach { result ->
             allPassed = saveResultState(result, endpoint) && allPassed
             saveResultFields(result, endpoint)
+            ResultsFieldsGlobal.save(result.response, endpoint.responseBody)
         }
         return allPassed
     }
