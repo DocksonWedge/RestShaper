@@ -22,17 +22,17 @@ object ResultsFieldsGlobal {
 
 
     private tailrec fun getValue(propertyKeys: List<String>, body: JsonElement): JsonElement {
-        if (body !is JsonObject) {
-            return when {
-                body is JsonArray -> return body.jsonArray
-                body is JsonNull -> return body.jsonNull
-                body is JsonPrimitive -> body.jsonPrimitive
+        return if (body !is JsonObject) {
+            when (body) {
+                is JsonArray -> body.jsonArray
+                is JsonNull -> body.jsonNull
+                is JsonPrimitive -> body.jsonPrimitive
                 else -> throw NoKnownResponseValueError(
                     "Could not figure out how to get a value from a response! key: $propertyKeys - body: $body"
                 )
             }
         } else {
-            return getValue(
+            getValue(
                 propertyKeys.subList(1, propertyKeys.size),
                 body.getOrDefault(propertyKeys[0], JsonPrimitive(""))
             )
