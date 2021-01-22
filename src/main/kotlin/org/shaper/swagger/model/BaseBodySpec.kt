@@ -14,7 +14,7 @@ abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
     protected fun getFlatKeys(_schema: Schema<*>) : Set<String>{
         return getFlatKeys("", _schema) //TODO pass in name maybe?
             .filter { it.isNotBlank() }
-            .map { it.toLowerCase().substringAfter(keyDelim) }
+            .map { it.substringAfter(keyDelim) }
             .toSet()
     }
 
@@ -25,16 +25,16 @@ abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
             schema.properties.flatMap { property ->
                 getFlatKeys(property.key, property.value)
                     .flatMap {
-                        listOf(key.capitalize(), key.capitalize() + keyDelim + it)
+                        listOf(key, key + keyDelim + it)
                     }
             }
         } else if (schema is ArraySchema) {
             getFlatKeys("", schema.items)
                 .flatMap {
-                    listOf(key.capitalize(), key.capitalize() + it) // since "" the -> is added already
+                    listOf(key, key + it) // since "" the -> is added already
                 }
         } else {
-            listOf(key.capitalize())
+            listOf(key)
         }
     }
 

@@ -7,6 +7,9 @@ import org.shaper.swagger.model.EndpointSpec
 
 object RestAssuredClient {
     val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion ->
+        println("Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}")
+        println (" query params: ${input.queryParams}")
+        println (" body: ${input.requestBody()}")
         val result = RestAssured.given()
             .queryParams(input.queryParams)
             .headers(input.headers)
@@ -14,7 +17,6 @@ object RestAssuredClient {
             .body(input.requestBody())
             .request(endpointSpec.method.toString(), endpointSpec.fullUrl(input.pathParams))
             ?: throw error("Calling ${endpointSpec.method} ${endpointSpec.url} with input $input failed to return a request!")
-        println("Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}")
         result.prettyPeek()
         TestResult(result, input, endpointSpec.endpoint)
     }

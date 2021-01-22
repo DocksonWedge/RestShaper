@@ -17,7 +17,6 @@ object Results {
         var allPassed = true
         results.forEach { result ->
             allPassed = saveResultState(result, endpoint) && allPassed
-            saveResultFields(result, endpoint)
             ResultsFieldsGlobal.save(result.response, endpoint.responseBody)
         }
         return allPassed
@@ -37,11 +36,6 @@ object Results {
             addParamResult(endpoint.queryParams, result.input.queryParams, addPassing)
             true
         }
-    }
-
-    private fun saveResultFields(result: TestResult, endpoint: EndpointSpec){
-        //TODO - finish
-        // val responseJson = Json.parseToJsonElement(result.response.body)
     }
 
     //TODO get linkages function - takes one result an previous links

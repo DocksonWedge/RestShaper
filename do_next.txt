@@ -7,6 +7,7 @@ pick out apis to test with
 
 difference * and Any
 Needed for mvp release:
+- force valid and invalid values
 - passing concrete header in - for auth
 - readable output flagging 500s
 -- output to file
@@ -30,6 +31,9 @@ Needed for mvp release:
 handle undefined response fields
 
 multi thread runner/make async
+
+replace println's with real loggers
+
 
 difference between query param = null and not including param
 -- analagous problem for request body/body fields?
