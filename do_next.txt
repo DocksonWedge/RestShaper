@@ -21,7 +21,7 @@ Needed for mvp release:
 --- find api "name" e.g. /pets/{petId} name = pet/pets so in response "Id" ~= "Pet:Id"
 ---- see base body spec TODO
 --- match between pascal case and snake case for response
-
+-- saving and using full objects and arrays
 
 - testing/experimenting
 -- leaving empty vs null 'endpoints'

@@ -3,14 +3,14 @@ package org.shaper.swagger.specfinder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import org.shaper.common.Urls.petStoreSwaggerLocation
+import org.shaper.common.Urls.petStoreSwaggerLocationEdited
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.SwaggerOperationNotFound
 import kotlin.math.exp
 
 class GetRelevantSpecsTest {
-    private val exampleFolder = "src\\test\\Resources\\TestExamples"
-    private val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
-    private val petStoreSwaggerLocationEdited = "${exampleFolder}\\PetStoreSwaggerEdited.yaml"
+
 
     @TestFactory
     fun `Test getRelevantSpecs returns correct total number of endpoints`() = listOf(

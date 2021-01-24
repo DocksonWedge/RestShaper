@@ -7,10 +7,11 @@ import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 
 import org.shaper.swagger.SwaggerOperationNotFound
+import org.shaper.swagger.constants.Util
 import org.shaper.tester.client.RestAssuredClient
 
 class EndpointSpec(
-    private val swaggerSpec: OpenAPI,
+    val swaggerSpec: OpenAPI,
     val method: HttpMethod,
     val path: String,
     // TODO can call function be private val?
@@ -18,8 +19,7 @@ class EndpointSpec(
     private val swaggerUrlOrFile: String = ""
 ) {
 
-    private val swaggerOperation = swaggerSpec.paths[path]?.readOperationsMap()?.get(method)
-        ?: throw SwaggerOperationNotFound("Could not find $method $path in swagger spec.")
+    val swaggerOperation = Util.getOperation(path, method, swaggerSpec)
 
     val params = swaggerOperation.parameters?.map {
         it.name to ParameterSpec(it, swaggerSpec)
