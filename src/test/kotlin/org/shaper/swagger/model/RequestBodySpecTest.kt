@@ -17,7 +17,7 @@ class RequestBodySpecTest {
             "id",
             "category",
             "name",
-            "photourls",
+            "photoUrls",
             "tags",
             "status",
             "category|~>id",
@@ -27,9 +27,9 @@ class RequestBodySpecTest {
         ),
         listOf("post:/store/order") to setOf(
             "id",
-            "petid",
+            "petId",
             "quantity",
-            "shipdate",
+            "shipDate",
             "status",
             "complete"
         ),
