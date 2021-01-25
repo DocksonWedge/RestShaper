@@ -5,10 +5,11 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.ObjectSchema
 import io.swagger.v3.oas.models.media.Schema
+import org.shaper.global.results.ResultsFieldsGlobal
 import java.util.*
 import kotlin.reflect.KClass
 
-class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI) {
+class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI, val name: String = "") {
 
     val schema = deriveSchema(_schema)
     val dataType: KClass<*> = swaggerTypeToKClass(schema.type?.toLowerCase() ?: "")
@@ -20,6 +21,14 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
 
     val failingValues = mutableSetOf<Any>()
     val passingValues = mutableSetOf<Any>()
+        get() {
+            // so.... schema name and title are null alot... not sure why
+            if (name.isNotBlank()) { //TODO - trigger delegate listener?
+                field.addAll(ResultsFieldsGlobal.getFromKey(name).map { it.content })
+            }
+            return field
+        }
+
 
     val nestedParams = mutableMapOf<String, ParamInfo<*>>()
 
@@ -31,7 +40,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
             Map::class ->
                 nestedParams.putAll(getNestedParms(schema))
             List::class ->
-                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>, fullSpec)
+                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>, fullSpec, name)
         }
     }
 
@@ -63,12 +72,12 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
     private fun <Y> getNestedParms(schema: Schema<Y>): MutableMap<String, ParamInfo<Any>> {
         // TODO - support maps?
         if (schema !is ObjectSchema) {
-            throw error("Paramter schema ${schema.name} is not a map schema, but is on an object param.")
+            throw error("Paramter schema ${schema.title} is not a map schema, but is on an object param.")
         }
         return schema
             .properties //todo add additional properties as well
             .filter { it.value != null }
-            .mapValues { ParamInfo(it.value, fullSpec) }
+            .mapValues { ParamInfo(it.value, fullSpec, it.key) }
             .toMutableMap()
 
     }

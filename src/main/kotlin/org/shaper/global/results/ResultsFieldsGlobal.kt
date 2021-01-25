@@ -7,14 +7,22 @@ import org.shaper.swagger.constants.JsonProperties
 import org.shaper.swagger.model.ResponseBodySpec
 
 object ResultsFieldsGlobal {
-    lateinit var index: MutableMap<String, MutableSet<Any>>
-    lateinit var multiIndex: MutableMap<String, MutableSet<Any>>
+    lateinit var index: MutableMap<String, MutableSet<JsonPrimitive>>
+    lateinit var multiIndex: MutableMap<String, MutableSet<JsonPrimitive>>
     //todo handle arrays and maps
+
+    fun getFromKey(key: String): MutableSet<JsonPrimitive>{
+        return if (this::index.isInitialized){
+            index[key] ?: mutableSetOf()
+        }else {
+            mutableSetOf()
+        }
+    }
 
     // Call this if you want to inject previous data or test data into these globals
     fun initGlobals(
-        _index: MutableMap<String, MutableSet<Any>> = mutableMapOf(),
-        _multiIndex: MutableMap<String, MutableSet<Any>> = mutableMapOf(),
+        _index: MutableMap<String, MutableSet<JsonPrimitive>> = mutableMapOf(),
+        _multiIndex: MutableMap<String, MutableSet<JsonPrimitive>> = mutableMapOf(),
         reset: Boolean = false
     ) {
         if (!this::index.isInitialized || reset) {
@@ -32,7 +40,7 @@ object ResultsFieldsGlobal {
     }
 
     private fun saveResultField(fieldName: String, fullPath: String, value: JsonPrimitive) {
-        saveResultFieldImpl(index, fieldName, fullPath, value) { list: MutableSet<Any>, any: JsonPrimitive ->
+        saveResultFieldImpl(index, fieldName, fullPath, value) { list: MutableSet<JsonPrimitive>, any: JsonPrimitive ->
             list.add(any)
         }
         //todo - multi index and object index
@@ -45,11 +53,11 @@ object ResultsFieldsGlobal {
     }
 
     private fun saveResultFieldImpl(
-        idx: MutableMap<String, MutableSet<Any>>,
+        idx: MutableMap<String, MutableSet<JsonPrimitive>>,
         fieldName: String,
         path: String,
         value: JsonPrimitive,
-        addFun: (MutableSet<Any>, JsonPrimitive) -> Unit
+        addFun: (MutableSet<JsonPrimitive>, JsonPrimitive) -> Unit
     ) {
         // normalize keys for indexing
         val pathKey = (path + fieldName).toLowerCase()

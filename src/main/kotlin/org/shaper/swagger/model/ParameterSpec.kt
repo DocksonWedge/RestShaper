@@ -30,6 +30,6 @@ class ParameterSpec(
     }
     val name: String = param.name
     val paramType: String = param.`in`
-    val info = ParamInfo(param.schema, fullSpec)
+    val info = ParamInfo(param.schema, fullSpec, name)
 }
 
