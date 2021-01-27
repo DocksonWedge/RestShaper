@@ -155,7 +155,7 @@
                                 <manifest>
                                     <addClasspath>true</addClasspath>
                                     <classpathPrefix>lib/</classpathPrefix>
-                                    <mainClass>org.shaper.entry.DockerEntryKt</mainClass>
+                                    <mainClass>org.shaper.entry.docker.DockerEntryKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
