@@ -24,7 +24,16 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
         get() {
             // so.... schema name and title are null alot... not sure why
             if (name.isNotBlank()) { //TODO - trigger delegate listener?
-                field.addAll(ResultsFieldsGlobal.getFromKey(name).map { it.content })
+                field.addAll(
+                    ResultsFieldsGlobal //TODO - do we care if there is a type mismatch? i.e. we pass an int in json for a string?
+                        .getFromKey(name)
+                        .map { // only add if we are type safe here
+//                            if (it.content::class == dataType) {
+                                it.content
+//                            } else {
+//                                null
+//                            }
+                        })
             }
             return field
         }

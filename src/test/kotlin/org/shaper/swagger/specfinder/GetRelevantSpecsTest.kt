@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.common.Urls.petStoreSwaggerLocation
 import org.shaper.common.Urls.petStoreSwaggerLocationEdited
+import org.shaper.global.results.ResultsFieldsGlobal
 import org.shaper.swagger.SpecFinder
 import org.shaper.swagger.SwaggerOperationNotFound
 import kotlin.math.exp
@@ -175,7 +176,7 @@ class GetRelevantSpecsTest {
                     rawEndpoints
                 ).getRelevantSpecs()
                 val param = actualSpecs[0].params.values.toList()[0]
-                Assertions.assertEquals(expected, param.info.passingValues)
+                Assertions.assertTrue(param.info.passingValues.containsAll(expected))
             }
         }
 

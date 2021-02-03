@@ -20,7 +20,7 @@ class SimpleInputGenerator(
 ) {
     companion object {
         //instantiate this as little as possible using a static companion - it is apparently very slow
-        val faker = Faker()
+        private val faker = Faker()
         val threadLocalRandom = ThreadLocalRandom.current()
 
         //TODO map any could be json elements
@@ -29,10 +29,10 @@ class SimpleInputGenerator(
             return param
                 .nestedParams
                 .mapValues {
-                        SimpleInputGenerator()
-                            .getParamVals(it.value as ParamInfo<Any>)
-                            .iterator()
-                            .next() ?: ""
+                    SimpleInputGenerator()
+                        .getParamVals(it.value as ParamInfo<Any>)
+                        .iterator()
+                        .next() ?: ""
                 }
         }
 
@@ -71,6 +71,24 @@ class SimpleInputGenerator(
                 )
             }
         }
+
+        private fun <T> getPassingNumber(
+            conversionFun: Number.() -> T,
+            randomFun: (ParamInfo<Any>) -> T
+        ): (ParamInfo<Any>) -> T {
+            return { p ->
+                if (p.passingValues.isEmpty()) {
+                    randomFun(p)
+                } else {
+                    val value = p.passingValues.random()
+                    if (value is Number) {
+                        value.conversionFun()
+                    } else {
+                        randomFun(p)
+                    }
+                }
+            }
+        }
     }
 
     fun getInput(endpoint: EndpointSpec): SimpleTestInput {
@@ -87,7 +105,7 @@ class SimpleInputGenerator(
     fun getBodyVals(param: ParamInfo<Any>?): Sequence<*> {
         return sequence {
             val iter = getParamVals(param).iterator()
-            while (iter.hasNext()){
+            while (iter.hasNext()) {
                 yield(pokoToJsonElement(iter.next() ?: ""))
             }
         }
@@ -114,6 +132,7 @@ class SimpleInputGenerator(
         }
     }
 
+
     private class emptyGenerator() : Sequence<String> {
         override fun iterator(): Iterator<String> = object : Iterator<String> {
             override fun hasNext(): Boolean {
@@ -131,7 +150,7 @@ class SimpleInputGenerator(
             param,
             { 0L },
             { faker.number().randomNumber() },
-            { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
+            getPassingNumber(Number::toLong) { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
         )
 
     private class RandomBooleanGenerator(param: ParamInfo<Any>) :
@@ -147,7 +166,7 @@ class SimpleInputGenerator(
             param,
             { 0.0 },
             { faker.number().randomDouble(5, -10000000, 10000000) },
-            { p -> threadLocalRandom.nextDouble(p.minDecimal, p.maxDecimal) }
+            getPassingNumber(Number::toDouble) { p -> threadLocalRandom.nextDouble(p.minDecimal, p.maxDecimal) }
         )
 
     private class RandomStringGenerator(param: ParamInfo<Any>) :

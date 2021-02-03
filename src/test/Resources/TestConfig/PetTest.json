@@ -1,7 +1,7 @@
 {
-  "numCases": 5,
+  "numCases": 2,
   "swaggerLocation": "https://petstore.swagger.io/v2/swagger.json",
-  "chainDepth": 1,
+  "chainDepth": 5,
   "endpoints": [
     {
       "method":  "POST",
