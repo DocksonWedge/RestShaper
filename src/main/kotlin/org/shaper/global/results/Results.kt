@@ -17,7 +17,7 @@ object Results {
         var allPassed = true
         results.forEach { result ->
             allPassed = saveResultState(result, endpoint) && allPassed
-            ResultsFieldsGlobal.save(result.response, endpoint.responseBody)
+            ResultsFieldsGlobal.save(result.response, endpoint)
         }
         return allPassed
     }

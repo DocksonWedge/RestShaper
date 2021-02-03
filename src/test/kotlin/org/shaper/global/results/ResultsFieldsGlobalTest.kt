@@ -113,7 +113,7 @@ class ResultsFieldsGlobalTest {
         val swaggerOperation = Util.getOperation(path, method, endpointSpec.swaggerSpec)
         val responseBody = ResponseBodySpec(endpointSpec.swaggerOperation.responses, endpointSpec.swaggerSpec)
         ResultsFieldsGlobal.initGlobals(reset = true)
-        ResultsFieldsGlobal.save(responseData, responseBody)
+        ResultsFieldsGlobal.save(responseData, endpointSpec)
     }
 
     private data class testInput(

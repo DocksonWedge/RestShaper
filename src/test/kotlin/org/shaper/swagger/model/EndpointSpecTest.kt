@@ -37,7 +37,6 @@ class EndpointSpecTest {
         ),
     )
         .map { (path, paramValues, expected) ->
-
             DynamicTest.dynamicTest(
                 "when I get url for $path with values $paramValues " +
                         "then I expect the concrete URL of $expected"

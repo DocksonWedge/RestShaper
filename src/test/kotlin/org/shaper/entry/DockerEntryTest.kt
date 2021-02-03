@@ -13,8 +13,7 @@ class DockerEntryTest {
     @ResourceLock("ResultsStateGlobal")
     fun `Test general run works with config json`() {
         main("src/test/Resources/TestConfig/PetTest.json")
-        println(ResultsFieldsGlobal.index)
-        //main("src/test/Resources/TestConfig/PetTestDefault.json")
+        main("src/test/Resources/TestConfig/PetTestDefault.json")
     }
 
 }

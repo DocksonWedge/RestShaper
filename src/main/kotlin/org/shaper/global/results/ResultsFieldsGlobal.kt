@@ -4,6 +4,7 @@ import kotlinx.serialization.json.*
 import org.shaper.generators.model.ResponseData
 import org.shaper.serialization.JsonTree
 import org.shaper.swagger.constants.JsonProperties
+import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ResponseBodySpec
 
 object ResultsFieldsGlobal {
@@ -11,10 +12,10 @@ object ResultsFieldsGlobal {
     lateinit var multiIndex: MutableMap<String, MutableSet<JsonPrimitive>>
     //todo handle arrays and maps
 
-    fun getFromKey(key: String): MutableSet<JsonPrimitive>{
-        return if (this::index.isInitialized){
-            index[key] ?: mutableSetOf()
-        }else {
+    fun getFromKey(key: String): MutableSet<JsonPrimitive> {
+        return if (this::index.isInitialized) {
+            index[key.toLowerCase()] ?: mutableSetOf()
+        } else {
             mutableSetOf()
         }
     }
@@ -31,16 +32,23 @@ object ResultsFieldsGlobal {
         }
     }
 
-    fun save(responseData: ResponseData, responseBodySpec: ResponseBodySpec) {
+    fun save(responseData: ResponseData, endpoint: EndpointSpec) {
         initGlobals()
         JsonTree.traverse(
             jsonElement = responseData.bodyParsed,
+            title = endpoint.title,
             terminalFunction = this::saveResultField
         )
     }
 
     private fun saveResultField(fieldName: String, fullPath: String, title: String, value: JsonPrimitive) {
-        saveResultFieldImpl(index, fieldName, fullPath, value) { list: MutableSet<JsonPrimitive>, any: JsonPrimitive ->
+        saveResultFieldImpl(
+            index,
+            fieldName,
+            fullPath,
+            title,
+            value
+        ) { list: MutableSet<JsonPrimitive>, any: JsonPrimitive ->
             list.add(any)
         }
         //todo - multi index and object index
@@ -56,8 +64,8 @@ object ResultsFieldsGlobal {
         idx: MutableMap<String, MutableSet<JsonPrimitive>>,
         fieldName: String,
         path: String,
-        value: JsonPrimitive,
         title: String = "",
+        value: JsonPrimitive,
         addFun: (MutableSet<JsonPrimitive>, JsonPrimitive) -> Unit
     ) {
         // normalize keys for indexing

@@ -77,14 +77,22 @@ class SimpleInputGenerator(
             randomFun: (ParamInfo<Any>) -> T
         ): (ParamInfo<Any>) -> T {
             return { p ->
-                if (p.passingValues.isEmpty()) {
+                val passingValues =
+                    p.passingValues // this "get" does a recalculation every time, so try not to call it directly
+                if (passingValues.isEmpty()) {
                     randomFun(p)
                 } else {
-                    val value = p.passingValues.random()
-                    if (value is Number) {
-                        value.conversionFun()
-                    } else {
-                        randomFun(p)
+                    val value = passingValues.random()
+                    when (value) {
+                        is Number -> value.conversionFun()
+                        is String -> {
+                            try {
+                                value.toBigDecimal().conversionFun()
+                            } catch (nfe: NumberFormatException) {
+                                randomFun(p)
+                            }
+                        }
+                        else -> randomFun(p)
                     }
                 }
             }
@@ -208,8 +216,8 @@ class SimpleInputGenerator(
         override fun iterator(): Iterator<T> = object : Iterator<T> {
 
             override fun next(): T {
-                val percentNull = .01
-                val percentInvalid = .01
+                val percentNull = .05
+                val percentInvalid = .05
                 val randomNum = faker.number().randomDouble(3, 0, 1)
                 return if (randomNum < percentNull) {
                     nullFun(param)
