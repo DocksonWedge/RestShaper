@@ -208,8 +208,8 @@ class SimpleInputGenerator(
         override fun iterator(): Iterator<T> = object : Iterator<T> {
 
             override fun next(): T {
-                val percentNull = .15
-                val percentInvalid = .10
+                val percentNull = .01
+                val percentInvalid = .01
                 val randomNum = faker.number().randomDouble(3, 0, 1)
                 return if (randomNum < percentNull) {
                     nullFun(param)

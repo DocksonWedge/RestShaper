@@ -39,7 +39,7 @@ object ResultsFieldsGlobal {
         )
     }
 
-    private fun saveResultField(fieldName: String, fullPath: String, value: JsonPrimitive) {
+    private fun saveResultField(fieldName: String, fullPath: String, title: String, value: JsonPrimitive) {
         saveResultFieldImpl(index, fieldName, fullPath, value) { list: MutableSet<JsonPrimitive>, any: JsonPrimitive ->
             list.add(any)
         }
@@ -57,10 +57,12 @@ object ResultsFieldsGlobal {
         fieldName: String,
         path: String,
         value: JsonPrimitive,
+        title: String = "",
         addFun: (MutableSet<JsonPrimitive>, JsonPrimitive) -> Unit
     ) {
         // normalize keys for indexing
         val pathKey = (path + fieldName).toLowerCase()
+        val titleKey = (title + pathKey).toLowerCase()
         val key = fieldName.toLowerCase()
         // index by just field name
         val valuesList = idx.getOrPut(key) { mutableSetOf() }
@@ -69,6 +71,10 @@ object ResultsFieldsGlobal {
         if (pathKey != fieldName) {
             val valuesListExtended = idx.getOrPut(pathKey) { mutableSetOf() }
             addFun(valuesListExtended, value) //TODO what about last 2 of 3  in path chain?
+        }
+        if (titleKey != pathKey) {
+            val valuesListExtended = idx.getOrPut(titleKey) { mutableSetOf() }
+            addFun(valuesListExtended, value)
         }
     }
 

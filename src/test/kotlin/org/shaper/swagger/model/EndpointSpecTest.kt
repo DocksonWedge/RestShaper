@@ -50,6 +50,7 @@ class EndpointSpecTest {
                 every { swaggerOperation.parameters } returns listOf()
                 every { swaggerOperation.requestBody } returns null
                 every { swaggerOperation.responses } returns null
+                every { swaggerOperation.tags } returns null
 
                 val endpoint = EndpointSpec(swaggerSpec, HttpMethod.POST, path)
                 Assertions.assertEquals(
@@ -87,6 +88,28 @@ class EndpointSpecTest {
                         .then().assertThat()
                         .body("size()", equalTo(expected))
                 }
+            }
+        }
+
+    @TestFactory
+    fun `Test findPathTitle gets the correct title`() = listOf(
+        "/pet" to "pet",
+        "/pet/" to "pet",
+        "/pet/{petId}" to "pet",
+        "/pet/{petId}/uploadImage" to "uploadImage",
+        "/store/order/{orderId}" to "order",
+        "/store/order" to "order",
+        "{orderId}" to ""
+    )
+        .map { (path, expected) ->
+            DynamicTest.dynamicTest(
+                "when I get url for $path with then I expect the path title of $expected"
+            ) {
+                Assertions.assertEquals(
+                    expected,
+                    EndpointSpec.findPathTitle(path)
+                )
+
             }
         }
 }

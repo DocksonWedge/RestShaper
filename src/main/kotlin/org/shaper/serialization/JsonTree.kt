@@ -8,16 +8,18 @@ object JsonTree {
         jsonElement: JsonElement,
         currentKey: String = "",
         prevKeys: String = "",
-        terminalFunction: (String, String, JsonPrimitive) -> Unit
+        title: String = "",
+        terminalFunction: (String, String, String, JsonPrimitive) -> Unit
     ) { // function to run when we hit the non-null terminal leaf
         when(jsonElement) {
-            is JsonPrimitive -> terminatePrimitive(jsonElement, currentKey, prevKeys, terminalFunction)
+            is JsonPrimitive -> terminatePrimitive(jsonElement, currentKey, prevKeys,title, terminalFunction)
             is JsonArray -> {
                 jsonElement.jsonArray.forEach { value ->
                     traverse(
                         value,
                         currentKey, //keeping the same key for each list value
                         prevKeys,
+                        title,
                         terminalFunction
                     )
                 }
@@ -27,6 +29,7 @@ object JsonTree {
                         value,
                         key,
                         prevKeys + currentKey,
+                        title,
                         terminalFunction
                     )
                 }
@@ -38,10 +41,11 @@ object JsonTree {
         jsonElement: JsonElement,
         currentKey: String = "",
         prevKeys: String = "",
-        terminalFunction: (String, String, JsonPrimitive) -> Unit
+        title: String = "",
+        terminalFunction: (String, String, String, JsonPrimitive) -> Unit
     ) {
         try {
-            terminalFunction(currentKey, prevKeys, jsonElement.jsonPrimitive)
+            terminalFunction(currentKey, prevKeys, title, jsonElement.jsonPrimitive)
         } catch (e: Exception) {
             throw JsonTree.NoKnownResponseValueError(
                 "Could not figure out how to get a value from a response! " +

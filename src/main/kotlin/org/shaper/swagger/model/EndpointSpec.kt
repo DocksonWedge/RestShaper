@@ -37,15 +37,30 @@ class EndpointSpec(
 
     val responseBody = ResponseBodySpec(swaggerOperation.responses, swaggerSpec)
 
-    val pathTitle = path.substringAfterLast("/")
+    private val firstTag = swaggerOperation.tags?.firstOrNull() ?: ""
+    private val pathTitle = findPathTitle(path)
+    val title = if (pathTitle != "") pathTitle else firstTag
+
+    companion object {
+        internal fun findPathTitle(path: String): String {
+            return path
+                .split("/")
+                .lastOrNull { !it.isPathVariable() && it.isNotBlank() }
+                ?: ""
+        }
+
+        private fun String.isPathVariable(): Boolean {
+            return this.matches(Regex("""^\{.*}${'$'}"""))
+        }
+    }
 
     //TODO figure out how to handle contenttype here - being overriden in RESTAssured call
-    private fun deriveHeaderParams() : Map<String, ParameterSpec> {
+    private fun deriveHeaderParams(): Map<String, ParameterSpec> {
         val headers = params.filter { it.value.paramType == "header" }
         return if (requestBody.hasBody()) {
             // add json application type if there is a body
             headers.plus("Content-Type" to ParameterSpec.getContentTypeParam(swaggerSpec))
-        }else{
+        } else {
             headers
         }
 
