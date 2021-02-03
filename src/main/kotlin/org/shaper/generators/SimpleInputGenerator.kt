@@ -21,7 +21,12 @@ class SimpleInputGenerator(
     companion object {
         //instantiate this as little as possible using a static companion - it is apparently very slow
         private val faker = Faker()
+        private val valueReusePercent = .7
         val threadLocalRandom = ThreadLocalRandom.current()
+
+        private fun randPercent(): Double{
+            return faker.number().randomDouble(3, 0, 1)
+        }
 
         //TODO map any could be json elements
         fun streamMapParamSequence(param: ParamInfo<Any>): Map<String, Any> {
@@ -79,7 +84,7 @@ class SimpleInputGenerator(
             return { p ->
                 val passingValues =
                     p.passingValues // this "get" does a recalculation every time, so try not to call it directly
-                if (passingValues.isEmpty()) {
+                if (passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     randomFun(p)
                 } else {
                     val value = passingValues.random()
@@ -183,7 +188,7 @@ class SimpleInputGenerator(
             { "" },
             { faker.regexify("[A-z1-9]{0,25}") },
             { p ->
-                if (p.passingValues.isEmpty()) {
+                if (p.passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     faker.regexify("[A-z1-9]{0,25}")
                 } else {
                     p.passingValues.random().toString()
@@ -218,7 +223,7 @@ class SimpleInputGenerator(
             override fun next(): T {
                 val percentNull = .05
                 val percentInvalid = .05
-                val randomNum = faker.number().randomDouble(3, 0, 1)
+                val randomNum = randPercent()
                 return if (randomNum < percentNull) {
                     nullFun(param)
                 } else if (randomNum < percentNull + percentInvalid) {
