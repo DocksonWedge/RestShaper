@@ -4,3 +4,4 @@ target/
 .DS_store/
 RestShaper.iml
 test-config.json
+*/zk-single-kafka-multiple/

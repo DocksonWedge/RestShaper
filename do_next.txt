@@ -15,7 +15,7 @@ Needed for mvp release:
 -- reading file back in for new run
 - call chaining
 -- track the CALL (e.g. GET /pet) that retrieved a result (eventually prevent looping and report on the call chain.
--- TEST CHAINING! basic chaining should work for strings
+-- chaining - is the random selection really random? Feels like a lot of duplicates.
 --- match between pascal case and snake case for response
 -- saving and using full objects and arrays
 

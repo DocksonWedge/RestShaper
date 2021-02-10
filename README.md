@@ -96,7 +96,7 @@ Remote docker image TBD.
  * Query parameter, path parameter, header, and request body generation
     * Currently, String, Integer, Decimal data types are supported.
  * Serialized results output in JSON
- 
+
  ## Coming soon
  * additional parameter data types
  * API call "chaining"
@@ -108,3 +108,6 @@ Remote docker image TBD.
 - a "generator" IS A function that transforms information about the test
 (for example, an Endpoint spec or test results) to a new form for another
 area(for example, test query parameters or a results flat-file)
+  
+## Starting kafka
+docker-compose -f kafka/docker-compose.kafka.yaml up --remove-orphans
