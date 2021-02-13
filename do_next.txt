@@ -5,6 +5,9 @@ pick out apis to test with
 -- path param
 -- query param
 
+
+deduplicate topic creation bash script
+
 difference * and Any
 Needed for mvp release:
 - force valid and invalid values

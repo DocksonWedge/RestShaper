@@ -110,4 +110,27 @@ Remote docker image TBD.
 area(for example, test query parameters or a results flat-file)
   
 ## Starting kafka
-docker-compose -f kafka/docker-compose.kafka.yaml up --remove-orphans
+
+`docker-compose -f kafka/docker-compose.kafka.yaml up -d --remove-orphans`
+
+start with topics
+`kafka-start.sh`
+
+
+exec to contianer
+`docker exec -it kafka bash`
+
+create topic
+`./usr/bin/kafka-topics --zookeeper zookeeper:2181 --create --topic my-first-topic --partitions 3 --if-not-exists`
+
+list topics
+`./usr/bin/kafka-topics --zookeeper zookeeper:2181 --list`
+
+describe topic
+`./usr/bin/kafka-topics --zookeeper zookeeper:2181 --topic my-first-topic --describe`
+
+produce message
+`./usr/bin/kafka-console-producer --broker-list localhost:9092 --topic my-first-topic --property parse.key=true --property key.separator=: < topic-input.txt`
+
+consume message
+`./usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic my-first-topic --property parse.key=true --property key.separator=: --from-beginning`
