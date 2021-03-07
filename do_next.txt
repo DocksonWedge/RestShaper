@@ -5,6 +5,7 @@ pick out apis to test with
 -- path param
 -- query param
 
+put startup scripts in a common location
 
 deduplicate topic creation bash script
 

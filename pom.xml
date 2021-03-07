@@ -12,14 +12,6 @@
     <name>org.dockson.shaper RestShaper</name>
     <description>Utility to test REST APIs with their OpenAPI specification</description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.4.10</kotlin.version>
@@ -32,6 +24,7 @@
         <serialization.version>1.0.0-RC</serialization.version>
         <kotlinx.version>1.4.10</kotlinx.version>
         <mockk.version>1.10.0</mockk.version>
+        <kafka.version>2.0.0</kafka.version>
     </properties>
 
     <dependencies>
@@ -75,6 +68,11 @@
             <groupId>org.docksonwedge.dockmatcher</groupId>
             <artifactId>matcher</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
         </dependency>
 
         <!-- test dependencies -->
