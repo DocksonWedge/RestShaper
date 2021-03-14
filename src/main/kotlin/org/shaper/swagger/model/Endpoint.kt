@@ -8,5 +8,6 @@ data class Endpoint(
     val method: HttpMethod,
     val url: String,
     val path: String,
-    val swaggerUrlOrFile: String
+    val swaggerUrlOrFile: String,
+    val title: String
 )

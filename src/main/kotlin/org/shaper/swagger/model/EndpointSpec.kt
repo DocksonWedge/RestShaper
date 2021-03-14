@@ -79,7 +79,7 @@ class EndpointSpec(
     val paramUrl = {
         url + path
     }
-    val endpoint = Endpoint(method, url, path, swaggerUrlOrFile)
+    val endpoint = Endpoint(method, url, path, swaggerUrlOrFile, title)
 
     fun callWithConcretion(input: TestInputConcretion): TestResult {
         return callFunction(this, input)

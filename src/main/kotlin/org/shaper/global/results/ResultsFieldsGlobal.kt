@@ -2,6 +2,7 @@ package org.shaper.global.results
 
 import kotlinx.serialization.json.*
 import org.shaper.generators.model.ResponseData
+import org.shaper.generators.model.TestResult
 import org.shaper.serialization.JsonTree
 import org.shaper.swagger.constants.JsonProperties
 import org.shaper.swagger.model.EndpointSpec
@@ -32,11 +33,11 @@ object ResultsFieldsGlobal {
         }
     }
 
-    fun save(responseData: ResponseData, endpoint: EndpointSpec) {
+    fun save(testResult: TestResult ) {
         initGlobals()
         JsonTree.traverse(
-            jsonElement = responseData.bodyParsed,
-            title = endpoint.title,
+            jsonElement = testResult.response.bodyParsed,
+            title = testResult.endpoint.title,
             terminalFunction = this::saveResultField
         )
     }
