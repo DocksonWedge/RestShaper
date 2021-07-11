@@ -2,6 +2,7 @@ package org.shaper.swagger.model
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem.HttpMethod
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.mocks.EndpointSpecMock.getWithMockedSwagger
+import org.shaper.swagger.constants.Util
 
 import java.util.*
 
@@ -44,8 +46,13 @@ class EndpointSpecTest {
 
                 val swaggerSpec = mockk<OpenAPI>()
                 val swaggerOperation = mockk<Operation>()
-                every { swaggerSpec.servers[0].url } returns "https://myUrl"
-                every { swaggerSpec.paths[path]?.readOperationsMap()?.get(HttpMethod.POST) } returns swaggerOperation
+                every { swaggerSpec.servers } returns listOf(
+                    mockk {
+                        every{ url } returns "https://myUrl"
+                    }
+                )
+                mockkObject(Util)
+                every { Util.getOperation(path, HttpMethod.POST, swaggerSpec) } returns swaggerOperation
                 every { swaggerOperation.parameters } returns listOf()
                 every { swaggerOperation.requestBody } returns null
                 every { swaggerOperation.responses } returns null
@@ -59,7 +66,6 @@ class EndpointSpecTest {
 
             }
         }
-
     // http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs
     @TestFactory //TODO how to call out that this requires an external resource?
     fun `Test callWithConcretion successfully calls an endpoint`() = listOf(
