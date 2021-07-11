@@ -1,5 +1,6 @@
 package org.shaper.global.results
 
+import io.mockk.mockk
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import kotlinx.serialization.json.*
 import org.junit.jupiter.api.Assertions
@@ -11,6 +12,8 @@ import org.shaper.config.EndpointConfigBuilder
 import org.shaper.config.endpointConfig
 import org.shaper.entry.*
 import org.shaper.generators.model.ResponseData
+import org.shaper.generators.model.TestInputConcretion
+import org.shaper.generators.model.TestResult
 import org.shaper.swagger.constants.Util
 import org.shaper.swagger.model.ResponseBodySpec
 
@@ -113,7 +116,8 @@ class ResultsFieldsGlobalTest {
         val swaggerOperation = Util.getOperation(path, method, endpointSpec.swaggerSpec)
         val responseBody = ResponseBodySpec(endpointSpec.swaggerOperation.responses, endpointSpec.swaggerSpec)
         ResultsFieldsGlobal.initGlobals(reset = true)
-        ResultsFieldsGlobal.save(responseData, endpointSpec)
+        val result = TestResult(responseData, mockk<TestInputConcretion>(), endpointSpec.endpoint)
+        ResultsFieldsGlobal.save(result)
     }
 
     private data class testInput(

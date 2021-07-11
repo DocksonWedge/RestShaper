@@ -3,6 +3,7 @@ package org.shaper.global.results
 import kotlinx.serialization.json.*
 import org.shaper.generators.model.ResponseData
 import org.shaper.generators.model.TestResult
+import org.shaper.global.kafka.ResultsProducer
 import org.shaper.serialization.JsonTree
 import org.shaper.swagger.constants.JsonProperties
 import org.shaper.swagger.model.EndpointSpec
@@ -33,16 +34,26 @@ object ResultsFieldsGlobal {
         }
     }
 
-    fun save(testResult: TestResult ) {
+    fun save(testResult: TestResult) {
         initGlobals()
         JsonTree.traverse(
             jsonElement = testResult.response.bodyParsed,
             title = testResult.endpoint.title,
-            terminalFunction = this::saveResultField
+            terminalFunction = { fieldName: String, fullPath: String, title: String, value: JsonPrimitive
+                ->
+                this.saveResultField(fieldName, fullPath, title, value, testResult)
+            }
         )
     }
 
-    private fun saveResultField(fieldName: String, fullPath: String, title: String, value: JsonPrimitive) {
+    // TODO - in save, flush Endpoint plus field to DB
+    private fun saveResultField(
+        fieldName: String,
+        fullPath: String,
+        title: String,
+        value: JsonPrimitive,
+        testResult: TestResult
+    ) {
         saveResultFieldImpl(
             index,
             fieldName,
@@ -50,11 +61,17 @@ object ResultsFieldsGlobal {
             title,
             value
         ) { list: MutableSet<JsonPrimitive>, any: JsonPrimitive ->
+            ResultsProducer.produceResultsFieldMessage(testResult, fieldName, fullPath, title, value)
             list.add(any)
         }
         //todo - multi index and object index
 //        if (value is List<*> || value is Set<*>) {
-//            saveResultFieldImpl(multiIndex, fieldName, fullPath, value) { list: MutableSet<Any>, any: Any ->
+//            saveResultFieldImpl(
+        //            multiIndex,
+        //            fieldName,
+        //            fullPath,
+        //            value
+        //            ) { list: MutableSet<Any>, any: Any ->
 //                list.addAll(any as Collection<Any>)
 //            }
 //        }
