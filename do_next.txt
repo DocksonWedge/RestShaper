@@ -9,6 +9,8 @@ put startup scripts in a common location
 
 deduplicate topic creation bash script
 
+**** set message expiry
+
 difference * and Any
 Needed for mvp release:
 - force valid and invalid values

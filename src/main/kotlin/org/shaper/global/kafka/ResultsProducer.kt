@@ -21,8 +21,8 @@ object ResultsProducer {
     private fun create(): Producer<String, String> {
         val props = Properties()
         props["bootstrap.servers"] = KAFKA_BROKER
-        props["key.serializer"] = StringSerializer::class.java
-        props["value.serializer"] = StringSerializer::class.java
+        props["key.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
+        props["value.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
         return KafkaProducer<String, String>(props)
     }
 
@@ -47,7 +47,7 @@ object ResultsProducer {
         producer.value.send(
             ProducerRecord(
                 "result-store",
-                "${testResult.endpoint.method}-${testResult.endpoint.path}-$fullPath",
+                "${testResult.endpoint.method}-${testResult.endpoint.path}-$fieldName",
                 message
             )
         )
