@@ -50,7 +50,7 @@ object JsonTree {
             throw JsonTree.NoKnownResponseValueError(
                 "Could not figure out how to get a value from a response! " +
                         "key: $prevKeys - $currentKey - jsonElement: $jsonElement " +
-                        "error:${e.localizedMessage} \n ${e.stackTrace}"
+                        "error:${e.localizedMessage} \n ${e.stackTraceToString()}"
             )
         }
     }

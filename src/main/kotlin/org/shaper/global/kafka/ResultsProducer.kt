@@ -61,7 +61,7 @@ object ResultsProducer {
         val fieldName: String,
         val fullPath: String,
         val title: String,
-        val value: JsonPrimitive
+        val value: JsonPrimitive?
     )
 
 }

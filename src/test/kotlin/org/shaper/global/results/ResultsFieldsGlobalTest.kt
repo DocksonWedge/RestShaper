@@ -85,23 +85,24 @@ class ResultsFieldsGlobalTest {
         Assertions.assertEquals(4, ResultsFieldsGlobal.index["name"]?.size)
         assertField("categoryname", petBody["category"]?.jsonObject?.get("name"))
         assertField("categoryid", petBody["category"]?.jsonObject?.get("id"))
-        Assertions.assertEquals(2, ResultsFieldsGlobal.index["photourls"]?.size )
+        Assertions.assertEquals(2, ResultsFieldsGlobal.index["photourls"]?.size)
         assertList("photourls", setOf(JsonPrimitive("abc"), JsonPrimitive("123")))
         assertList("tagsid", setOf(JsonPrimitive(1), JsonPrimitive(2)))
         assertList("tagsname", setOf(JsonPrimitive("tag1"), JsonPrimitive("tag2")))
         assertField("status", petBody["status"])
     }
 
-    private fun assertOrderField(fieldName: String){
-        assertField(fieldName, orderBody[fieldName] )
+    private fun assertOrderField(fieldName: String) {
+        assertField(fieldName, orderBody[fieldName])
     }
 
-    private fun assertField(indexPath: String , expectedValue: JsonElement?){
+    private fun assertField(indexPath: String, expectedValue: JsonElement?) {
         Assertions.assertEquals(expectedValue, ResultsFieldsGlobal.index[indexPath.toLowerCase()]!!.first())
     }
-     private fun assertList(indexPath: String, set: Set<JsonPrimitive>){
-         Assertions.assertTrue(ResultsFieldsGlobal.index[indexPath]!!.containsAll(set))
-     }
+
+    private fun assertList(indexPath: String, set: Set<JsonPrimitive>) {
+        Assertions.assertTrue(ResultsFieldsGlobal.index[indexPath]!!.containsAll(set))
+    }
 
     //***
     // test run impls
@@ -116,7 +117,11 @@ class ResultsFieldsGlobalTest {
         val swaggerOperation = Util.getOperation(path, method, endpointSpec.swaggerSpec)
         val responseBody = ResponseBodySpec(endpointSpec.swaggerOperation.responses, endpointSpec.swaggerSpec)
         ResultsFieldsGlobal.initGlobals(reset = true)
-        val result = TestResult(responseData, mockk<TestInputConcretion>(), endpointSpec.endpoint)
+        val result = TestResult(
+            responseData,
+            TestInputConcretion(mapOf(), mapOf(), mapOf(), mapOf(), JsonPrimitive("")),
+            endpointSpec.endpoint
+        )
         ResultsFieldsGlobal.save(result)
     }
 
