@@ -3,6 +3,7 @@ package org.shaper.global.kafka
 import kotlinx.serialization.json.JsonPrimitive
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.shaper.generators.model.TestResult
 import java.util.*
@@ -11,7 +12,7 @@ import java.util.*
 object ResultsProducer {
 
     private const val KAFKA_BROKER = "localhost:9092"
-    private val producerReference = lazy { create() }
+    private val producer = lazy { create() }
 
     private fun create(): Producer<String, String> {
         val props = Properties()
@@ -28,7 +29,8 @@ object ResultsProducer {
         title: String,
         value: JsonPrimitive
     ) {
-
+        // TODO find test!
+        producer.value.send(ProducerRecord("result-store","abc123","{\"a\":\"1\"}"))
     }
 
 }

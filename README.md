@@ -116,6 +116,8 @@ area(for example, test query parameters or a results flat-file)
 start with topics
 `kafka-start.sh`
 
+Docker desktop must be running
+
 
 exec to contianer
 `docker exec -it kafka bash`
@@ -133,4 +135,4 @@ produce message
 `./usr/bin/kafka-console-producer --broker-list localhost:9092 --topic my-first-topic --property parse.key=true --property key.separator=: < topic-input.txt`
 
 consume message
-`./usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic my-first-topic --property parse.key=true --property key.separator=: --from-beginning`
+`docker exec -i kafka ./usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic result-store --property parse.key=true --property key.separator=: --from-beginning`
