@@ -16,7 +16,7 @@
 RestShaper is a project designed to generate API test cases off of swagger documents. 
 The difference with RestShaper is that it seeks to learn the... well,
  shape of the REST API under test, and alert on changes to that shape. R
- ather than generating cases purely at random, it aims to 
+ Rather than generating cases purely at random, it aims to 
  * give the user some "steering" for the test case generation
  * inform future test case generation with the results of previous tests
  
@@ -119,7 +119,7 @@ start with topics
 Docker desktop must be running
 
 
-exec to contianer
+exec to container
 `docker exec -it kafka bash`
 
 create topic

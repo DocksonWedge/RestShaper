@@ -1,11 +1,15 @@
 package org.shaper.global.kafka
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
+import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
+import org.shaper.swagger.model.Endpoint
 import java.util.*
 
 
@@ -29,8 +33,35 @@ object ResultsProducer {
         title: String,
         value: JsonPrimitive
     ) {
-        // TODO find test!
-        producer.value.send(ProducerRecord("result-store","abc123","{\"a\":\"1\"}"))
+
+        val messageObj = ResultValueMessage(
+            testResult.input,
+            testResult.endpoint,
+            fieldName,
+            fullPath,
+            title,
+            value
+        )
+        val message = Json.encodeToString(ResultValueMessage.serializer(), messageObj)
+        // TODO create a test!
+        producer.value.send(
+            ProducerRecord(
+                "result-store",
+                "${testResult.endpoint.method}-${testResult.endpoint.path}-$fullPath",
+                message
+            )
+        )
     }
+
+
+    @Serializable
+    private data class ResultValueMessage(
+        val input: TestInputConcretion,
+        val endpoint: Endpoint,
+        val fieldName: String,
+        val fullPath: String,
+        val title: String,
+        val value: JsonPrimitive
+    )
 
 }
