@@ -40,7 +40,8 @@ object ResultsProducer {
             fieldName,
             fullPath,
             title,
-            value
+            value,
+            testResult.response.statusCode
         )
         val message = Json.encodeToString(ResultValueMessage.serializer(), messageObj)
         // TODO create a test!
@@ -61,7 +62,8 @@ object ResultsProducer {
         val fieldName: String,
         val fullPath: String,
         val title: String,
-        val value: JsonPrimitive?
+        val value: JsonPrimitive?,
+        val statusCode: Int
     )
 
 }

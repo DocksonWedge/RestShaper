@@ -98,6 +98,20 @@ fun petStorePostPet(numCases: Int = 5): Boolean {
         }
     }.run()
 }
+fun petStoreMultiPet(numCases: Int = 2): Boolean {
+    return runnerConfig {
+        inputFunction = SimpleInputGenerator(numCases)::getInput
+
+        endpointConfig = {
+            swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
+            endpoints = listOf(
+                POST to "/pet",
+                DELETE to "/pet/{petId}",
+                GET to "/pet/{petId}"
+            )
+        }
+    }.run(3)
+}
 
 fun petStorePostOrder(numCases: Int = 5): Boolean {
     return runnerConfig {
