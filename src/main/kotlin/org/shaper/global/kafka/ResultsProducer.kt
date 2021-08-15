@@ -1,12 +1,13 @@
 package org.shaper.global.kafka
 
+
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.datetime.Instant
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.StringSerializer
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.Endpoint
@@ -41,6 +42,7 @@ object ResultsProducer {
             fullPath,
             title,
             value,
+            testResult.creationTime,
             testResult.response.statusCode
         )
         val message = Json.encodeToString(ResultValueMessage.serializer(), messageObj)
@@ -63,6 +65,7 @@ object ResultsProducer {
         val fullPath: String,
         val title: String,
         val value: JsonPrimitive?,
+        val executionTime: Instant,
         val statusCode: Int
     )
 

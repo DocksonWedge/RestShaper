@@ -2,11 +2,14 @@ package org.shaper.generators.model
 
 import io.restassured.internal.RestAssuredResponseImpl
 import io.restassured.response.Response
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import org.joda.time.DateTime
+
 import org.shaper.serialization.DateTimeSerializer
 import org.shaper.swagger.model.Endpoint
+
 
 
 @Serializable
@@ -16,8 +19,8 @@ data class TestResult(
     val endpoint: Endpoint
 
 ) {
-    @Serializable(with = DateTimeSerializer::class)
-    val creationTime = DateTime.now()
+    @Serializable
+    val creationTime = Clock.System.now() //DateTime.now()
 
     @Transient
     var restAssuredResponse: Response = RestAssuredResponseImpl()
