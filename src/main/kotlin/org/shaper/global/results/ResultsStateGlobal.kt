@@ -19,6 +19,7 @@ object ResultsStateGlobal {
                             >
                     >
             >()
+
     @Synchronized
     fun save(
         endpoint: EndpointSpec,
@@ -59,6 +60,7 @@ object ResultsStateGlobal {
     fun getIndexFromStatusCode(endpoint: EndpointSpec, statusCode: Int): Map<Int, MutableList<TestResult>> {
         return index[endpoint.paramUrl()]?.get(endpoint.method)?.get(statusCode) ?: mapOf()
     }
+
     fun getResultsFromStatusCode(endpoint: EndpointSpec, statusCode: Int): List<TestResult> {
         return getIndexFromStatusCode(endpoint, statusCode).flatMap { it.value }
     }
@@ -66,6 +68,7 @@ object ResultsStateGlobal {
     fun loadInitialResultsSet(loadFunction: () -> Unit) {
         loadFunction()
     }
+
     @Synchronized
     fun clearResults() {
         index.clear()

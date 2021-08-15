@@ -3,6 +3,7 @@ package org.shaper.global.results
 import io.mockk.mockk
 import io.swagger.v3.oas.models.PathItem.HttpMethod
 import kotlinx.serialization.json.*
+import mu.KotlinLogging
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -16,6 +17,8 @@ import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.constants.Util
 import org.shaper.swagger.model.ResponseBodySpec
+
+private val logger = KotlinLogging.logger {}
 
 class ResultsFieldsGlobalTest {
 
@@ -63,7 +66,7 @@ class ResultsFieldsGlobalTest {
                     "then I find properties $body in the ResultsFieldsGlobal.index."
         ) {
             testGlobalSave(method, path, body)
-            print(ResultsFieldsGlobal.index)
+            logger.info { ResultsFieldsGlobal.index }
             assertion()
         }
     }

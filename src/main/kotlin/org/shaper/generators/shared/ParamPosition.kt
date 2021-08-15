@@ -16,8 +16,8 @@ data class ParamPosition<T>(private val _iter: Iterator<T>, var currentVal: T? =
     }
 
     override fun next(): T {
-            wasReset = false
-            currentVal = iter.next()
-            return currentVal!!
+        wasReset = false
+        currentVal = iter.next()
+        return currentVal!!
     }
 }

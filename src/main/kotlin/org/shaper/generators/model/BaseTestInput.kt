@@ -67,11 +67,11 @@ abstract class BaseTestInput(
 
         private fun getBodyValuesAtPosition(position: Iterator<*>): JsonElement {
             val nextVal = position.next() ?: ""
-            return if (nextVal is Map<*,*>) {
+            return if (nextVal is Map<*, *>) {
                 JsonObject(nextVal as Map<String, JsonElement>)
             } else if (nextVal is List<*>) {
-                JsonArray (nextVal as List<JsonElement>)
-            } else if(nextVal is String) {
+                JsonArray(nextVal as List<JsonElement>)
+            } else if (nextVal is String) {
                 JsonPrimitive(nextVal as String)
             } else {
                 JsonPrimitive("")

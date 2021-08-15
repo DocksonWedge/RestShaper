@@ -9,7 +9,7 @@ import kotlinx.serialization.Transient
 
 import org.shaper.serialization.DateTimeSerializer
 import org.shaper.swagger.model.Endpoint
-
+import java.util.*
 
 
 @Serializable
@@ -21,6 +21,9 @@ data class TestResult(
 ) {
     @Serializable
     val creationTime = Clock.System.now() //DateTime.now()
+
+    @Serializable
+    val resultId = UUID.randomUUID().toString()
 
     @Transient
     var restAssuredResponse: Response = RestAssuredResponseImpl()

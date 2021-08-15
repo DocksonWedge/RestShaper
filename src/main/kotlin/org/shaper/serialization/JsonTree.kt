@@ -11,8 +11,8 @@ object JsonTree {
         title: String = "",
         terminalFunction: (String, String, String, JsonPrimitive) -> Unit
     ) { // function to run when we hit the non-null terminal leaf
-        when(jsonElement) {
-            is JsonPrimitive -> terminatePrimitive(jsonElement, currentKey, prevKeys,title, terminalFunction)
+        when (jsonElement) {
+            is JsonPrimitive -> terminatePrimitive(jsonElement, currentKey, prevKeys, title, terminalFunction)
             is JsonArray -> {
                 jsonElement.jsonArray.forEach { value ->
                     traverse(
@@ -23,7 +23,8 @@ object JsonTree {
                         terminalFunction
                     )
                 }
-            } is JsonObject -> {
+            }
+            is JsonObject -> {
                 jsonElement.jsonObject.forEach { (key, value) ->
                     traverse(
                         value,

@@ -29,7 +29,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
                         .getFromKey(name)
                         .map { // only add if we are type safe here
 //                            if (it.content::class == dataType) {
-                                it.content
+                            it.content
 //                            } else {
 //                                null
 //                            }

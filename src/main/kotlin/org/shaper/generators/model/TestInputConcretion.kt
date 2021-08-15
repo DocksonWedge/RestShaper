@@ -12,7 +12,7 @@ data class TestInputConcretion(
     val headers: Map<String, @Serializable(with = AnySerializer::class) Any?>,
     val cookies: Map<String, @Serializable(with = AnySerializer::class) Any?>,
     val body: JsonElement
-    ){
+) {
     fun requestBody(): String {
         return body.toString()
     }

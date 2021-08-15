@@ -135,4 +135,4 @@ produce message
 `./usr/bin/kafka-console-producer --broker-list localhost:9092 --topic result-store --property parse.key=true --property key.separator=: < topic-input.txt`
 
 consume message
-`docker exec -i kafka ./usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic result-store --property print.key=true --property key.separator=: --from-beginning`
+`docker exec -i kafka ./usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic result-body-store --property print.key=true --property key.separator=: --from-beginning`

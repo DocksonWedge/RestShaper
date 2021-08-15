@@ -11,6 +11,6 @@ data class ResponseData(
     val statusCode: Int,
     val headers: Map<String, String>,
     val cookies: Map<String, String>
-){
+) {
     val bodyParsed = if (body.isNotBlank()) Json.parseToJsonElement(body) else JsonPrimitive("")
 }

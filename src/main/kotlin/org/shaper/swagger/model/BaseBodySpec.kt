@@ -11,7 +11,7 @@ abstract class BaseBodySpec(protected val fullSpec: OpenAPI) {
 
     abstract val properties: Set<String>
 
-    protected fun getFlatKeys(_schema: Schema<*>) : Set<String>{
+    protected fun getFlatKeys(_schema: Schema<*>): Set<String> {
         return getFlatKeys("", _schema) //TODO pass in name maybe?
             .filter { it.isNotBlank() }
             .map { it.substringAfter(keyDelim) }

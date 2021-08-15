@@ -38,10 +38,10 @@ class SimpleTestInput(
         // TODO make abstract so util functions are reusable, next and hasNext implemented in child class
         override fun next(): TestInputConcretion {
             i++
-            position.queryParams.forEach { it.value.next()  }
-            position.pathParams.forEach { it.value.next()  }
-            position.headers.forEach { it.value.next()  }
-            position.cookies.forEach { it.value.next()  }
+            position.queryParams.forEach { it.value.next() }
+            position.pathParams.forEach { it.value.next() }
+            position.headers.forEach { it.value.next() }
+            position.cookies.forEach { it.value.next() }
             return inputFromPosition(position)
         }
 

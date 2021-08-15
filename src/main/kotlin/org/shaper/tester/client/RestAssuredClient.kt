@@ -1,15 +1,18 @@
 package org.shaper.tester.client
 
 import io.restassured.RestAssured
+import mu.KotlinLogging
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.EndpointSpec
 
 object RestAssuredClient {
+    private val logger = KotlinLogging.logger {}
+
     val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion ->
-        println("Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}")
-        println (" query params: ${input.queryParams}")
-        println (" body: ${input.requestBody()}")
+        logger.info { "Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}" }
+        logger.info { " query params: ${input.queryParams}" }
+        logger.info { " body: ${input.requestBody()}" }
         val result = RestAssured.given()
             .queryParams(input.queryParams)
             .headers(input.headers)

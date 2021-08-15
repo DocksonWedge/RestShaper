@@ -1,5 +1,6 @@
 package org.shaper.global.results
 
+import mu.KotlinLogging
 import org.shaper.generators.model.TestResult
 import org.shaper.global.results.ResultsStateGlobal.getResultsFromStatusCode
 import org.shaper.global.results.ResultsStateGlobal.getStatusCodesFromEndpoint
@@ -7,6 +8,8 @@ import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ParameterSpec
 
 object Results {
+    private val logger = KotlinLogging.logger {}
+
     // TODO purify function so it doesn't actually touch the global?
     @Synchronized
     fun saveToGlobal(
@@ -22,7 +25,7 @@ object Results {
         return allPassed
     }
 
-    private fun saveResultState(result: TestResult, endpoint: EndpointSpec): Boolean{
+    private fun saveResultState(result: TestResult, endpoint: EndpointSpec): Boolean {
         ResultsStateGlobal.save(
             endpoint,
             result.response.statusCode,
@@ -40,10 +43,10 @@ object Results {
 
     //TODO get linkages function - takes one result an previous links
     fun printSummary(endpoint: EndpointSpec) {
-        println("Summary for endpoint ${endpoint.method} : ${endpoint.path}")
+        logger.info { "Summary for endpoint ${endpoint.method} : ${endpoint.path}" }
         getStatusCodesFromEndpoint(endpoint).forEach {
             val numResponses = getResultsFromStatusCode(endpoint, it).size
-            println("  Status $it returned $numResponses times.")
+            logger.info { "  Status $it returned $numResponses times." }
         }
     }
 

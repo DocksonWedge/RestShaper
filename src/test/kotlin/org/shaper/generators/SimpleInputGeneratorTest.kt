@@ -2,6 +2,7 @@ package org.shaper.generators
 
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import mu.KotlinLogging
 import org.docksonwedge.kotmatcher.DockMatcher
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.model.SimpleTestInput
 import org.shaper.swagger.SpecFinder
-
+private val logger = KotlinLogging.logger {}
 class SimpleInputGeneratorTest {
     private val exampleFolder = "src\\test\\Resources\\TestExamples"
     private val petStoreSwaggerLocation = "${exampleFolder}\\PetStoreSwagger.yaml"
@@ -39,7 +40,7 @@ class SimpleInputGeneratorTest {
 
             Assertions.assertEquals(expected, input.toList().size)
             input.forEach {
-                println("test run! ${it.pathParams["orderId"]}")
+                logger.info { "test run! ${it.pathParams["orderId"]}" }
                 Assertions.assertDoesNotThrow { it.pathParams["orderId"] as Long }
             }
             // count() uses the sequence to count the total, so it IS different than checking .size

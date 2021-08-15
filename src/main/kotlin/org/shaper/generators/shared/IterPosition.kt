@@ -21,7 +21,8 @@ data class IterPosition(
             bodiesIter
         )
     }
-    private fun getValuesMap(params: MutableMap<String, Iterator<*>>) : MutableMap<String, ParamPosition<*>> {
+
+    private fun getValuesMap(params: MutableMap<String, Iterator<*>>): MutableMap<String, ParamPosition<*>> {
         return params.map { entry -> entry.key to ParamPosition(entry.value) }.toMap().toMutableMap()
     }
 }

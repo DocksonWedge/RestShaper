@@ -17,9 +17,9 @@ class ParameterSpec(
     private val param: Parameter,
     private val fullSpec: OpenAPI
 ) {
-    companion object{
+    companion object {
         // make standard parameter for header content type
-        fun getContentTypeParam(fullSpec: OpenAPI, contentType: String = "application/json") : ParameterSpec{
+        fun getContentTypeParam(fullSpec: OpenAPI, contentType: String = "application/json"): ParameterSpec {
             val ctParam = Parameter()
             ctParam.name = "Content-Type"
             ctParam.`in` = "header"
@@ -28,6 +28,7 @@ class ParameterSpec(
             return ParameterSpec(ctParam, fullSpec)
         }
     }
+
     val name: String = param.name
     val paramType: String = param.`in`
     val info = ParamInfo(param.schema, fullSpec, name)

@@ -24,7 +24,7 @@ class SimpleInputGenerator(
         private val valueReusePercent = .7
         val threadLocalRandom = ThreadLocalRandom.current()
 
-        private fun randPercent(): Double{
+        private fun randPercent(): Double {
             return faker.number().randomDouble(3, 0, 1)
         }
 

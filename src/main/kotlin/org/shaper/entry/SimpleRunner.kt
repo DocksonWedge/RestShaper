@@ -98,6 +98,7 @@ fun petStorePostPet(numCases: Int = 5): Boolean {
         }
     }.run()
 }
+
 fun petStoreMultiPet(numCases: Int = 2): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
@@ -125,6 +126,7 @@ fun petStorePostOrder(numCases: Int = 5): Boolean {
         }
     }.run()
 }
+
 fun petStoreCreateWithArray(numCases: Int = 5): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
