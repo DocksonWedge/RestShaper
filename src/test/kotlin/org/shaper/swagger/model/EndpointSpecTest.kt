@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.PathItem.HttpMethod
 import kotlinx.serialization.json.JsonObject
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.model.TestInputConcretion
@@ -67,6 +68,7 @@ class EndpointSpecTest {
             }
         }
     // http://api.dataatwork.org/v1/spec/skills-api.json GET:/jobs
+    @Disabled
     @TestFactory //TODO how to call out that this requires an external resource?
     fun `Test callWithConcretion successfully calls an endpoint`() = listOf(
         "/jobs" to 4, //Expected is the number returned plus 1 for pagination info

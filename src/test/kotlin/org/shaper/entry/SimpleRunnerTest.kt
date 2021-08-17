@@ -1,6 +1,7 @@
 package org.shaper.entry
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.shaper.global.results.ResultsStateGlobal
@@ -8,6 +9,7 @@ import org.shaper.global.results.ResultsStateGlobal
 // Hits external endpoint!
 
 class SimpleRunnerTest {
+    @Disabled
     @ResourceLock("ResultsStateGlobal")
     @Test
     fun `Test SimpleRunner runs a simple test!`() {

@@ -33,6 +33,7 @@ object ResultsProducer {
         fieldName: String,
         fullPath: String,
         title: String,
+        paramType: String,
         value: JsonPrimitive
     ) {
 
@@ -40,6 +41,7 @@ object ResultsProducer {
             fieldName,
             fullPath,
             title,
+            paramType,
             value,
             testResult.resultId
         )
@@ -81,6 +83,7 @@ object ResultsProducer {
         val fieldName: String,
         val fullPath: String,
         val title: String,
+        val paramType: String,
         val value: JsonPrimitive?,
         val resultId: String
     )

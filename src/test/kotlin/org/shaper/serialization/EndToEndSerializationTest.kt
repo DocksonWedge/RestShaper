@@ -3,6 +3,7 @@ package org.shaper.serialization
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.shaper.entry.dataAtWorkRun
@@ -10,7 +11,7 @@ import org.shaper.generators.model.TestResult
 import org.shaper.global.results.ResultsStateGlobal
 
 class EndToEndSerializationTest {
-
+    @Disabled
     @ResourceLock("ResultsStateGlobal")
     @Test
     fun `Test serializer goes to JSON and back to object`() {

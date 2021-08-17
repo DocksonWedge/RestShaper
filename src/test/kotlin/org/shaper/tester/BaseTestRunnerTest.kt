@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.restassured.http.Headers
 import io.restassured.response.Response
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -20,6 +21,7 @@ import org.shaper.swagger.model.EndpointSpec
 
 
 class BaseTestRunnerTest {
+    @Disabled
     @ResourceLock("ResultsStateGlobal")
     @TestFactory
     fun `Test lazy evaluation of input and input happy path`() = listOf(

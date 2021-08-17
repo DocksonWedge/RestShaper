@@ -61,7 +61,7 @@ object ResultsFieldsGlobal {
             title,
             value
         ) { list: MutableSet<JsonPrimitive>, any: JsonPrimitive ->
-            ResultsProducer.produceResultsFieldMessage(testResult, fieldName, fullPath, title, value)
+            ResultsProducer.produceResultsFieldMessage(testResult, fieldName, fullPath, title, "BODY" ,value)
             list.add(any)
         }
         //todo - multi index and object index
