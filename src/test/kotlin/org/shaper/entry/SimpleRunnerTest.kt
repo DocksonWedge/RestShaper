@@ -68,4 +68,5 @@ class SimpleRunnerTest {
             ResultsStateGlobal.getAllResults()[0].input.headers["api_key"] as String
         }
     }
+
 }

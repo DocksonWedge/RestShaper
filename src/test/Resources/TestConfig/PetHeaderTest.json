@@ -1,0 +1,16 @@
+{
+  "numCases": 1,
+  "swaggerLocation": "https://petstore.swagger.io/v2/swagger.json",
+  "chainDepth": 1,
+  "staticParams": {
+    "headers": {
+      "api_key": "token"
+    }
+  },
+  "endpoints": [
+    {
+      "method":  "DELETE",
+      "path": "/pet/{petId}"
+    }
+  ]
+}

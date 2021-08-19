@@ -12,5 +12,5 @@ fun main(vararg args: String) {
         DockerConfig.serializer(),
         File(configLocation).readText(Charsets.UTF_8)
     )
-    GeneralRun(config.numCases, config.swaggerLocation, config.endpoints, config.chainDepth)
+    GeneralRun(config.numCases, config.swaggerLocation, config.staticParams, config.endpoints, config.chainDepth)
 }

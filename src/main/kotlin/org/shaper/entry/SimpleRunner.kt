@@ -146,12 +146,13 @@ fun petStoreCreateWithArray(numCases: Int = 5): Boolean {
 fun GeneralRun(
     numCases: Int = 5,
     swaggerLocation: String,
+    staticParams: StaticParams,
     _endpoints: List<SimpleEndpoint>,
     chainDepth: Int = 1
 ): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
-
+        this.staticParams = staticParams
         endpointConfig = {
             swaggerUrl = swaggerLocation
             endpoints = _endpoints.map { it.method to it.path }
