@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.PathItem.HttpMethod.DELETE
 import org.shaper.config.runnerConfig
 import org.shaper.entry.model.SimpleEndpoint
 import org.shaper.generators.SimpleInputGenerator
+import org.shaper.generators.model.StaticParams
 
 fun dataAtWorkRun(numCases: Int = 5): Boolean {
     return runnerConfig {
@@ -20,11 +21,13 @@ fun dataAtWorkRun(numCases: Int = 5): Boolean {
         }
     }.run()
 }
-
+//USED IN HEADER TEST
 fun petStoreGetPet(numCases: Int = 5): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
-
+        staticParams = StaticParams(
+            headers = mapOf("Authorization" to "token")
+        )
         endpointConfig = {
             swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
             endpoints = listOf(

@@ -13,7 +13,7 @@ class DockerEntryTest {
     @ResourceLock("ResultsStateGlobal")
     fun `Test general run works with config json`() {
         main("src/test/Resources/TestConfig/PetTest.json")
-        main("src/test/Resources/TestConfig/PetTestDefault.json")
+        main("src/test/Resources/TestConfig/PetTestDefault.json") //TODO add in auth headers here to
     }
 
 }

@@ -12,6 +12,7 @@ object RestAssuredClient {
     val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion ->
         logger.info { "Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}" }
         logger.info { " query params: ${input.queryParams}" }
+        logger.info { " header params: ${input.headers}" }
         logger.info { " body: ${input.requestBody()}" }
         val result = RestAssured.given()
             .queryParams(input.queryParams)

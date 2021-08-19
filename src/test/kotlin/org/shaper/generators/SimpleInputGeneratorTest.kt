@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.shaper.generators.model.SimpleTestInput
+import org.shaper.generators.model.StaticParams
 import org.shaper.swagger.SpecFinder
 private val logger = KotlinLogging.logger {}
 class SimpleInputGeneratorTest {
@@ -36,7 +37,7 @@ class SimpleInputGeneratorTest {
 
             val input =
                 (if (number == null) SimpleInputGenerator() else SimpleInputGenerator(number))
-                    .getInput(endpoint) //TODO - this is the slow line
+                    .getInput(endpoint, StaticParams()) //TODO - this is the slow line
 
             Assertions.assertEquals(expected, input.toList().size)
             input.forEach {
@@ -65,7 +66,7 @@ class SimpleInputGeneratorTest {
                 SpecFinder(petStoreSwaggerLocation, listOf(endpoint))
                     .getRelevantSpecs()[0]
 
-            val input = SimpleInputGenerator().getInput(endpointSpec)
+            val input = SimpleInputGenerator().getInput(endpointSpec, StaticParams())
             val concreteValue = getParamValues(input)?.iterator()?.next()
             Assertions.assertTrue(type.isInstance(concreteValue),
                 "Expected $type but value was ${concreteValue!!::class}")
@@ -80,7 +81,7 @@ class SimpleInputGeneratorTest {
                 .getRelevantSpecs()[0]
 
         val concreteValue = SimpleInputGenerator()
-            .getInput(endpointSpec)
+            .getInput(endpointSpec, StaticParams())
             .bodies
             .iterator().next() as JsonObject
 

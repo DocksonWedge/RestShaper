@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.shaper.generators.SimpleInputGenerator
+import org.shaper.generators.model.StaticParams
 import org.shaper.generators.model.TestInputConcretion
 import org.shaper.generators.model.TestResult
 import org.shaper.global.results.Results
@@ -45,6 +46,7 @@ class BaseTestRunnerTest {
 
             val passed = BaseTestRunner.shapeEndpoint(
                 endpoints[0],
+                StaticParams(),
                 SimpleInputGenerator()::getInput
             ) { endpoint: EndpointSpec, results: Sequence<TestResult> ->
                 val resultsList = results.toList()

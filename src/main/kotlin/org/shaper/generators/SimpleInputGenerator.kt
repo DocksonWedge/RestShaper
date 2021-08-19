@@ -7,8 +7,10 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.generators.model.SimpleTestInput
+import org.shaper.generators.model.StaticParams
 import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.swagger.model.ParamInfo
+import org.shaper.swagger.model.ParameterSpec
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
 
@@ -104,15 +106,35 @@ class SimpleInputGenerator(
         }
     }
 
-    fun getInput(endpoint: EndpointSpec): SimpleTestInput {
+    fun getInput(endpoint: EndpointSpec, staticParams: StaticParams): SimpleTestInput {
         return SimpleTestInput(
-            endpoint.queryParams.mapValues { getParamVals(it.value.info) },
-            endpoint.pathParams.mapValues { getParamVals(it.value.info) },
-            endpoint.headerParams.mapValues { getParamVals(it.value.info) },
-            endpoint.cookieParams.mapValues { getParamVals(it.value.info) },
+            endpoint.queryParams.mapValues {
+                getRandomOrStaticParamVals(it, staticParams.queryParams)
+            },
+            endpoint.pathParams.mapValues {
+                getRandomOrStaticParamVals(it, staticParams.pathParams)
+            },
+            endpoint.headerParams.mapValues {
+                getRandomOrStaticParamVals(it, staticParams.headers)
+            },
+            endpoint.cookieParams.mapValues {
+                getRandomOrStaticParamVals(it, staticParams.cookies)
+            },
             getBodyVals(endpoint.requestBody.bodyInfo),
             numCases
         )
+    }
+
+    private fun getRandomOrStaticParamVals(
+        paramDef: Map.Entry<String, ParameterSpec>,
+        staticParam: Map<String, Any?>
+    )
+            : Sequence<*> {
+        if (staticParam.containsKey(paramDef.key)) { // TODO add to other params
+            return singleElementForever(staticParam[paramDef.key])
+        } else {
+            return getParamVals(paramDef.value.info)
+        }
     }
 
     fun getBodyVals(param: ParamInfo<Any>?): Sequence<*> {
@@ -240,6 +262,20 @@ class SimpleInputGenerator(
 
         fun getErroredParams(endpoint: EndpointSpec) {
             ResultsStateGlobal.getIndexFromStatusCode(endpoint, 500)
+        }
+    }
+
+    class singleElementForever<T>(
+        val element: T
+    ) : Sequence<T> {
+        override fun iterator(): Iterator<T> = object : Iterator<T> {
+            override fun next(): T {
+                return element
+            }
+
+            override fun hasNext(): Boolean {
+                return true
+            }
         }
     }
 }
