@@ -128,10 +128,9 @@ class SimpleInputGenerator(
     private fun getRandomOrStaticParamVals(
         paramDef: Map.Entry<String, ParameterSpec>,
         staticParam: Map<String, Any?>
-    )
-            : Sequence<*> {
+    ): Sequence<*> {
         if (staticParam.containsKey(paramDef.key)) { // TODO add to other params
-            return singleElementForever(staticParam[paramDef.key])
+            return SingleValueForever(staticParam[paramDef.key])
         } else {
             return getParamVals(paramDef.value.info)
         }
@@ -265,14 +264,13 @@ class SimpleInputGenerator(
         }
     }
 
-    class singleElementForever<T>(
+    class SingleValueForever<T>(
         val element: T
     ) : Sequence<T> {
         override fun iterator(): Iterator<T> = object : Iterator<T> {
             override fun next(): T {
                 return element
             }
-
             override fun hasNext(): Boolean {
                 return true
             }

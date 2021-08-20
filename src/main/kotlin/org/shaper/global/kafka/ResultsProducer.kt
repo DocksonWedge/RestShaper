@@ -17,7 +17,7 @@ import java.util.*
 
 object ResultsProducer {
 
-    private const val KAFKA_BROKER = "localhost:9092"
+    private val KAFKA_BROKER = if (System.getenv("IS_DOCKER") == "true")  "kafka:9092"  else "127.0.0.1:9093"
     private val producer = lazy { create() }
 
     private fun create(): Producer<String, String> {

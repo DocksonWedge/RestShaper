@@ -4,3 +4,9 @@ services:
     build: .
     volumes:
       - ./target:/target
+    environment:
+      - IS_DOCKER=true
+
+networks:
+  default:
+    name: restshaper-network
