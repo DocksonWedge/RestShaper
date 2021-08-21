@@ -7,6 +7,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.generators.model.SimpleTestInput
+import org.shaper.generators.model.SourceIdMap
 import org.shaper.generators.model.StaticParams
 import org.shaper.global.results.ResultsStateGlobal
 import org.shaper.swagger.model.ParamInfo
@@ -30,26 +31,31 @@ class SimpleInputGenerator(
             return faker.number().randomDouble(3, 0, 1)
         }
 
-        //TODO map any could be json elements
-        fun streamMapParamSequence(param: ParamInfo<Any>): Map<String, Any> {
-            //TODO add required fields handling
-            return param
-                .nestedParams
-                .mapValues {
+        fun getStreamMapParamSequence(param: ParamInfo<Any>, sourceIdMap: SourceIdMap)
+                : (param: ParamInfo<Any>) -> Map<String, Any> {
+            //TODO map any could be json elements
+            return fun (param: ParamInfo<Any>): Map<String, Any> {
+                //TODO add required fields handling
+                return param
+                    .nestedParams
+                    .mapValues {
+                        SimpleInputGenerator()
+                            .getParamVals(it.value as ParamInfo<Any>, sourceIdMap)
+                            .iterator()
+                            .next() ?: ""
+                    }
+            }
+        }
+        fun getStreamListParamSequence(param: ParamInfo<Any>, sourceIdMap: SourceIdMap)
+                : (param: ParamInfo<Any>) -> List<Any> {
+            return fun (param: ParamInfo<Any>): List<Any> {
+                //TODO add max length handling
+                return (1..faker.number().numberBetween(1, 5)).map { _ ->
                     SimpleInputGenerator()
-                        .getParamVals(it.value as ParamInfo<Any>)
+                        .getParamVals(param.listParam, sourceIdMap)
                         .iterator()
                         .next() ?: ""
                 }
-        }
-
-        fun streamListParamSequence(param: ParamInfo<Any>): List<Any> {
-            //TODO add max length handling
-            return (1..faker.number().numberBetween(1, 5)).map { _ ->
-                SimpleInputGenerator()
-                    .getParamVals(param.listParam)
-                    .iterator()
-                    .next() ?: ""
             }
         }
 
@@ -81,7 +87,8 @@ class SimpleInputGenerator(
 
         private fun <T> getPassingNumber(
             conversionFun: Number.() -> T,
-            randomFun: (ParamInfo<Any>) -> T
+            sourceIdMap: SourceIdMap,
+            randomFun: (ParamInfo<Any>) -> T,
         ): (ParamInfo<Any>) -> T {
             return { p ->
                 val passingValues =
@@ -89,7 +96,9 @@ class SimpleInputGenerator(
                 if (passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     randomFun(p)
                 } else {
-                    val value = passingValues.random().first
+                    val chosenVal = passingValues.random()
+                    val value = chosenVal.first
+                    sourceIdMap.set(p.paramType, p.name, chosenVal.second)
                     when (value) {
                         is Number -> value.conversionFun()
                         is String -> {
@@ -107,38 +116,42 @@ class SimpleInputGenerator(
     }
 
     fun getInput(endpoint: EndpointSpec, staticParams: StaticParams): SimpleTestInput {
+        val sourceIdMap = SourceIdMap()
         return SimpleTestInput(
             endpoint.queryParams.mapValues {
-                getRandomOrStaticParamVals(it, staticParams.queryParams)
+                getRandomOrStaticParamVals(it, staticParams.queryParams, sourceIdMap)
             },
             endpoint.pathParams.mapValues {
-                getRandomOrStaticParamVals(it, staticParams.pathParams)
+                getRandomOrStaticParamVals(it, staticParams.pathParams, sourceIdMap)
             },
             endpoint.headerParams.mapValues {
-                getRandomOrStaticParamVals(it, staticParams.headers)
+                getRandomOrStaticParamVals(it, staticParams.headers, sourceIdMap)
             },
             endpoint.cookieParams.mapValues {
-                getRandomOrStaticParamVals(it, staticParams.cookies)
+                getRandomOrStaticParamVals(it, staticParams.cookies, sourceIdMap)
             },
-            getBodyVals(endpoint.requestBody.bodyInfo),
-            numCases
+            getBodyVals(endpoint.requestBody.bodyInfo, sourceIdMap),
+            numCases,
+            sourceIdMap
         )
     }
 
     private fun getRandomOrStaticParamVals(
         paramDef: Map.Entry<String, ParameterSpec>,
-        staticParam: Map<String, Any?>
+        staticParam: Map<String, Any?>,
+        sourceIdMap: SourceIdMap
     ): Sequence<*> {
+        sourceIdMap.set(paramDef.value.info.paramType, paramDef.value.info.name, null)
         if (staticParam.containsKey(paramDef.key)) { // TODO add to other params
             return SingleValueForever(staticParam[paramDef.key])
         } else {
-            return getParamVals(paramDef.value.info)
+            return getParamVals(paramDef.value.info, sourceIdMap)
         }
     }
 
-    fun getBodyVals(param: ParamInfo<Any>?): Sequence<*> {
+    fun getBodyVals(param: ParamInfo<Any>?, sourceIdMap: SourceIdMap): Sequence<*> {
         return sequence {
-            val iter = getParamVals(param).iterator()
+            val iter = getParamVals(param, sourceIdMap).iterator()
             while (iter.hasNext()) {
                 yield(pokoToJsonElement(iter.next() ?: ""))
             }
@@ -147,18 +160,18 @@ class SimpleInputGenerator(
 
     // TODO calculate function based on requirements, then pass it in
     // TODO can we have a way here to know when we have done something invalid and push that to the expected results
-    fun getParamVals(param: ParamInfo<Any>?): Sequence<*> {
+    fun getParamVals(param: ParamInfo<Any>?, sourceIdMap: SourceIdMap): Sequence<*> {
         if (param == null) {
             return emptyGenerator()
         }
         return when (param.dataType) {
             // TODO - more complex generator that hits edge cases and is aware of parameter spec
-            Long::class -> RandomLongGenerator(param)
-            String::class -> RandomStringGenerator(param)
-            Double::class -> RandomDoubleGenerator(param)
+            Long::class -> RandomLongGenerator(param, sourceIdMap)
+            String::class -> RandomStringGenerator(param, sourceIdMap)
+            Double::class -> RandomDoubleGenerator(param, sourceIdMap)
             Boolean::class -> RandomBooleanGenerator(param)
-            List::class -> RandomListGenerator(param)
-            Map::class -> RandomMapGenerator(param)
+            List::class -> RandomListGenerator(param, sourceIdMap)
+            Map::class -> RandomMapGenerator(param, sourceIdMap)
             else -> throw NotImplementedError(
                 "Parameters with data type other than " +
                         "integer, number, boolean, or string are not yet implemented."
@@ -179,12 +192,12 @@ class SimpleInputGenerator(
         }
     }
 
-    private class RandomLongGenerator(param: ParamInfo<Any>) :
+    private class RandomLongGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<Long>(
             param,
             { 0L },
             { faker.number().randomNumber() },
-            getPassingNumber(Number::toLong) { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
+            getPassingNumber(Number::toLong, sourceIdMap) { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
         )
 
     private class RandomBooleanGenerator(param: ParamInfo<Any>) :
@@ -195,15 +208,20 @@ class SimpleInputGenerator(
             { Random.nextBoolean() }
         )
 
-    private class RandomDoubleGenerator(param: ParamInfo<Any>) :
+    private class RandomDoubleGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<Double>(
             param,
             { 0.0 },
             { faker.number().randomDouble(5, -10000000, 10000000) },
-            getPassingNumber(Number::toDouble) { p -> threadLocalRandom.nextDouble(p.minDecimal, p.maxDecimal) }
+            getPassingNumber(Number::toDouble, sourceIdMap) { p ->
+                threadLocalRandom.nextDouble(
+                    p.minDecimal,
+                    p.maxDecimal
+                )
+            }
         )
 
-    private class RandomStringGenerator(param: ParamInfo<Any>) :
+    private class RandomStringGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<String>(
             param,
             { "" },
@@ -212,25 +230,27 @@ class SimpleInputGenerator(
                 if (p.passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     faker.regexify("[A-z1-9]{0,25}")
                 } else {
-                    p.passingValues.random().first.toString()
+                    val chosenVal = p.passingValues.random()
+                    sourceIdMap.set(param.paramType, param.name, chosenVal.second)
+                    chosenVal.first.toString()
                 }
             }
         )
 
-    private class RandomMapGenerator(param: ParamInfo<Any>) :
+    private class RandomMapGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<Map<String, Any>>(
             param,
             { mapOf() },
-            SimpleInputGenerator::streamMapParamSequence,
-            SimpleInputGenerator::streamMapParamSequence //TODO finish algorithm
+            SimpleInputGenerator.getStreamMapParamSequence(param, sourceIdMap),
+            SimpleInputGenerator.getStreamMapParamSequence(param, sourceIdMap) //TODO finish algorithm
         )
 
-    private class RandomListGenerator(param: ParamInfo<Any>) :
+    private class RandomListGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<List<Any>>(
             param,
             { listOf() },
-            SimpleInputGenerator::streamListParamSequence,
-            SimpleInputGenerator::streamListParamSequence //TODO finish algorithm
+            SimpleInputGenerator.getStreamListParamSequence(param, sourceIdMap),
+            SimpleInputGenerator.getStreamListParamSequence(param, sourceIdMap) //TODO finish algorithm
         )
 
     abstract class RandomBaseGenerator<T>(
@@ -271,6 +291,7 @@ class SimpleInputGenerator(
             override fun next(): T {
                 return element
             }
+
             override fun hasNext(): Boolean {
                 return true
             }

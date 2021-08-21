@@ -9,7 +9,7 @@ import org.shaper.global.results.ResultsFieldsGlobal
 import java.util.*
 import kotlin.reflect.KClass
 
-class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI, val name: String = "") {
+class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI, val name: String = "", val paramType: String) {
 
     val schema = deriveSchema(_schema)
     val dataType: KClass<*> = swaggerTypeToKClass(schema.type?.toLowerCase() ?: "")
@@ -49,7 +49,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
             Map::class ->
                 nestedParams.putAll(getNestedParms(schema))
             List::class ->
-                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>, fullSpec, name)
+                listParam = ParamInfo((schema as ArraySchema).items as Schema<Any>, fullSpec, name, paramType)
         }
     }
 
@@ -86,7 +86,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
         return schema
             .properties //todo add additional properties as well
             .filter { it.value != null }
-            .mapValues { ParamInfo(it.value, fullSpec, it.key) }
+            .mapValues { ParamInfo(it.value, fullSpec, it.key, paramType) }
             .toMutableMap()
 
     }

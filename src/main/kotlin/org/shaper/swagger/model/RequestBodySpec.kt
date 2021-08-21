@@ -29,9 +29,9 @@ class RequestBodySpec(private val requestBody: RequestBody?, fullSpec: OpenAPI) 
     //TODO handle multiple request schemas
     private fun getBody(): ParamInfo<Any>? {
         return if (jsonContentRef != "") {
-            ParamInfo(fullSpec.components.schemas[schemaRef.left] as Schema<Any>, fullSpec)
+            ParamInfo(fullSpec.components.schemas[schemaRef.left] as Schema<Any>, fullSpec, paramType = "body")
         } else if (jsonSchema != null) {
-            ParamInfo(jsonSchema, fullSpec)
+            ParamInfo(jsonSchema, fullSpec, paramType = "body")
         } else {
             null
         }

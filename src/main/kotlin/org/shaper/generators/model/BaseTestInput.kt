@@ -15,7 +15,8 @@ abstract class BaseTestInput(
     var pathParams: Map<String, Sequence<*>>,
     var headers: Map<String, Sequence<*>>,
     var cookies: Map<String, Sequence<*>>,
-    var bodies: Sequence<*>
+    var bodies: Sequence<*>,
+    val sourceIdMap: SourceIdMap
     // val additionalConfig: () -> Unit TODO - move this a level higher
 ) : Sequence<TestInputConcretion> {
 
@@ -29,7 +30,8 @@ abstract class BaseTestInput(
         var pathParams: Map<String, Sequence<*>>,
         var headers: Map<String, Sequence<*>>,
         var cookies: Map<String, Sequence<*>>,
-        var bodies: Sequence<*> // TODO - should probably be map of maps
+        var bodies: Sequence<*>, // TODO - should probably be map of maps
+        val sourceIdMap: SourceIdMap
         // val additionalConfig: () -> Unit TODO - move this a level higher?
     ) : Iterator<TestInputConcretion> {
 
@@ -45,14 +47,16 @@ abstract class BaseTestInput(
             bodies.iterator()
         )
 
-        protected fun inputFromPosition(position: IterPosition): TestInputConcretion {
-            return TestInputConcretion(
+        protected fun inputFromPosition(position: IterPosition, sourceIdMap: SourceIdMap): TestInputConcretion {
+            val concretion= TestInputConcretion(
                 getParamValuesAtPosition(queryParams, position.queryParams),
                 getParamValuesAtPosition(pathParams, position.pathParams),
                 getParamValuesAtPosition(headers, position.headers),
                 getParamValuesAtPosition(cookies, position.cookies),
                 getBodyValuesAtPosition(position.bodiesIter)//TODO
             )
+            concretion.sourceResultIds.addAll(sourceIdMap.values())
+            return concretion
         }
 
         private fun getParamValuesAtPosition(
