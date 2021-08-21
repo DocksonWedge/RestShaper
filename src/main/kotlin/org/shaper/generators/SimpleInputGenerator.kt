@@ -89,7 +89,7 @@ class SimpleInputGenerator(
                 if (passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     randomFun(p)
                 } else {
-                    val value = passingValues.random()
+                    val value = passingValues.random().first
                     when (value) {
                         is Number -> value.conversionFun()
                         is String -> {
@@ -212,7 +212,7 @@ class SimpleInputGenerator(
                 if (p.passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     faker.regexify("[A-z1-9]{0,25}")
                 } else {
-                    p.passingValues.random().toString()
+                    p.passingValues.random().first.toString()
                 }
             }
         )

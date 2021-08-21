@@ -36,7 +36,6 @@ object Results {
             addParamResult(endpoint.queryParams, result.input.queryParams, addFailing)
             false
         } else {
-            addParamResult(endpoint.queryParams, result.input.queryParams, addPassing)
             true
         }
     }
@@ -67,7 +66,7 @@ object Results {
     }
 
     private val addPassing = { param: ParameterSpec, value: Any ->
-        param.info.addPassingValue(value)
+        //param.info.addPassingValue(value)
     }
     private val addFailing = { param: ParameterSpec, value: Any ->
         param.info.addFailingValue(value)

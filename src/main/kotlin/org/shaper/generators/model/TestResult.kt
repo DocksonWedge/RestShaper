@@ -7,7 +7,6 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-import org.shaper.serialization.DateTimeSerializer
 import org.shaper.swagger.model.Endpoint
 import java.util.*
 
@@ -16,8 +15,9 @@ import java.util.*
 data class TestResult(
     val response: ResponseData,
     val input: TestInputConcretion,
-    val endpoint: Endpoint
-
+    val endpoint: Endpoint,
+    val resultGroupId: String,
+    val sourceResultIds: Set<String> = setOf<String>()
 ) {
     @Serializable
     val creationTime = Clock.System.now() //DateTime.now()
@@ -28,8 +28,14 @@ data class TestResult(
     @Transient
     var restAssuredResponse: Response = RestAssuredResponseImpl()
 
-    constructor(_response: Response, _input: TestInputConcretion, _endpoint: Endpoint)
-            : this(fromRestAssuredResponse(_response), _input, _endpoint) {
+    constructor(
+        _response: Response,
+        _input: TestInputConcretion,
+        _endpoint: Endpoint,
+        _resultGroupId: String,
+        _sourceResultIds: Set<String> = setOf<String>()
+    )
+            : this(fromRestAssuredResponse(_response), _input, _endpoint, _resultGroupId, _sourceResultIds) {
         restAssuredResponse = _response
     }
 

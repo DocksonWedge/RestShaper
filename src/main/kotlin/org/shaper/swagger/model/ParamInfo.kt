@@ -20,7 +20,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
     val minDecimal = schema?.minimum?.toDouble() ?: -10000000000.0
 
     val failingValues = mutableSetOf<Any>()
-    val passingValues = mutableSetOf<Any>()
+    val passingValues = mutableSetOf<Pair<Any, String>>()
         get() {
             // so.... schema name and title are null alot... not sure why
             if (name.isNotBlank()) { //TODO - trigger delegate listener?
@@ -29,7 +29,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
                         .getFromKey(name)
                         .map { // only add if we are type safe here
 //                            if (it.content::class == dataType) {
-                            it.content
+                            it.first.content to it.second
 //                            } else {
 //                                null
 //                            }
@@ -44,7 +44,7 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
     var listParam: ParamInfo<Any>? = null
 
     init {
-        passingValues.addAll(getAllEnumValues(schema))
+        passingValues.addAll(getAllEnumValues(schema).map{ it to "" }.toMutableSet())
         when (dataType) {
             Map::class ->
                 nestedParams.putAll(getNestedParms(schema))
@@ -113,9 +113,9 @@ class ParamInfo<T>(private val _schema: Schema<T>, private val fullSpec: OpenAPI
         failingValues.add(value)
     }
 
-    fun addPassingValue(value: Any) {
-        passingValues.add(value)
-        failingValues.remove(value)
-    }
+//    fun addPassingValue(value: Any) {
+//        passingValues.add(value)
+//        failingValues.remove(value)
+//    }
 }
 

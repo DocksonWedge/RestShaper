@@ -14,20 +14,21 @@ object BaseTestRunner {
         endpoint: EndpointSpec,
         staticParams: StaticParams,
         inputGenerator: (EndpointSpec, StaticParams) -> BaseTestInput,
+        runId: String = "",
         outputGenerator: (EndpointSpec, Sequence<TestResult>) -> T
     ): T {
         //TODO - document input-output interface/how-to
         val paramValues = inputGenerator(endpoint, staticParams)
         // This doesn't actually run until the out put gen because it's a sequence!
-        val results = paramValues.map { runTest(it, endpoint) }
+        val results = paramValues.map { runTest(it, endpoint, runId) }
         return outputGenerator(endpoint, results)
     }
 
     /**
     Use shapeEndpoint instead unless you really know what you are doing!
      */
-    fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec): TestResult {
-        return endpoint.callWithConcretion(testInput)
+    fun runTest(testInput: TestInputConcretion, endpoint: EndpointSpec, runId: String): TestResult {
+        return endpoint.callWithConcretion(testInput, runId)
     }
 
 

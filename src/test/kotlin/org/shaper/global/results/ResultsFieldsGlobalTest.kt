@@ -123,7 +123,8 @@ class ResultsFieldsGlobalTest {
         val result = TestResult(
             responseData,
             TestInputConcretion(mapOf(), mapOf(), mapOf(), mapOf(), JsonPrimitive("")),
-            endpointSpec.endpoint
+            endpointSpec.endpoint,
+            ""
         )
         ResultsFieldsGlobal.save(result)
     }

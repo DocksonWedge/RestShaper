@@ -40,14 +40,15 @@ class BaseTestRunnerTest {
             every { mockResponse.asString() } returns "{}"
             every { mockResponse.headers } returns Headers()
             every { mockResponse.cookies } returns mapOf()
-            endpoints[0].callFunction = { e: EndpointSpec, i: TestInputConcretion ->
-                TestResult(mockResponse, i, e.endpoint)
+            endpoints[0].callFunction = { e: EndpointSpec, i: TestInputConcretion, r:String ->
+                TestResult(mockResponse, i, e.endpoint,r)
             }
 
             val passed = BaseTestRunner.shapeEndpoint(
                 endpoints[0],
                 StaticParams(),
-                SimpleInputGenerator()::getInput
+                SimpleInputGenerator()::getInput,
+                ""
             ) { endpoint: EndpointSpec, results: Sequence<TestResult> ->
                 val resultsList = results.toList()
                 Assertions.assertEquals(expected, resultsList.size)

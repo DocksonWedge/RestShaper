@@ -7,6 +7,7 @@ import org.shaper.generators.model.TestResult
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.global.results.Results
 import org.shaper.tester.BaseTestRunner
+import java.util.*
 
 class RunnerConfigBuilder {
     var inputFunction: (EndpointSpec, StaticParams) -> BaseTestInput = SimpleInputGenerator(5)::getInput
@@ -16,6 +17,7 @@ class RunnerConfigBuilder {
     lateinit var endpointConfig: EndpointConfigBuilder.() -> Unit
 
     fun run(maxChainDepth: Int = 1): Boolean {
+        val runId = UUID.randomUUID().toString()
         var passing = true
         val endpointList = EndpointConfigBuilder()
             .apply(endpointConfig)
@@ -26,6 +28,7 @@ class RunnerConfigBuilder {
                     endpointSpec,
                     staticParams,
                     inputFunction,
+                    runId,
                     outputFunction
                 ) && passing
                 summarizeFunction(endpointSpec)

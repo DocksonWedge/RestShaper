@@ -55,7 +55,9 @@ object ResultsProducer {
             testResult.creationTime,
             testResult.response.statusCode,
             testResult.response.body,
-            testResult.resultId
+            testResult.resultId,
+            testResult.resultGroupId,
+            testResult.sourceResultIds
         )
         val bodyMessage = Json.encodeToString(ResultBodyMessage.serializer(), bodyMessageObj)
         sendResultsMessage(bodyMessage, "result-body-store", testResult, fieldName)
@@ -96,7 +98,9 @@ object ResultsProducer {
         val executionTime: Instant,
         val statusCode: Int,
         val responseBody: String,
-        val resultId: String
+        val resultId: String,
+        val resultGroupId: String,
+        val sourceResultIds: Set<String>
     )
 
 }

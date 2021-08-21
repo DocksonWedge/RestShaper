@@ -9,7 +9,7 @@ import org.shaper.swagger.model.EndpointSpec
 object RestAssuredClient {
     private val logger = KotlinLogging.logger {}
 
-    val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion ->
+    val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion, runId:String ->
         logger.info { "Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}" }
         logger.info { " query params: ${input.queryParams}" }
         logger.info { " header params: ${input.headers}" }
@@ -22,6 +22,6 @@ object RestAssuredClient {
             .request(endpointSpec.method.toString(), endpointSpec.fullUrl(input.pathParams))
             ?: throw error("Calling ${endpointSpec.method} ${endpointSpec.url} with input $input failed to return a request!")
         result.prettyPeek()
-        TestResult(result, input, endpointSpec.endpoint)
+        TestResult(result, input, endpointSpec.endpoint, runId, input.sourceResultIds)
     }
 }

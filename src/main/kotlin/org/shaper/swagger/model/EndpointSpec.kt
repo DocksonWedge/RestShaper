@@ -15,7 +15,7 @@ class EndpointSpec(
     val method: HttpMethod,
     val path: String,
     // TODO can call function be private val?
-    var callFunction: (EndpointSpec, TestInputConcretion) -> TestResult = RestAssuredClient.callRestAssured,
+    var callFunction: (EndpointSpec, TestInputConcretion, String) -> TestResult = RestAssuredClient.callRestAssured,
     private val swaggerUrlOrFile: String = ""
 ) {
 
@@ -81,8 +81,8 @@ class EndpointSpec(
     }
     val endpoint = Endpoint(method, url, path, swaggerUrlOrFile, title)
 
-    fun callWithConcretion(input: TestInputConcretion): TestResult {
-        return callFunction(this, input)
+    fun callWithConcretion(input: TestInputConcretion, runId: String): TestResult {
+        return callFunction(this, input, runId)
     }
 }
 
