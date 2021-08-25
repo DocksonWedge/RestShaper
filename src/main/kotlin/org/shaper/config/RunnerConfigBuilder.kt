@@ -4,6 +4,7 @@ import org.shaper.generators.SimpleInputGenerator
 import org.shaper.generators.model.BaseTestInput
 import org.shaper.generators.model.StaticParams
 import org.shaper.generators.model.TestResult
+import org.shaper.global.kafka.ResultsProducer
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.global.results.Results
 import org.shaper.tester.BaseTestRunner
@@ -31,6 +32,7 @@ class RunnerConfigBuilder {
                     runId,
                     outputFunction
                 ) && passing
+                ResultsProducer.produceRunCompleteMessage(runId)
                 summarizeFunction(endpointSpec)
             }
         }

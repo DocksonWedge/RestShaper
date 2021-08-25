@@ -118,6 +118,8 @@ You can see examples in SimpleRunner.kt
 
 ## Starting kafka
 
+To run without Kafka set environment variable `USE_KAFKA` = false
+
 `docker-compose -f kafka/docker-compose.kafka.yaml up -d --remove-orphans`
 
 start with topics
