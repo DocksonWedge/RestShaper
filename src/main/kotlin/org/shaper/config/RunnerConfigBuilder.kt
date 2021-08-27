@@ -17,8 +17,8 @@ class RunnerConfigBuilder {
     var summarizeFunction: (EndpointSpec) -> Unit = Results::printSummary
     lateinit var endpointConfig: EndpointConfigBuilder.() -> Unit
 
-    fun run(maxChainDepth: Int = 1): Boolean {
-        val runId = UUID.randomUUID().toString()
+    fun run(maxChainDepth: Int = 1, runId: String = ""): Boolean {
+        val runUuid = if (runId.isBlank()) UUID.randomUUID().toString() else runId
         var passing = true
         val endpointList = EndpointConfigBuilder()
             .apply(endpointConfig)
@@ -32,7 +32,7 @@ class RunnerConfigBuilder {
                     runId,
                     outputFunction
                 ) && passing
-                ResultsProducer.produceRunCompleteMessage(runId)
+                ResultsProducer.produceRunCompleteMessage(runUuid)
                 summarizeFunction(endpointSpec)
             }
         }

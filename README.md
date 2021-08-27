@@ -71,6 +71,9 @@ copy [test-config.example.json](test-config.example.json) to start. Then, just r
 
 Remote docker image TBD.
 
+### As an api with docker compose
+`docker-compose -f docker-compose-api.yml up`
+
 ## Configuration in Kotlin
 
 If you want a public kotlin interface, you can use the RestShaper Kotlin DSL to configure and run a test with one call!

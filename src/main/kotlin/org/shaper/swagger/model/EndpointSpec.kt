@@ -54,7 +54,7 @@ class EndpointSpec(
         }
     }
 
-    //TODO figure out how to handle contenttype here - being overriden in RESTAssured call
+    //TODO figure out how to handle content type here - being overridden in RESTAssured call
     private fun deriveHeaderParams(): Map<String, ParameterSpec> {
         val headers = params.filter { it.value.paramType == "header" }
         return if (requestBody.hasBody()) {

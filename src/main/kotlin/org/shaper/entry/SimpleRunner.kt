@@ -148,7 +148,8 @@ fun GeneralRun(
     swaggerLocation: String,
     staticParams: StaticParams,
     _endpoints: List<SimpleEndpoint>,
-    chainDepth: Int = 1
+    chainDepth: Int = 1,
+    runId: String = ""
 ): Boolean {
     return runnerConfig {
         inputFunction = SimpleInputGenerator(numCases)::getInput
@@ -157,5 +158,5 @@ fun GeneralRun(
             swaggerUrl = swaggerLocation
             endpoints = _endpoints.map { it.method to it.path }
         }
-    }.run(chainDepth)
+    }.run(chainDepth, runId)
 }

@@ -25,8 +25,8 @@
         <kotlinx.version>1.4.10</kotlinx.version>
         <mockk.version>1.11.0</mockk.version>
         <kafka.version>2.0.0</kafka.version>
-        <java.version>1.8</java.version>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+        <java.version>13</java.version>
+        <kotlin.compiler.jvmTarget>13</kotlin.compiler.jvmTarget>        <ktor.version>1.6.2</ktor.version>
     </properties>
 
     <dependencies>
@@ -55,6 +55,16 @@
             <artifactId>kotlin-serialization</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-core</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-netty</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>io.github.microutils</groupId>
@@ -70,6 +80,11 @@
             <groupId>io.swagger.parser.v3</groupId>
             <artifactId>swagger-parser</artifactId>
             <version>2.0.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.oai</groupId>
+            <artifactId>swagger-request-validator-core</artifactId>
+            <version>2.19.4</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -181,6 +196,24 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-api-jar</id>
+                        <phase>package</phase>
+                        <goals> <goal>single</goal> </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                    <mainClass>org.shaper.entry.docker.ApiEntryKt</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>rest-shaper-api</finalName>
                         </configuration>
                     </execution>
                 </executions>
