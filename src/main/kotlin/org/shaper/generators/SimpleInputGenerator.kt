@@ -32,9 +32,9 @@ class SimpleInputGenerator(
         }
 
         fun getStreamMapParamSequence(param: ParamInfo<Any>, sourceIdMap: SourceIdMap)
-                : (param: ParamInfo<Any>) -> Map<String, Any> {
+                : (param: ParamInfo<Any>, index: Int) -> Map<String, Any> {
             //TODO map any could be json elements
-            return fun (param: ParamInfo<Any>): Map<String, Any> {
+            return fun (param: ParamInfo<Any>, index: Int): Map<String, Any> {
                 //TODO add required fields handling
                 return param
                     .nestedParams
@@ -47,12 +47,12 @@ class SimpleInputGenerator(
             }
         }
         fun getStreamListParamSequence(param: ParamInfo<Any>, sourceIdMap: SourceIdMap)
-                : (param: ParamInfo<Any>) -> List<Any> {
-            return fun (param: ParamInfo<Any>): List<Any> {
+                : (param: ParamInfo<Any>, index: Int) -> List<Any> {
+            return fun (param: ParamInfo<Any>, index: Int): List<Any> { // TODO is this index ok with calling paramvals
                 //TODO add max length handling
                 return (1..faker.number().numberBetween(1, 5)).map { _ ->
                     SimpleInputGenerator()
-                        .getParamVals(param.listParam, sourceIdMap)
+                        .getParamVals(param.listParam, sourceIdMap) //TODO how to pass index in?
                         .iterator()
                         .next() ?: ""
                 }
@@ -89,8 +89,8 @@ class SimpleInputGenerator(
             conversionFun: Number.() -> T,
             sourceIdMap: SourceIdMap,
             randomFun: (ParamInfo<Any>) -> T,
-        ): (ParamInfo<Any>) -> T {
-            return { p ->
+        ): (ParamInfo<Any>, Int) -> T {
+            return { p, index ->
                 val passingValues =
                     p.passingValues // this "get" does a recalculation every time, so try not to call it directly
                 if (passingValues.isEmpty() || valueReusePercent < randPercent()) {
@@ -98,7 +98,7 @@ class SimpleInputGenerator(
                 } else {
                     val chosenVal = passingValues.random()
                     val value = chosenVal.first
-                    sourceIdMap.set(p.paramType, p.name, chosenVal.second)
+                    sourceIdMap.set(p.paramType, p.name, index, chosenVal.second)
                     when (value) {
                         is Number -> value.conversionFun()
                         is String -> {
@@ -141,7 +141,7 @@ class SimpleInputGenerator(
         staticParam: Map<String, Any?>,
         sourceIdMap: SourceIdMap
     ): Sequence<*> {
-        sourceIdMap.set(paramDef.value.info.paramType, paramDef.value.info.name, null)
+//        sourceIdMap.set(paramDef.value.info.paramType, paramDef.value.info.name, -1, null)
         if (staticParam.containsKey(paramDef.key)) { // TODO add to other params
             return SingleValueForever(staticParam[paramDef.key])
         } else {
@@ -195,24 +195,24 @@ class SimpleInputGenerator(
     private class RandomLongGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<Long>(
             param,
-            { 0L },
-            { faker.number().randomNumber() },
+            { p,i -> 0L },
+            { p,i -> faker.number().randomNumber() },
             getPassingNumber(Number::toLong, sourceIdMap) { p -> faker.number().numberBetween(p.minInt, p.maxInt) }
         )
 
     private class RandomBooleanGenerator(param: ParamInfo<Any>) :
         RandomBaseGenerator<Boolean>(
             param,
-            { Random.nextBoolean() },
-            { Random.nextBoolean() },
-            { Random.nextBoolean() }
+            { p,i -> Random.nextBoolean() },
+            { p,i -> Random.nextBoolean() },
+            { p,i -> Random.nextBoolean() }
         )
 
     private class RandomDoubleGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<Double>(
             param,
-            { 0.0 },
-            { faker.number().randomDouble(5, -10000000, 10000000) },
+            { p,i -> 0.0 },
+            { p,i -> faker.number().randomDouble(5, -10000000, 10000000) },
             getPassingNumber(Number::toDouble, sourceIdMap) { p ->
                 threadLocalRandom.nextDouble(
                     p.minDecimal,
@@ -224,14 +224,14 @@ class SimpleInputGenerator(
     private class RandomStringGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<String>(
             param,
-            { "" },
-            { faker.regexify("[A-z1-9]{0,25}") },
-            { p ->
+            { p,i -> "" },
+            { p,i -> faker.regexify("[A-z1-9]{0,25}") },
+            { p, index ->
                 if (p.passingValues.isEmpty() || valueReusePercent < randPercent()) {
                     faker.regexify("[A-z1-9]{0,25}")
                 } else {
                     val chosenVal = p.passingValues.random()
-                    sourceIdMap.set(param.paramType, param.name, chosenVal.second)
+                    sourceIdMap.set(param.paramType, param.name, index, chosenVal.second)
                     chosenVal.first.toString()
                 }
             }
@@ -240,7 +240,7 @@ class SimpleInputGenerator(
     private class RandomMapGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<Map<String, Any>>(
             param,
-            { mapOf() },
+            { p,i -> mapOf() },
             SimpleInputGenerator.getStreamMapParamSequence(param, sourceIdMap),
             SimpleInputGenerator.getStreamMapParamSequence(param, sourceIdMap) //TODO finish algorithm
         )
@@ -248,29 +248,30 @@ class SimpleInputGenerator(
     private class RandomListGenerator(param: ParamInfo<Any>, sourceIdMap: SourceIdMap) :
         RandomBaseGenerator<List<Any>>(
             param,
-            { listOf() },
+            { p,i -> listOf() },
             SimpleInputGenerator.getStreamListParamSequence(param, sourceIdMap),
             SimpleInputGenerator.getStreamListParamSequence(param, sourceIdMap) //TODO finish algorithm
         )
 
     abstract class RandomBaseGenerator<T>(
         val param: ParamInfo<Any>,
-        val nullFun: (ParamInfo<Any>) -> T,
-        val invalidFun: (ParamInfo<Any>) -> T,
-        val validFun: (ParamInfo<Any>) -> T,
+        val nullFun: (ParamInfo<Any>, Int) -> T,
+        val invalidFun: (ParamInfo<Any>, Int) -> T,
+        val validFun: (ParamInfo<Any>, Int) -> T,
     ) : Sequence<T> {
         override fun iterator(): Iterator<T> = object : Iterator<T> {
-
+            private var index = -1
             override fun next(): T {
+                index++ // not used but can we for the result value?
                 val percentNull = .05
                 val percentInvalid = .05
                 val randomNum = randPercent()
                 return if (randomNum < percentNull) {
-                    nullFun(param)
+                    nullFun(param, index)
                 } else if (randomNum < percentNull + percentInvalid) {
-                    invalidFun(param)
+                    invalidFun(param, index)
                 } else {
-                    validFun(param)
+                    validFun(param, index)
                 }
             }
 

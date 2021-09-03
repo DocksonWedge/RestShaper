@@ -9,11 +9,15 @@ import org.shaper.swagger.model.EndpointSpec
 object RestAssuredClient {
     private val logger = KotlinLogging.logger {}
 
-    val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion, runId:String ->
+    val callRestAssured = { endpointSpec: EndpointSpec, input: TestInputConcretion, runId: String ->
         logger.info { "Calling ${endpointSpec.method} => ${endpointSpec.fullUrl(input.pathParams)}" }
         logger.info { " query params: ${input.queryParams}" }
         logger.info { " header params: ${input.headers}" }
+        logger.info { " path params: ${input.pathParams}" }
+        logger.info { " cookie params: ${input.cookies}" }
         logger.info { " body: ${input.requestBody()}" }
+        logger.info { " source Ids: ${input.sourceResultIds}" }
+        logger
         val result = RestAssured.given()
             .queryParams(input.queryParams)
             .headers(input.headers)

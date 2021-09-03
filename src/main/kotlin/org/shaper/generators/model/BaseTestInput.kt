@@ -48,13 +48,14 @@ abstract class BaseTestInput(
         )
 
         protected fun inputFromPosition(position: IterPosition, sourceIdMap: SourceIdMap): TestInputConcretion {
-            val concretion= TestInputConcretion(
+            val concretion=TestInputConcretion(
                 getParamValuesAtPosition(queryParams, position.queryParams),
                 getParamValuesAtPosition(pathParams, position.pathParams),
                 getParamValuesAtPosition(headers, position.headers),
                 getParamValuesAtPosition(cookies, position.cookies),
                 getBodyValuesAtPosition(position.bodiesIter)//TODO
             )
+            // TODO this is wrong vvv
             concretion.sourceResultIds.addAll(sourceIdMap.values())
             return concretion
         }

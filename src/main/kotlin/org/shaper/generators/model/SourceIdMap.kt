@@ -1,26 +1,27 @@
 package org.shaper.generators.model
 
 class SourceIdMap() {
-    private val sourceIdMap = mutableMapOf<String, String>()
+    private val sourceIdMapList = mutableMapOf<String, MutableList<String>>()
 
-    fun set(paramType: String, paramName: String, value: String?) {
-        if (value == null || value.isBlank()) {
-            sourceIdMap.remove(getKey(paramType, paramName))
+    fun set(paramType: String, paramName: String, position: Int, sourceId: String?) {
+        if (sourceId == null || sourceId.isBlank()) {
+            sourceIdMapList[getKey(paramType, paramName)]?.removeAt(position)
         } else {
-            sourceIdMap[getKey(paramType, paramName)] = value
+            val sourceList = sourceIdMapList.getOrElse(getKey(paramType, paramName)) { mutableListOf() }
+            sourceList[position] = sourceId
+            sourceIdMapList[getKey(paramType, paramName)] = sourceList
         }
     }
 
-    fun get(paramType: String, paramName: String): Any? {
-        return sourceIdMap[getKey(paramType, paramName)]
+    fun get(paramType: String, paramName: String, position: Int): Any? {
+        return sourceIdMapList[getKey(paramType, paramName)]?.get(position)
     }
 
-    fun values():
-            MutableCollection<String>{
-        return sourceIdMap.values
+    fun values(position: Int): Collection<String> {
+        return sourceIdMapList.map { it.value[position] }
     }
 
-    private fun getKey(paramType: String, paramName: String): String {
+    private inline fun getKey(paramType: String, paramName: String): String {
         return "${paramType.toUpperCase()}-${paramName.toUpperCase()}"
     }
 
