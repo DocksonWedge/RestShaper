@@ -13,7 +13,7 @@ class EndToEndSmoke {
         ::petStorePostPet,
         ::petStoreDeletePet,
         ::petStoreGetPet,
-        ::petStoreFindByStatus,
+//        ::petStoreFindByStatus,
         ::petStoreGetOrder,
         ::petStoreGetOrderFromFile,
         ::petStorePostOrder,

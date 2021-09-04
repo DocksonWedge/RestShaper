@@ -50,20 +50,20 @@ class ResultsStateGlobalTest {
         // test save on empty index
         ResultsStateGlobal.save(endpoint, 200, input, result1)
         val resultList1 =
-            ResultsStateGlobal.index[endpoint.paramUrl()]?.get(endpoint.method)?.get(200)?.get(input.hashCode())
+            ResultsStateGlobal.getIndex()[endpoint.paramUrl()]?.get(endpoint.method)?.get(200)?.get(input.hashCode())
         Assertions.assertEquals(1, resultList1!!.size)
         Assertions.assertEquals(result1, resultList1[0])
         // test save on a previously created index
         ResultsStateGlobal.save(endpoint, 200, input, result2)
         val resultList2 =
-            ResultsStateGlobal.index[endpoint.paramUrl()]?.get(endpoint.method)?.get(200)?.get(input.hashCode())
+            ResultsStateGlobal.getIndex()[endpoint.paramUrl()]?.get(endpoint.method)?.get(200)?.get(input.hashCode())
         Assertions.assertEquals(2, resultList2!!.size)
         Assertions.assertEquals(result1, resultList2[0])
         Assertions.assertEquals(result2, resultList2[1])
         // test save on a half created index
         ResultsStateGlobal.save(endpoint, 400, input, result2)
         val resultList3 =
-            ResultsStateGlobal.index[endpoint.paramUrl()]?.get(endpoint.method)?.get(400)?.get(input.hashCode())
+            ResultsStateGlobal.getIndex()[endpoint.paramUrl()]?.get(endpoint.method)?.get(400)?.get(input.hashCode())
 
         Assertions.assertEquals(1, resultList3!!.size)
         Assertions.assertEquals(result2, resultList3[0])

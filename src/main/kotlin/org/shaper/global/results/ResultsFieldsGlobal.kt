@@ -8,18 +8,20 @@ import org.shaper.serialization.JsonTree
 import org.shaper.swagger.constants.JsonProperties
 import org.shaper.swagger.model.EndpointSpec
 import org.shaper.swagger.model.ResponseBodySpec
+import kotlin.concurrent.getOrSet
+
 
 object ResultsFieldsGlobal {
-    lateinit var index: MutableMap<String, MutableSet<Pair<JsonPrimitive, String>>>
-    lateinit var multiIndex: MutableMap<String, MutableSet<JsonPrimitive>>
+
+    var index: ThreadLocal<MutableMap<String, MutableSet<Pair<JsonPrimitive, String>>>> = ThreadLocal()
+    fun getIndex(): MutableMap<String, MutableSet<Pair<JsonPrimitive, String>>> {
+        return index.getOrSet { mutableMapOf() }
+    }
+    var multiIndex: ThreadLocal<MutableMap<String, MutableSet<JsonPrimitive>>> = ThreadLocal()
     //todo handle arrays and maps
 
     fun getFromKey(key: String): MutableSet<Pair<JsonPrimitive, String>> {
-        return if (this::index.isInitialized) {
-            index[key.toLowerCase()] ?: mutableSetOf()
-        } else {
-            mutableSetOf()
-        }
+        return index.getOrSet { mutableMapOf() }[key.toLowerCase()] ?: mutableSetOf()
     }
 
     // Call this if you want to inject previous data or test data into these globals
@@ -28,9 +30,9 @@ object ResultsFieldsGlobal {
         _multiIndex: MutableMap<String, MutableSet<JsonPrimitive>> = mutableMapOf(),
         reset: Boolean = false
     ) {
-        if (!this::index.isInitialized || reset) {
-            index = _index
-            multiIndex = _multiIndex
+        if (reset || index.get() == null) {
+            index.set(_index)
+            multiIndex.set(_multiIndex)
         }
     }
 
@@ -55,7 +57,7 @@ object ResultsFieldsGlobal {
         testResult: TestResult
     ) {
         saveResultFieldImpl(
-            index,
+            index.get(),
             fieldName,
             fullPath,
             title,

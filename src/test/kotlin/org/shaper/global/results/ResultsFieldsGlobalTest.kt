@@ -84,11 +84,11 @@ class ResultsFieldsGlobalTest {
     }
 
     private fun assertPet() {
-        Assertions.assertEquals(4, ResultsFieldsGlobal.index["id"]?.size)
-        Assertions.assertEquals(4, ResultsFieldsGlobal.index["name"]?.size)
+        Assertions.assertEquals(4, ResultsFieldsGlobal.getIndex()["id"]?.size)
+        Assertions.assertEquals(4, ResultsFieldsGlobal.getIndex()["name"]?.size)
         assertField("categoryname", petBody["category"]?.jsonObject?.get("name"))
         assertField("categoryid", petBody["category"]?.jsonObject?.get("id"))
-        Assertions.assertEquals(2, ResultsFieldsGlobal.index["photourls"]?.size)
+        Assertions.assertEquals(2, ResultsFieldsGlobal.getIndex()["photourls"]?.size)
         assertList("photourls", setOf(JsonPrimitive("abc"), JsonPrimitive("123")))
         assertList("tagsid", setOf(JsonPrimitive(1), JsonPrimitive(2)))
         assertList("tagsname", setOf(JsonPrimitive("tag1"), JsonPrimitive("tag2")))
@@ -100,11 +100,15 @@ class ResultsFieldsGlobalTest {
     }
 
     private fun assertField(indexPath: String, expectedValue: JsonElement?) {
-        Assertions.assertEquals(expectedValue, ResultsFieldsGlobal.index[indexPath.toLowerCase()]!!.first())
+        val valueSourcePair = ResultsFieldsGlobal.getIndex()[indexPath.toLowerCase()]!!.first()
+        Assertions.assertEquals(expectedValue, valueSourcePair.first)
+        Assertions.assertEquals(36,valueSourcePair.second.length)
     }
 
     private fun assertList(indexPath: String, set: Set<JsonPrimitive>) {
-        Assertions.assertTrue(ResultsFieldsGlobal.index[indexPath]!!.containsAll(set))
+        Assertions.assertTrue(ResultsFieldsGlobal.getIndex()[indexPath]!!
+            .map { it.first }
+            .containsAll(set))
     }
 
     //***

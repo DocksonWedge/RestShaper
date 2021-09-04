@@ -163,7 +163,7 @@ class GetRelevantSpecsTest {
     fun `Test getRelevantSpecs returns params with the correct enum`() = listOf(
         listOf("get:/pet/findByStatus")
                 to
-                setOf("available", "pending", "sold")
+                setOf("available" to "", "pending" to "", "sold" to "")
     )
         .map { (rawEndpoints, expected) ->
             DynamicTest.dynamicTest(
