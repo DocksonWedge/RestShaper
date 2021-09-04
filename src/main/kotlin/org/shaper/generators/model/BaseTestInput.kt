@@ -44,34 +44,44 @@ abstract class BaseTestInput(
             pathParams.mapValues { getInitPosition(it) }.toMutableMap(),
             headers.mapValues { getInitPosition(it) }.toMutableMap(),
             cookies.mapValues { getInitPosition(it) }.toMutableMap(),
-            bodies.iterator()
+            bodies.iterator().withIndex()
         )
 
         protected fun inputFromPosition(position: IterPosition, sourceIdMap: SourceIdMap): TestInputConcretion {
-            val concretion=TestInputConcretion(
-                getParamValuesAtPosition(queryParams, position.queryParams),
-                getParamValuesAtPosition(pathParams, position.pathParams),
-                getParamValuesAtPosition(headers, position.headers),
-                getParamValuesAtPosition(cookies, position.cookies),
-                getBodyValuesAtPosition(position.bodiesIter)//TODO
+            val sourceIds = mutableSetOf<String>()
+            val concretion = TestInputConcretion(
+                getParamValuesAtPosition(queryParams, position.queryParams, SourceIdMap.Type.QUERY, sourceIdMap, sourceIds),
+                getParamValuesAtPosition(pathParams, position.pathParams, SourceIdMap.Type.PATH, sourceIdMap, sourceIds),
+                getParamValuesAtPosition(headers, position.headers, SourceIdMap.Type.HEADER, sourceIdMap, sourceIds),
+                getParamValuesAtPosition(cookies, position.cookies, SourceIdMap.Type.COOKIE, sourceIdMap, sourceIds),
+                getBodyValuesAtPosition(position.bodiesIter, sourceIdMap, sourceIds)//TODO
             )
-            // TODO this is wrong vvv
-            concretion.sourceResultIds.addAll(sourceIdMap.values())
+            concretion.sourceResultIds.addAll(sourceIds)
             return concretion
         }
 
         private fun getParamValuesAtPosition(
             params: Map<String, Sequence<*>>,
-            position: MutableMap<String, ParamPosition<*>>
+            position: MutableMap<String, ParamPosition<*>>,
+            paramType: SourceIdMap.Type,
+            sourceIdMap: SourceIdMap,
+            sourceIds: MutableSet<String>
         ): Map<String, *> {
             return params.mapValues { param ->
                 val inputPosition = position[param.key] ?: error("Iterating over a parameter that doesn't exist!")
+                sourceIdMap.get(paramType, param.key, inputPosition.index)?.let { sourceIds.add(it) }
                 inputPosition.currentVal
             }
         }
 
-        private fun getBodyValuesAtPosition(position: Iterator<*>): JsonElement {
-            val nextVal = position.next() ?: ""
+        private fun getBodyValuesAtPosition(
+            position: Iterator<IndexedValue<*>>,
+            sourceIdMap: SourceIdMap,
+            sourceIds: MutableSet<String>
+        ): JsonElement {
+            val indexedVal = position.next()
+            val nextVal = indexedVal.value ?: ""
+            sourceIds.addAll(sourceIdMap.getAllParamsAtType(SourceIdMap.Type.BODY, indexedVal.index))
             return if (nextVal is Map<*, *>) {
                 JsonObject(nextVal as Map<String, JsonElement>)
             } else if (nextVal is List<*>) {

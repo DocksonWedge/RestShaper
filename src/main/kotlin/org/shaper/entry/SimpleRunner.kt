@@ -110,7 +110,7 @@ fun petStoreMultiPet(numCases: Int = 2): Boolean {
             swaggerUrl = "https://petstore.swagger.io/v2/swagger.json"
             endpoints = listOf(
                 POST to "/pet",
-                DELETE to "/pet/{petId}",
+//                DELETE to "/pet/{petId}",
                 GET to "/pet/{petId}"
             )
         }

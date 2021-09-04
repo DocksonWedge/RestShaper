@@ -1,28 +1,55 @@
 package org.shaper.generators.model
 
-class SourceIdMap() {
-    private val sourceIdMapList = mutableMapOf<String, MutableList<String>>()
+import mu.KotlinLogging
 
-    fun set(paramType: String, paramName: String, position: Int, sourceId: String?) {
+class SourceIdMap() {
+    private val logger = KotlinLogging.logger {}
+    enum class Type(val str: String) {
+        QUERY("QUERY"),
+        PATH("PATH"),
+        HEADER("HEADER"),
+        COOKIE("COOKIE"),
+        BODY("BODY")
+    }
+
+    private val sourceIdMapList = mutableMapOf<Type, MutableMap<String, MutableMap<Int, String>>>()
+
+    fun set(paramType: Type, paramName: String, position: Int, sourceId: String?) {
         if (sourceId == null || sourceId.isBlank()) {
-            sourceIdMapList[getKey(paramType, paramName)]?.removeAt(position)
+            val list = sourceIdMapList[paramType]?.get(paramName)?.remove(position)
         } else {
-            val sourceList = sourceIdMapList.getOrElse(getKey(paramType, paramName)) { mutableListOf() }
+            val sourceList = sourceIdMapList
+                .getOrPut(paramType) { mutableMapOf() }
+                .getOrElse(paramName) { mutableMapOf() }
             sourceList[position] = sourceId
-            sourceIdMapList[getKey(paramType, paramName)] = sourceList
+            sourceIdMapList[paramType]?.put(paramName, sourceList)
         }
     }
 
-    fun get(paramType: String, paramName: String, position: Int): Any? {
-        return sourceIdMapList[getKey(paramType, paramName)]?.get(position)
+    fun get(paramType: Type, paramName: String, position: Int): String? {
+        return sourceIdMapList[paramType]?.get(paramName)?.get(position)
     }
 
-    fun values(position: Int): Collection<String> {
-        return sourceIdMapList.map { it.value[position] }
+    fun clear(paramType: Type){
+        sourceIdMapList[paramType] = mutableMapOf()
     }
 
-    private inline fun getKey(paramType: String, paramName: String): String {
-        return "${paramType.toUpperCase()}-${paramName.toUpperCase()}"
+    fun getAllParamsAtType(paramType: Type, position: Int): Set<String> {
+        return sourceIdMapList[paramType]?.mapNotNull {
+            it.value[position]
+        }?.toSet() ?: setOf()
     }
 
+    fun convertParamsToPosition(paramType: Type, newPosition: Int, otherMap: SourceIdMap){
+        val typeMap = this.sourceIdMapList[paramType] ?: return
+
+        typeMap.forEach { nameEntry ->
+            if (nameEntry.value.size > 1 ){
+                logger.warn { "Found a parameter with too many source IDs! Ignoring all but the last! Param name: ${nameEntry.key}" }
+            }
+            nameEntry.value.forEach {
+                otherMap.set(paramType, nameEntry.key, newPosition, it.value)
+            }
+        }
+    }
 }

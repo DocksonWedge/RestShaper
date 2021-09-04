@@ -5,7 +5,7 @@ data class IterPosition(
     var pathParamsIter: MutableMap<String, Iterator<*>>,
     var headersIter: MutableMap<String, Iterator<*>>,
     var cookiesIter: MutableMap<String, Iterator<*>>,
-    var bodiesIter: Iterator<*>
+    var bodiesIter: Iterator<IndexedValue<*>>
 ) {
     val queryParams = getValuesMap(queryParamsIter)
     val pathParams = getValuesMap(pathParamsIter)
