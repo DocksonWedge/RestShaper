@@ -13,11 +13,11 @@ import kotlin.concurrent.getOrSet
 
 object ResultsFieldsGlobal {
 
-    var index: ThreadLocal<MutableMap<String, MutableSet<Pair<JsonPrimitive, String>>>> = ThreadLocal()
+    private var index: ThreadLocal<MutableMap<String, MutableSet<Pair<JsonPrimitive, String>>>> = ThreadLocal()
     fun getIndex(): MutableMap<String, MutableSet<Pair<JsonPrimitive, String>>> {
         return index.getOrSet { mutableMapOf() }
     }
-    var multiIndex: ThreadLocal<MutableMap<String, MutableSet<JsonPrimitive>>> = ThreadLocal()
+    private var multiIndex: ThreadLocal<MutableMap<String, MutableSet<JsonPrimitive>>> = ThreadLocal()
     //todo handle arrays and maps
 
     fun getFromKey(key: String): MutableSet<Pair<JsonPrimitive, String>> {
@@ -34,6 +34,14 @@ object ResultsFieldsGlobal {
             index.set(_index)
             multiIndex.set(_multiIndex)
         }
+    }
+
+    @Synchronized
+    fun clearResults() {
+        index.get()?.clear()
+        index.remove()
+        multiIndex.get()?.clear()
+        multiIndex.remove()
     }
 
     fun save(testResult: TestResult) {

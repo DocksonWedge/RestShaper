@@ -64,7 +64,10 @@ object Results {
             )
         }
     }
-
+    fun clearGlobals(){
+        ResultsFieldsGlobal.clearResults()
+        ResultsStateGlobal.clearResults()
+    }
     private val addPassing = { param: ParameterSpec, value: Any ->
         //param.info.addPassingValue(value)
     }

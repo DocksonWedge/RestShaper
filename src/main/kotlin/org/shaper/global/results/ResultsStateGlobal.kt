@@ -82,5 +82,6 @@ object ResultsStateGlobal {
     @Synchronized
     fun clearResults() {
         index.get()?.clear()
+        index.remove()
     }
 }

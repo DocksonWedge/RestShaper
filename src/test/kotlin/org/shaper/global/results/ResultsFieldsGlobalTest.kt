@@ -66,7 +66,7 @@ class ResultsFieldsGlobalTest {
                     "then I find properties $body in the ResultsFieldsGlobal.index."
         ) {
             testGlobalSave(method, path, body)
-            logger.info { ResultsFieldsGlobal.index }
+            logger.info { ResultsFieldsGlobal.getIndex() }
             assertion()
         }
     }

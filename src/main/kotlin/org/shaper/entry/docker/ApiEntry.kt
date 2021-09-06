@@ -8,8 +8,10 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import mu.KotlinLogging
 import org.shaper.entry.GeneralRun
 import org.shaper.entry.model.DockerConfig
+import org.shaper.global.results.ResultsFieldsGlobal
 import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -41,6 +43,7 @@ fun Application.module(testing: Boolean = false) {
                         runId
                     )
                 }.start()
+
                 call.respondText(
                     "{ \"runId\": \"$runId\" }",
                     ContentType("application", "json"),
